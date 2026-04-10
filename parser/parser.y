@@ -25,14 +25,44 @@ void yyerror(const char *s);
 //Logical Operators
 %token AND OR NOT
 
-//Types
-%token INT FLOAT DOUBLE CHAR BOOL VOID
+//Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
+%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
+
+%token ID
 
 %token SEMICOLON
+%token COMMA
 
 %token ADDR
 
 %%
+//tipo: .... é um agrupamento lógico.
+tipo: 
+    TYPE_INT 
+    | TYPE_FLOAT 
+    | TYPE_DOUBLE 
+    | TYPE_CHAR 
+    | TYPE_BOOL 
+    | TYPE_VOID 
+    ;
+
+declarador:
+    ID
+    | ID INITVAR expressao
+    ;
+
+declaradores: 
+    declarador 
+    | declaradores COMMA declarador 
+    ;
+
+
+
+declaracao: 
+    tipo declaradores SEMICOLON 
+    ;
+
+
 
 expressao:
     expressao PLUS expressao
