@@ -6,13 +6,29 @@ int yylex(void);
 void yyerror(const char *s);
 %}
 
-%token NUM
+%union {
+    int iValue;
+    char cValue;
+    char *sIndex;
+    char *sValue;
+}
+
+%token NUM STRING CHAR_LIT FLOAT_NUM
+
+//Control Operators
+%token KW_IF KW_ELSE KW_SWITCH KW_CASE KW_DEFAULT
+
+//Loop Operators
+%token KW_WHILE KW_FOR KW_DO
+
+//End Code
+%token KW_BREAK KW_CONTINUE KW_RETURN
 
 //Comparison Operators
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
 
 //Update Operators
-%token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE
+%token UPDT_INC UPDT_DEC UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE
 
 %token INITVAR
 
@@ -35,15 +51,26 @@ void yyerror(const char *s);
 
 %token ADDR
 
+
+%left PLUS MINUS
+%left TIMES DIVIDE INTDIVIDE MOD
+%left L_PAREN R_PAREN
+
 %%
+
+programa:
+    declaracao
+    | expressao
+    ;
+
 //tipo: .... é um agrupamento lógico.
-tipo: 
-    TYPE_INT 
-    | TYPE_FLOAT 
-    | TYPE_DOUBLE 
-    | TYPE_CHAR 
-    | TYPE_BOOL 
-    | TYPE_VOID 
+tipo:
+    TYPE_INT
+    | TYPE_FLOAT
+    | TYPE_DOUBLE
+    | TYPE_CHAR
+    | TYPE_BOOL
+    | TYPE_VOID
     ;
 
 declarador:
@@ -51,19 +78,19 @@ declarador:
     | ID INITVAR expressao
     ;
 
-declaradores: 
-    declarador 
-    | declaradores COMMA declarador 
+declaradores:
+    declarador
+    | declaradores COMMA declarador
     ;
 
 
 
-declaracao: 
-    tipo declaradores SEMICOLON 
+declaracao:
+    tipo declaradores SEMICOLON
     ;
 
 
-
+// STRING ou CHAR_LIT "pode ser somado" com INT(?)
 expressao:
     expressao PLUS expressao
   | expressao MINUS expressao
@@ -71,6 +98,10 @@ expressao:
   | expressao DIVIDE expressao
   | L_PAREN expressao R_PAREN
   | NUM
+  | FLOAT_NUM
+  | STRING
+  | CHAR_LIT
+  | ID
   ;
 
 %%
