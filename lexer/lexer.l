@@ -13,7 +13,7 @@
 
 %%
 
-/* keywords */
+    /* keywords */
 
 "if"            { RETURN_TOKEN(KW_IF); }
 "else"          { RETURN_TOKEN(KW_ELSE); }      
@@ -27,7 +27,7 @@
 "default"       { RETURN_TOKEN(KW_DEFAULT); }
 "return"        { RETURN_TOKEN(KW_RETURN); }
 
-/* data types */
+    /* data types */
 
 "int"           { RETURN_TOKEN(TYPE_INT); }
 "float"         { RETURN_TOKEN(TYPE_FLOAT); }
@@ -36,7 +36,7 @@
 "bool"          { RETURN_TOKEN(TYPE_BOOL); }
 "void"          { RETURN_TOKEN(TYPE_VOID); }
 
-/* identifiers */
+    /* identifiers */
 
 [a-zA-Z_]([a-zA-Z0-9_])* {
                                 yylval.sIndex = malloc(strlen(yytext)+1);
@@ -45,7 +45,7 @@
                                 return ID;
                             }
 
-/* strings */               
+    /* strings */               
 
 \"[^\"\\]*\"           {
                                 yylval.sValue = strdup(yytext+1);
@@ -54,7 +54,7 @@
                                 return STRING;
                             }
 
-/* characters */
+    /* characters */
 
 \'[^\'\\]\'            {
                                 yylval.cValue = *(yytext+1);
@@ -62,7 +62,7 @@
                                 return CHAR_LIT;
                             }
 
-/* numbers */
+    /* numbers */
 
 [0-9]+\.[0-9]+         { RETURN_TOKEN(FLOAT_NUM); }
 [0-9]+                 { 
@@ -71,7 +71,7 @@
                             }
 
 
-/* relational operators */
+    /* relational operators */
 
 "=="            { RETURN_TOKEN(EQUAL); }
 "!="            { RETURN_TOKEN(DIFF); }
@@ -80,7 +80,7 @@
 "<"             { RETURN_TOKEN(LESSER); }
 ">"             { RETURN_TOKEN(GREATER); }
 
-/* assign */
+    /* assign */
 
 "++"            { RETURN_TOKEN(UPDT_INC); }
 "--"            { RETURN_TOKEN(UPDT_DEC); }
@@ -90,7 +90,7 @@
 "/="            { RETURN_TOKEN(UPDT_DIVIDE); }
 "="             { RETURN_TOKEN(INITVAR); }
 
-/* arithmetic operators */
+    /* arithmetic operators */
 
 "+"             { RETURN_TOKEN(PLUS); }
 "-"             { RETURN_TOKEN(MINUS); }
@@ -99,7 +99,7 @@
 "/"             { RETURN_TOKEN(DIVIDE); }
 "%"             { RETURN_TOKEN(MOD); }
 
-/* symbols */
+    /* symbols */
 
 "("             { RETURN_TOKEN(L_PAREN); }
 ")"             { RETURN_TOKEN(R_PAREN); }
@@ -110,21 +110,21 @@
 ","             { RETURN_TOKEN(COMMA); }
 ";"             { RETURN_TOKEN(SEMICOLON); }
 
-/* logical operators */
+    /* logical operators */
 
 "&&"            { RETURN_TOKEN(AND); }
 "||"            { RETURN_TOKEN(OR); }
 "!"             { RETURN_TOKEN(NOT); }
 
-/* adress operator */
+    /* adress operator */
 
 "&"             { RETURN_TOKEN(ADDR); }
 
-/* whitespace */
+    /* whitespace */
 
 [ \t\n]+        { /* Ignorar espaços em branco */ }
 
-/* invalid */
+    /* invalid */
 
 .               { printf("\nCaractere inválido: %s\n\n", yytext); }
 
