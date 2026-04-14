@@ -8,24 +8,24 @@ void yyerror(const char *s);
 
 %token NUM
 
-//Comparison Operators
+    //Comparison Operators
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
 
-//Update Operators
+    //Update Operators
 %token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE
 
 %token INITVAR
 
-//Math Operators
+    //Math Operators
 %token PLUS MINUS TIMES DIVIDE INTDIVIDE MOD
 
-//Brackets
+    //Brackets
 %token L_PAREN R_PAREN L_SQBRACKET R_SQBRACKET L_CRLRBRACKET R_CRLRBRACKET
 
-//Logical Operators
+    //Logical Operators
 %token AND OR NOT
 
-//Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
+    //Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
 %token ID
@@ -34,6 +34,10 @@ void yyerror(const char *s);
 %token COMMA
 
 %token ADDR
+
+    //Operator precedence
+%left PLUS MINUS
+%left TIMES DIVIDE INTDIVIDE MOD
 
 %%
 //tipo: .... é um agrupamento lógico.
@@ -69,6 +73,8 @@ expressao:
   | expressao MINUS expressao
   | expressao TIMES expressao
   | expressao DIVIDE expressao
+  | expressao INTDIVIDE expressao
+  | expressao MOD expressao
   | L_PAREN expressao R_PAREN
   | NUM
   ;
