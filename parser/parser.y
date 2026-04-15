@@ -6,13 +6,15 @@ int yylex(void);
 void yyerror(const char *s);
 %}
 
-%token NUM
+%token NUM FLOAT_NUM
+%token STRING CHAR_LIT
 
     //Comparison Operators
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
 
     //Update Operators
 %token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE
+%token UPDT_INC UPDT_DEC
 
 %token INITVAR
 
@@ -40,6 +42,22 @@ void yyerror(const char *s);
 %left TIMES DIVIDE INTDIVIDE MOD
 
 %%
+
+programa:
+    comandos
+    ;
+
+comandos:
+    comando
+    | comandos comando
+    ;
+
+comando:
+    declaracao
+    | atribuicao
+    | atualizacao
+    ;
+
 //tipo: .... é um agrupamento lógico.
 tipo: 
     TYPE_INT 
@@ -66,7 +84,18 @@ declaracao:
     tipo declaradores SEMICOLON 
     ;
 
+atribuicao:
+    ID INITVAR expressao SEMICOLON
+    ;
 
+atualizacao:
+    ID UPDT_PLUS expressao SEMICOLON
+    | ID UPDT_MINUS expressao SEMICOLON
+    | ID UPDT_TIMES expressao SEMICOLON
+    | ID UPDT_DIVIDE expressao SEMICOLON
+    | ID UPDT_INC SEMICOLON
+    | ID UPDT_DEC SEMICOLON
+    ;
 
 expressao:
     expressao PLUS expressao
@@ -77,6 +106,10 @@ expressao:
   | expressao MOD expressao
   | L_PAREN expressao R_PAREN
   | NUM
+  | FLOAT_NUM
+  | ID
+  | STRING
+  | CHAR_LIT
   ;
 
 %%

@@ -17,7 +17,7 @@
 
 "int"           { RETURN_TOKEN(TYPE_INT); }
 "float"         { RETURN_TOKEN(TYPE_FLOAT); }
-"double"        { RETURN_TOKEN(TYPE_DOUBLE); }  
+"double"        { RETURN_TOKEN(TYPE_DOUBLE); }
 "char"          { RETURN_TOKEN(TYPE_CHAR); }
 "bool"          { RETURN_TOKEN(TYPE_BOOL); }
 "void"          { RETURN_TOKEN(TYPE_VOID); }
@@ -31,7 +31,31 @@
 
     /* numbers */
 
+[0-9]+\.[0-9]+  { RETURN_TOKEN(FLOAT_NUM); }
 [0-9]+          { RETURN_TOKEN(NUM); }
+
+    /* string and char literals */
+
+\"([^"\\]|\\.)*\"   { RETURN_TOKEN(STRING); }
+\'([^'\\]|\\.)?\'   { RETURN_TOKEN(CHAR_LIT); }
+
+    /* comparison operators */
+
+"=="            { RETURN_TOKEN(EQUAL); }
+"!="            { RETURN_TOKEN(DIFF); }
+"<="            { RETURN_TOKEN(LESS_EQ); }
+">="            { RETURN_TOKEN(GREAT_EQ); }
+"<"             { RETURN_TOKEN(LESSER); }
+">"             { RETURN_TOKEN(GREATER); }
+
+    /* update operators */
+
+"+="            { RETURN_TOKEN(UPDT_PLUS); }
+"-="            { RETURN_TOKEN(UPDT_MINUS); }
+"*="            { RETURN_TOKEN(UPDT_TIMES); }
+"/="            { RETURN_TOKEN(UPDT_DIVIDE); }
+"++"            { RETURN_TOKEN(UPDT_INC); }
+"--"            { RETURN_TOKEN(UPDT_DEC); }
 
     /* assign */
 
@@ -46,10 +70,24 @@
 "/"             { RETURN_TOKEN(DIVIDE); }
 "%"             { RETURN_TOKEN(MOD); }
 
+    /* logical operators */
+
+"&&"            { RETURN_TOKEN(AND); }
+"||"            { RETURN_TOKEN(OR); }
+"!"             { RETURN_TOKEN(NOT); }
+
+    /* address operator */
+
+"&"             { RETURN_TOKEN(ADDR); }
+
     /* symbols */
 
 "("             { RETURN_TOKEN(L_PAREN); }
 ")"             { RETURN_TOKEN(R_PAREN); }
+"["             { RETURN_TOKEN(L_SQBRACKET); }
+"]"             { RETURN_TOKEN(R_SQBRACKET); }
+"{"             { RETURN_TOKEN(L_CRLRBRACKET); }
+"}"             { RETURN_TOKEN(R_CRLRBRACKET); }
 ","             { RETURN_TOKEN(COMMA); }
 ";"             { RETURN_TOKEN(SEMICOLON); }
 
