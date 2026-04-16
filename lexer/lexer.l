@@ -1,12 +1,22 @@
+%option yylineno
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "parser/types.h"
 #include "parser.tab.h"
 
 #define RETURN_TOKEN(tok) \
     do { \
         printf("TOKEN: %s | VALUE: %s\n", #tok, yytext); \
+        switch (tok) { \
+            case NUM: \
+                yylval.iValue = atoi(yytext); \
+                break; \
+            case FLOAT_NUM: \
+                yylval.fValue = (float)atoi(yytext); \
+                break; \
+        } \
         return tok; \
     } while(0)
 %}
@@ -24,22 +34,34 @@
 
     /* identifiers */
 
-[a-zA-Z_]([a-zA-Z0-9_]*) {
-    printf("TOKEN: ID | VALUE: %s\n", yytext);
-    return ID;
-}
+[a-zA-Z_]([a-zA-Z0-9_])* {
+                                yylval.sStr = malloc(strlen(yytext)+1);
+                                strcpy(yylval.sStr, yytext);
+                                printf("TOKEN: ID | VALUE: %s\n", yytext);
+                                return ID;
+                            }
 
-    /* numbers */
+    /* strings */
 
-[0-9]+\.[0-9]+  { RETURN_TOKEN(FLOAT_NUM); }
-[0-9]+          { RETURN_TOKEN(NUM); }
+\"[^\"\\]*\"           {
+                                yylval.sStr = strdup(yytext+1);
+                                yylval.sStr[strlen(yylval.sStr)-1] = '\0';
+                                printf("TOKEN: STRING | VALUE: %s\n", yylval.sStr);
+                                return STRING;
+                            }
 
-    /* string and char literals */
+    /* characters */
 
 \"([^"\\]|\\.)*\"   { RETURN_TOKEN(STRING); }
 \'([^'\\]|\\.)?\'   { RETURN_TOKEN(CHAR_LIT); }
 
-    /* comparison operators */
+    /* numbers */
+
+[0-9]+\.[0-9]+         { RETURN_TOKEN(FLOAT_NUM); }
+[0-9]+                 { RETURN_TOKEN(NUM); }
+
+
+    /* relational operators */
 
 "=="            { RETURN_TOKEN(EQUAL); }
 "!="            { RETURN_TOKEN(DIFF); }
@@ -90,6 +112,9 @@
 "}"             { RETURN_TOKEN(R_CRLRBRACKET); }
 ","             { RETURN_TOKEN(COMMA); }
 ";"             { RETURN_TOKEN(SEMICOLON); }
+
+    /* keywords */
+"return"        { RETURN_TOKEN(KW_RETURN); }
 
     /* whitespace */
 
