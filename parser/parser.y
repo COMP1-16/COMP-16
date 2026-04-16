@@ -76,6 +76,8 @@ code:
 codeblock:
     declaracao {printf("Started as statement.\n");}
     | expressao SEMICOLON {printf("Started as expression.\n");}
+    | atualizacao
+    ;
 
 //tipo: .... é um agrupamento lógico.
 tipo:

@@ -14,7 +14,21 @@
                 yylval.iValue = atoi(yytext); \
                 break; \
             case FLOAT_NUM: \
-                yylval.fValue = (float)atoi(yytext); \
+                yylval.fValue = atof(yytext); \
+                break; \
+            case STRING: \
+                yylval.sStr = strdup(yytext+1); \
+                yylval.sStr[strlen(yylval.sStr)-1] = '\0'; \
+                printf("TOKEN: STRING | VALUE: %s\n", yylval.sStr); \
+                break; \
+            case ID: \
+                yylval.sStr = malloc(strlen(yytext)+1); \
+                strcpy(yylval.sStr, yytext); \
+                printf("TOKEN: ID | VALUE: %s\n", yytext); \
+                break; \
+            case CHAR_LIT: \
+                yylval.cValue = yytext[1]; \
+                printf("TOKEN: CHAR_LIT | VALUE: %s\n", yytext); \
                 break; \
         } \
         return tok; \
@@ -22,6 +36,10 @@
 %}
 
 %%
+    /* keywords */
+
+"return"        { RETURN_TOKEN(KW_RETURN); }
+
 
     /* data types */
 
@@ -34,25 +52,14 @@
 
     /* identifiers */
 
-[a-zA-Z_]([a-zA-Z0-9_])* {
-                                yylval.sStr = malloc(strlen(yytext)+1);
-                                strcpy(yylval.sStr, yytext);
-                                printf("TOKEN: ID | VALUE: %s\n", yytext);
-                                return ID;
-                            }
+[a-zA-Z_]([a-zA-Z0-9_])* { RETURN_TOKEN(ID); }
 
     /* strings */
 
-\"[^\"\\]*\"           {
-                                yylval.sStr = strdup(yytext+1);
-                                yylval.sStr[strlen(yylval.sStr)-1] = '\0';
-                                printf("TOKEN: STRING | VALUE: %s\n", yylval.sStr);
-                                return STRING;
-                            }
+\"[^\"\\]*\"           { RETURN_TOKEN(STRING); }
 
     /* characters */
 
-\"([^"\\]|\\.)*\"   { RETURN_TOKEN(STRING); }
 \'([^'\\]|\\.)?\'   { RETURN_TOKEN(CHAR_LIT); }
 
     /* numbers */
@@ -112,9 +119,6 @@
 "}"             { RETURN_TOKEN(R_CRLRBRACKET); }
 ","             { RETURN_TOKEN(COMMA); }
 ";"             { RETURN_TOKEN(SEMICOLON); }
-
-    /* keywords */
-"return"        { RETURN_TOKEN(KW_RETURN); }
 
     /* whitespace */
 
