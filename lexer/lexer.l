@@ -1,12 +1,22 @@
+%option yylineno
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "parser/types.h"
 #include "parser.tab.h"
 
 #define RETURN_TOKEN(tok) \
     do { \
         printf("TOKEN: %s | VALUE: %s\n", #tok, yytext); \
+        switch (tok) { \
+            case NUM: \
+                yylval.iValue = atoi(yytext); \
+                break; \
+            case FLOAT_NUM: \
+                yylval.fValue = (float)atoi(yytext); \
+                break; \
+        } \
         return tok; \
     } while(0)
 %}
@@ -39,8 +49,8 @@
     /* identifiers */
 
 [a-zA-Z_]([a-zA-Z0-9_])* {
-                                yylval.sIndex = malloc(strlen(yytext)+1);
-                                strcpy(yylval.sIndex, yytext);
+                                yylval.sStr = malloc(strlen(yytext)+1);
+                                strcpy(yylval.sStr, yytext);
                                 printf("TOKEN: ID | VALUE: %s\n", yytext);
                                 return ID;
                             }
@@ -48,9 +58,9 @@
     /* strings */
 
 \"[^\"\\]*\"           {
-                                yylval.sValue = strdup(yytext+1);
-                                yylval.sValue[strlen(yylval.sValue)-1] = '\0';
-                                printf("TOKEN: STRING | VALUE: %s\n", yylval.sValue);
+                                yylval.sStr = strdup(yytext+1);
+                                yylval.sStr[strlen(yylval.sStr)-1] = '\0';
+                                printf("TOKEN: STRING | VALUE: %s\n", yylval.sStr);
                                 return STRING;
                             }
 
@@ -65,10 +75,7 @@
     /* numbers */
 
 [0-9]+\.[0-9]+         { RETURN_TOKEN(FLOAT_NUM); }
-[0-9]+                 {
-                                //yylval = atoi(yytext);
-                                RETURN_TOKEN(NUM);
-                            }
+[0-9]+                 { RETURN_TOKEN(NUM); }
 
 
     /* relational operators */

@@ -2,18 +2,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "parser/funcs.h"
+
+extern int yylineno;
+
 int yylex(void);
 void yyerror(const char *s);
+
 %}
+
+%code requires {
+#include "parser/types.h"
+}
 
 %union {
     int iValue;
+    float fValue;
     char cValue;
-    char *sIndex;
-    char *sValue;
+    char *sStr;
+    Valor valor;
 }
 
-%token NUM STRING CHAR_LIT FLOAT_NUM
+%token <iValue> NUM 
+%token <sStr> STRING
+%token <cValue> CHAR_LIT
+%token <fValue> FLOAT_NUM
+
+%token <sStr> ID
+
+%type <valor> expressao
 
 //Control Operators
 %token KW_IF KW_ELSE KW_SWITCH KW_CASE KW_DEFAULT
@@ -44,13 +61,12 @@ void yyerror(const char *s);
 //Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
-%token ID
-
 %token SEMICOLON
 %token COMMA
 
 %token ADDR
 
+%nonassoc KW_ELSE
 
 %left PLUS MINUS
 %left TIMES DIVIDE INTDIVIDE MOD
@@ -58,10 +74,15 @@ void yyerror(const char *s);
 
 %%
 
-programa:
-    declaracao
-    | expressao
+code:
+    codeblock
+    | code codeblock
+    | code KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
     ;
+
+codeblock:
+    declaracao {printf("Started as statement.\n");}
+    | expressao SEMICOLON {printf("Started as expression.\n");}
 
 //tipo: .... é um agrupamento lógico.
 tipo:
@@ -83,31 +104,53 @@ declaradores:
     | declaradores COMMA declarador
     ;
 
-
-
 declaracao:
     tipo declaradores SEMICOLON
     ;
 
-
 // STRING ou CHAR_LIT "pode ser somado" com INT(?)
 expressao:
-    expressao PLUS expressao
-  | expressao MINUS expressao
-  | expressao TIMES expressao
-  | expressao DIVIDE expressao
-  | L_PAREN expressao R_PAREN
-  | NUM
-  | FLOAT_NUM
-  | STRING
-  | CHAR_LIT
-  | ID
-  ;
+  expressao PLUS expressao {
+        $$ = fazer_operacao($1, $3, '+');
+    }
+  | expressao MINUS expressao {
+        $$ = fazer_operacao($1, $3, '-');
+    }
+  | expressao TIMES expressao {
+        $$ = fazer_operacao($1, $3, '*');
+    }
+  | expressao DIVIDE expressao {
+        $$ = fazer_operacao($1, $3, '/');
+    }
+  | L_PAREN expressao R_PAREN {
+        $$ = $2;
+        printf("Expressão: %f\n", $$.dado.f);
+    }
+  | NUM {
+        $$.dado.i = $1;
+        printf("Inteiro: %d\n", $$.dado.i);
+    }
+  | FLOAT_NUM {
+        $$.dado.f = $1;
+        printf("Float: %f\n", $$.dado.f);
+    }
+  | STRING {
+        $$.dado.s = $1;
+        printf("String: %s\n", $$.dado.s);
+    }
+  | CHAR_LIT {
+        $$.dado.c = $1;
+        printf("Caractere: %c\n", $$.dado.c);
+    }
+  | ID {
+        $$.dado.s = $1;
+        printf("Variável: %s\n", $$.dado.s);
+    }
 
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro sintático: %s\n", s);
+    fprintf(stderr, "Linha %d, Erro sintático: %s\n", yylineno, s);
 }
 
 int main(void) {
