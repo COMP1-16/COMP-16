@@ -70,6 +70,7 @@ void yyerror(const char *s);
 code:
     codeblock
     | code codeblock
+    | KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
     | code KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
     ;
 
@@ -131,22 +132,27 @@ expressao:
         printf("Expressão: %f\n", $$.dado.f);
     }
   | NUM {
+        $$.tipo = TIPO_INT;
         $$.dado.i = $1;
         printf("Inteiro: %d\n", $$.dado.i);
     }
   | FLOAT_NUM {
+        $$.tipo = TIPO_FLOAT;
         $$.dado.f = $1;
         printf("Float: %f\n", $$.dado.f);
     }
   | STRING {
+        $$.tipo = TIPO_STR;
         $$.dado.s = $1;
         printf("String: %s\n", $$.dado.s);
     }
   | CHAR_LIT {
+        $$.tipo = TIPO_CHAR;
         $$.dado.c = $1;
         printf("Caractere: %c\n", $$.dado.c);
     }
   | ID {
+        $$.tipo = TIPO_STR;
         $$.dado.s = $1;
         printf("Variável: %s\n", $$.dado.s);
     }

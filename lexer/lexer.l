@@ -30,6 +30,8 @@
                 yylval.cValue = yytext[1]; \
                 printf("TOKEN: CHAR_LIT | VALUE: %s\n", yytext); \
                 break; \
+            default: \
+                break; \
         } \
         return tok; \
     } while(0)

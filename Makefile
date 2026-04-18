@@ -19,7 +19,8 @@ all: build
 build: # make -> Para compilar tudo
 	$(YACC) -d $(PARSER)
 	$(LEX) $(LEXER)
-	$(CC) -I. $(PARSER_C) -I$(PARSER_TYPES)  $(LEX_OUT) $(PARSER_UTILS) -o $(TARGET)
+	$(CC) -I. -I./parser $(PARSER_C) $(LEX_OUT) $(PARSER_UTILS) -o $(TARGET)
+
 
 run: build # make run -> Para rodar manual 
 	./$(TARGET)
