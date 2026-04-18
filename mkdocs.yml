@@ -1,0 +1,32 @@
+site_name: Interpretador de C - Compiladores 1 - Equipe 16
+repo_url: https://github.com/COMP1-16/COMP-16
+repo_name: COMP-16
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+
+nav:
+  - Home: index.md
+  - Interpretador:
+      - Linguagem interpretada: interpretador/linguagemInterpretada.md
+      - Escopo do interpretador: interpretador/escopo.md
+      - Estrutura do interpretador: interpretador/estrutura.md
+      - Como executar o interpretador: interpretador/comoExecutar.md
+      - Casos de teste: interpretador/casosTeste.md
+      - Glossário de termos: interpretador/glossarioTermos.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - admonition
+  - pymdownx.details
+  - tables
