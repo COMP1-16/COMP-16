@@ -2,12 +2,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "parser/funcs.h"
+
+extern int yylineno;
+
 int yylex(void);
 void yyerror(const char *s);
+
 %}
 
-%token NUM FLOAT_NUM
-%token STRING CHAR_LIT
+%code requires {
+#include "parser/types.h"
+}
+
+%union {
+    int iValue;
+    float fValue;
+    char cValue;
+    char *sStr;
+    Valor valor;
+}
+
+%token <iValue> NUM 
+%token <sStr> STRING
+%token <cValue> CHAR_LIT
+%token <fValue> FLOAT_NUM
+
+%token <sStr> ID
+
+%type <valor> expressao
 
     //Comparison Operators
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
@@ -30,42 +53,40 @@ void yyerror(const char *s);
     //Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
-%token ID
-
 %token SEMICOLON
 %token COMMA
 
+%token KW_RETURN
+
 %token ADDR
 
-    //Operator precedence
+
 %left PLUS MINUS
 %left TIMES DIVIDE INTDIVIDE MOD
+%left L_PAREN R_PAREN
 
 %%
 
-programa:
-    comandos
+code:
+    codeblock
+    | code codeblock
+    | code KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
     ;
 
-comandos:
-    comando
-    | comandos comando
-    ;
-
-comando:
-    declaracao
-    | atribuicao
+codeblock:
+    declaracao {printf("Started as statement.\n");}
+    | expressao SEMICOLON {printf("Started as expression.\n");}
     | atualizacao
     ;
 
 //tipo: .... é um agrupamento lógico.
-tipo: 
-    TYPE_INT 
-    | TYPE_FLOAT 
-    | TYPE_DOUBLE 
-    | TYPE_CHAR 
-    | TYPE_BOOL 
-    | TYPE_VOID 
+tipo:
+    TYPE_INT
+    | TYPE_FLOAT
+    | TYPE_DOUBLE
+    | TYPE_CHAR
+    | TYPE_BOOL
+    | TYPE_VOID
     ;
 
 declarador:
@@ -73,19 +94,13 @@ declarador:
     | ID INITVAR expressao
     ;
 
-declaradores: 
-    declarador 
-    | declaradores COMMA declarador 
+declaradores:
+    declarador
+    | declaradores COMMA declarador
     ;
 
-
-
-declaracao: 
-    tipo declaradores SEMICOLON 
-    ;
-
-atribuicao:
-    ID INITVAR expressao SEMICOLON
+declaracao:
+    tipo declaradores SEMICOLON
     ;
 
 atualizacao:
@@ -97,25 +112,49 @@ atualizacao:
     | ID UPDT_DEC SEMICOLON
     ;
 
+// STRING ou CHAR_LIT "pode ser somado" com INT(?)
 expressao:
-    expressao PLUS expressao
-  | expressao MINUS expressao
-  | expressao TIMES expressao
-  | expressao DIVIDE expressao
-  | expressao INTDIVIDE expressao
-  | expressao MOD expressao
-  | L_PAREN expressao R_PAREN
-  | NUM
-  | FLOAT_NUM
-  | ID
-  | STRING
-  | CHAR_LIT
-  ;
+  expressao PLUS expressao {
+        $$ = fazer_operacao($1, $3, '+');
+    }
+  | expressao MINUS expressao {
+        $$ = fazer_operacao($1, $3, '-');
+    }
+  | expressao TIMES expressao {
+        $$ = fazer_operacao($1, $3, '*');
+    }
+  | expressao DIVIDE expressao {
+        $$ = fazer_operacao($1, $3, '/');
+    }
+  | L_PAREN expressao R_PAREN {
+        $$ = $2;
+        printf("Expressão: %f\n", $$.dado.f);
+    }
+  | NUM {
+        $$.dado.i = $1;
+        printf("Inteiro: %d\n", $$.dado.i);
+    }
+  | FLOAT_NUM {
+        $$.dado.f = $1;
+        printf("Float: %f\n", $$.dado.f);
+    }
+  | STRING {
+        $$.dado.s = $1;
+        printf("String: %s\n", $$.dado.s);
+    }
+  | CHAR_LIT {
+        $$.dado.c = $1;
+        printf("Caractere: %c\n", $$.dado.c);
+    }
+  | ID {
+        $$.dado.s = $1;
+        printf("Variável: %s\n", $$.dado.s);
+    }
 
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro sintático: %s\n", s);
+    fprintf(stderr, "Linha %d, Erro sintático: %s\n", yylineno, s);
 }
 
 int main(void) {

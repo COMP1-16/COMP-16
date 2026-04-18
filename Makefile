@@ -11,12 +11,15 @@ LEX_OUT = lex.yy.c
 PARSER_C = parser.tab.c
 PARSER_H = parser.tab.h
 
+PARSER_TYPES = include parser/types.h
+PARSER_UTILS = parser/funcs.c
+
 all: build
 
 build: # make -> Para compilar tudo
 	$(YACC) -d $(PARSER)
 	$(LEX) $(LEXER)
-	$(CC) -I. $(PARSER_C) $(LEX_OUT) -o $(TARGET)
+	$(CC) -I. $(PARSER_C) -I$(PARSER_TYPES)  $(LEX_OUT) $(PARSER_UTILS) -o $(TARGET)
 
 run: build # make run -> Para rodar manual 
 	./$(TARGET)
