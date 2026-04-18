@@ -1,17 +1,45 @@
+%option yylineno
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "parser/types.h"
 #include "parser.tab.h"
 
 #define RETURN_TOKEN(tok) \
     do { \
         printf("TOKEN: %s | VALUE: %s\n", #tok, yytext); \
+        switch (tok) { \
+            case NUM: \
+                yylval.iValue = atoi(yytext); \
+                break; \
+            case FLOAT_NUM: \
+                yylval.fValue = atof(yytext); \
+                break; \
+            case STRING: \
+                yylval.sStr = strdup(yytext+1); \
+                yylval.sStr[strlen(yylval.sStr)-1] = '\0'; \
+                printf("TOKEN: STRING | VALUE: %s\n", yylval.sStr); \
+                break; \
+            case ID: \
+                yylval.sStr = malloc(strlen(yytext)+1); \
+                strcpy(yylval.sStr, yytext); \
+                printf("TOKEN: ID | VALUE: %s\n", yytext); \
+                break; \
+            case CHAR_LIT: \
+                yylval.cValue = yytext[1]; \
+                printf("TOKEN: CHAR_LIT | VALUE: %s\n", yytext); \
+                break; \
+        } \
         return tok; \
     } while(0)
 %}
 
 %%
+    /* keywords */
+
+"return"        { RETURN_TOKEN(KW_RETURN); }
+
 
     /* data types */
 
@@ -24,22 +52,23 @@
 
     /* identifiers */
 
-[a-zA-Z_]([a-zA-Z0-9_]*) {
-    printf("TOKEN: ID | VALUE: %s\n", yytext);
-    return ID;
-}
+[a-zA-Z_]([a-zA-Z0-9_])* { RETURN_TOKEN(ID); }
+
+    /* strings */
+
+\"[^\"\\]*\"           { RETURN_TOKEN(STRING); }
+
+    /* characters */
+
+\'([^'\\]|\\.)?\'   { RETURN_TOKEN(CHAR_LIT); }
 
     /* numbers */
 
-[0-9]+\.[0-9]+  { RETURN_TOKEN(FLOAT_NUM); }
-[0-9]+          { RETURN_TOKEN(NUM); }
+[0-9]+\.[0-9]+         { RETURN_TOKEN(FLOAT_NUM); }
+[0-9]+                 { RETURN_TOKEN(NUM); }
 
-    /* string and char literals */
 
-\"([^"\\]|\\.)*\"   { RETURN_TOKEN(STRING); }
-\'([^'\\]|\\.)?\'   { RETURN_TOKEN(CHAR_LIT); }
-
-    /* comparison operators */
+    /* relational operators */
 
 "=="            { RETURN_TOKEN(EQUAL); }
 "!="            { RETURN_TOKEN(DIFF); }
