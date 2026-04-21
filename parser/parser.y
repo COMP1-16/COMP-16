@@ -3,13 +3,19 @@
 #include <stdlib.h>
 
 #include "parser/funcs.h"
+#include "parser/simbolos.h"
 
 extern int yylineno;
 
 int yylex(void);
 void yyerror(const char *s);
 
+celula **TabelaDeSimbolos;
+int tipo_atual_declaracao;
+
 %}
+
+
 
 %code requires {
 #include "parser/types.h"
@@ -82,17 +88,50 @@ codeblock:
 
 //tipo: .... é um agrupamento lógico.
 tipo:
-    TYPE_INT
-    | TYPE_FLOAT
-    | TYPE_DOUBLE
-    | TYPE_CHAR
-    | TYPE_BOOL
-    | TYPE_VOID
+    TYPE_INT { tipo_atual_declaracao = TIPO_INT; }
+    | TYPE_FLOAT { tipo_atual_declaracao = TIPO_FLOAT; }
+    | TYPE_DOUBLE { tipo_atual_declaracao = TIPO_DOUBLE; }
+    | TYPE_CHAR { tipo_atual_declaracao = TIPO_CHAR; }
+    | TYPE_BOOL { tipo_atual_declaracao = TIPO_BOOL; }
+    | TYPE_VOID { tipo_atual_declaracao = TIPO_VOID; }
     ;
 
 declarador:
-    ID
-    | ID INITVAR expressao
+    ID {
+        /* Variavel criada sem valor inicial (ex: float x;) */
+        Valor vazio;
+        vazio.tipo = tipo_atual_declaracao;
+        /* Zera o dado dependendo do tipo para nao ter lixo de memoria */
+        if (vazio.tipo == TIPO_FLOAT) vazio.dado.f = 0.0;
+        else vazio.dado.i = 0;
+
+        inserirSimbolo($1, vazio, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' declarada sem valor.\n", $1);
+    }
+    | ID INITVAR expressao {
+        /* Variavel criada com valor (ex: float x = 10;) */
+        
+        /* Sistema de Coercao (Casting Implicito) */
+        if (tipo_atual_declaracao == TIPO_FLOAT && $3.tipo == TIPO_INT) {
+            /* Converte o Int para Float silenciosamente */
+            $3.dado.f = (float)$3.dado.i;
+            $3.tipo = TIPO_FLOAT;
+        } 
+        else if (tipo_atual_declaracao == TIPO_INT && $3.tipo == TIPO_FLOAT) {
+            /* Aviso de perda de precisao (Opcional, mas muito profissional) */
+            printf("Aviso: Convertendo float para int na variavel '%s' (perda de precisao).\n", $1);
+            $3.dado.i = (int)$3.dado.f;
+            $3.tipo = TIPO_INT;
+        }
+        else if (tipo_atual_declaracao != $3.tipo) {
+            /* Erro fatal (Ex: Tentar jogar String num Int) */
+            printf("Erro Semantico: O valor atribuido a '%s' e totalmente incompativel.\n", $1);
+            exit(1);
+        }
+        
+        inserirSimbolo($1, $3, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' inicializada com sucesso.\n", $1);
+    }
     ;
 
 declaradores:
@@ -105,12 +144,48 @@ declaracao:
     ;
 
 atualizacao:
-    ID UPDT_PLUS expressao SEMICOLON
-    | ID UPDT_MINUS expressao SEMICOLON
-    | ID UPDT_TIMES expressao SEMICOLON
-    | ID UPDT_DIVIDE expressao SEMICOLON
-    | ID UPDT_INC SEMICOLON
-    | ID UPDT_DEC SEMICOLON
+    ID UPDT_PLUS expressao SEMICOLON {
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor novo = fazer_operacao(atual, $3, '+');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (+).\n", $1);
+    }
+    | ID UPDT_MINUS expressao SEMICOLON {
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor novo = fazer_operacao(atual, $3, '-');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (-).\n", $1);
+    }
+    | ID UPDT_TIMES expressao SEMICOLON{
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor novo = fazer_operacao(atual, $3, '*');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (*).\n", $1);
+    }
+    | ID UPDT_DIVIDE expressao SEMICOLON{
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor novo = fazer_operacao(atual, $3, '/');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (/).\n", $1);
+    }
+    | ID UPDT_INC SEMICOLON{
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor um;
+        um.tipo = TIPO_INT;
+        um.dado.i = 1;
+        Valor novo = fazer_operacao(atual, um, '+');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (++).\n", $1);
+    }
+    | ID UPDT_DEC SEMICOLON{
+        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
+        Valor um;
+        um.tipo = TIPO_INT;
+        um.dado.i = 1;
+        Valor novo = fazer_operacao(atual, um, '-');
+        atualizarSimbolo($1, novo, TabelaDeSimbolos);
+        printf("[Memoria] Variavel '%s' atualizada (--).\n", $1);
+    }
     ;
 
 // STRING ou CHAR_LIT "pode ser somado" com INT(?)
@@ -152,9 +227,11 @@ expressao:
         printf("Caractere: %c\n", $$.dado.c);
     }
   | ID {
-        $$.tipo = TIPO_STR;
-        $$.dado.s = $1;
-        printf("Variável: %s\n", $$.dado.s);
+        $$ = buscaSimbolo($1, TabelaDeSimbolos);
+        
+        /* Debug visual para ajudar a equipe */
+        if ($$.tipo == TIPO_INT) printf("Lendo '%s': %d\n", $1, $$.dado.i);
+        else if ($$.tipo == TIPO_FLOAT) printf("Lendo '%s': %f\n", $1, $$.dado.f);
     }
 
 %%
@@ -164,6 +241,13 @@ void yyerror(const char *s) {
 }
 
 int main(void) {
+    /* Cria a Hash de tamanho 997 e preenche com NULL */
+    TabelaDeSimbolos = criarTabelaSimbolos();
+    
+    if (TabelaDeSimbolos == NULL) {
+        fprintf(stderr, "Erro fatal: Nao foi possivel alocar a Tabela de Simbolos.\n");
+        return 1;
+    }
     yyparse();
     return 0;
 }
