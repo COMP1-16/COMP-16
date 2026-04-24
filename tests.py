@@ -58,11 +58,11 @@ if __name__ == "__main__":
     total_passed = 0
     total_failed = 0
 
-    p, f = run_tests("tests/valid", expect_error=False)
+    p, f = run_tests("tests/operadores-aritmeticos/validos", expect_error=False)
     total_passed += p
     total_failed += f
 
-    p, f = run_tests("tests/invalid", expect_error=True)
+    p, f = run_tests("tests/operadores-aritmeticos/invalidos", expect_error=True)
     total_passed += p
     total_failed += f
 
