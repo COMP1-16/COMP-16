@@ -28,3 +28,14 @@
 | int x = y;        | Variável não declarada sendo usada;                    |                             | Questão semântica |
 | int x;<br>int x;  | Variável declarada 2 vezes;                            |                             | Questão semântica |
 
+
+## Atualização e Atribuição
+
+| Entrada           | Caso                          | Regra                             | Esperado |
+| ----------------- | ----------------------------- | --------------------------------- | -------- |
+| x = 5;            | Atribuição simples            | ID ATRIB expressao SEMICOLON      | Aceito   |
+| x += 3;           | Atualização composta          | ID ATRIB_SOMA expressao SEMICOLON | Aceito   |
+| x++;              | Incremento                    | ID INCREMENTO                     | Aceito   |
+| x = ;             | Atribuição sem valor          |                                   | Falho    |
+| x += ;            | Atualização sem valor         |                                   | Falho    |
+| x++ 3;            | Incremento com operando extra |                                   | Falho    |

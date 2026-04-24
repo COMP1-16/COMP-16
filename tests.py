@@ -78,6 +78,14 @@ if __name__ == "__main__":
     total_passed += p
     total_failed += f
 
+    p, f = run_tests("tests/atualizacao/validos", expect_error=False)
+    total_passed += p
+    total_failed += f
+
+    p, f = run_tests("tests/atualizacao/invalidos", expect_error=True)
+    total_passed += p
+    total_failed += f
+
     print("\n=== TOTAL ===")
     print(f"{GREEN}Passou: {total_passed}{RESET}")
     print(f"{RED}Falhou: {total_failed}{RESET}")
