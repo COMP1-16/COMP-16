@@ -104,7 +104,8 @@ declaracao:
     ;
 
 atualizacao:
-    ID UPDT_PLUS expressao SEMICOLON
+    ID INITVAR expressao SEMICOLON
+    | ID UPDT_PLUS expressao SEMICOLON
     | ID UPDT_MINUS expressao SEMICOLON
     | ID UPDT_TIMES expressao SEMICOLON
     | ID UPDT_DIVIDE expressao SEMICOLON
