@@ -1,35 +1,31 @@
-CC = gcc
-LEX = flex
-YACC = bison
+CC     = gcc
+LEX    = flex
+YACC   = bison
+TARGET = lib/interpreter
 
-TARGET = interpretador
+CFLAGS  = -Wall -Wextra -g -I.
 
-LEXER = lexer/lexer.l
-PARSER = parser/parser.y
-
-LEX_OUT = lex.yy.c
-PARSER_C = parser.tab.c
-PARSER_H = parser.tab.h
-
-PARSER_TYPES = parser/types.h
-PARSER_UTILS = parser/funcs.c
-
-PARSER_SIMBOLOS_C = parser/simbolos.c
-PARSER_SIMBOLOS_H = parser/simbolos.h
+SRCS = parser.tab.c lex.yy.c \
+       lib/ast.c lib/simbolos.c lib/semantico.c lib/interpreter.c lib/funcs.c src/main.c
 
 all: build
 
-build: # make -> Para compilar tudo
-	$(YACC) -d $(PARSER)
-	$(LEX) $(LEXER)
-	$(CC) -I. -I./parser $(PARSER_C) $(LEX_OUT) $(PARSER_UTILS) $(PARSER_SIMBOLOS_C) -o $(TARGET)
+build: $(TARGET)
 
+$(TARGET): $(SRCS)
+	$(CC) $(CFLAGS) $^ -o $@
 
-run: build # make run -> Para rodar manual 
+parser.tab.c parser.tab.h: parser/parser.y
+	$(YACC) -d parser/parser.y
+
+lex.yy.c: lexer/lexer.l parser.tab.h
+	$(LEX) lexer/lexer.l
+
+run: build
 	./$(TARGET)
 
-test: build # make test -> Para rodas todos os testes
+test: build
 	python3 tests.py
 
 clean:
-	rm -f $(LEX_OUT) $(PARSER_C) $(PARSER_H) $(TARGET)
+	rm -f lex.yy.c parser.tab.c parser.tab.h $(TARGET)
