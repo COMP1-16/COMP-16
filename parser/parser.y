@@ -1,253 +1,130 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "parser/funcs.h"
-#include "parser/simbolos.h"
+#include "lib/ast.h"
+#include "lib/types.h"
 
 extern int yylineno;
-
-int yylex(void);
+int  yylex(void);
 void yyerror(const char *s);
 
-celula **TabelaDeSimbolos;
-int tipo_atual_declaracao;
+No *raiz;
 
+/* Buffer para acumular statements (tipos de comando) no bloco raiz */
+#define MAX_STMTS 1024
+static No  *stmtBuf[MAX_STMTS];
+static int  stmtCount = 0;
+
+static int tipoAtual;
 %}
 
-
-
 %code requires {
-#include "parser/types.h"
+#include "lib/ast.h"
+#include "lib/types.h"
 }
 
 %union {
-    int iValue;
+    int   iValue;
     float fValue;
-    char cValue;
+    char  cValue;
     char *sStr;
-    Valor valor;
+    No   *no;
 }
 
-%token <iValue> NUM 
-%token <sStr> STRING
-%token <cValue> CHAR_LIT
+/* --- tokens com valor --- */
+%token <iValue> NUM
 %token <fValue> FLOAT_NUM
+%token <cValue> CHAR_LIT
+%token <sStr>   STRING
+%token <sStr>   ID
 
-%token <sStr> ID
+/* --- tipos de regras que produzem nós --- */
+%type <no> stmt expr declaracao declaradores declarador atualizacao
 
-%type <valor> expressao
-
-    //Comparison Operators
+/* --- tokens de operadores e pontuação --- */
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
-
-    //Update Operators
-%token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE
-%token UPDT_INC UPDT_DEC
-
+%token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE UPDT_INC UPDT_DEC
 %token INITVAR
-
-    //Math Operators
-%token PLUS MINUS TIMES DIVIDE INTDIVIDE MOD
-
-    //Brackets
+%token PLUS MINUS TIMES DIVIDE MOD
 %token L_PAREN R_PAREN L_SQBRACKET R_SQBRACKET L_CRLRBRACKET R_CRLRBRACKET
-
-    //Logical Operators
-%token AND OR NOT
-
-    //Types: Definição dos Tokens(Símbolos Terminais) dos tipos.
-%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
-
-%token SEMICOLON
-%token COMMA
-
+%token AND OR NOT ADDR
+%token SEMICOLON COMMA
 %token KW_RETURN
 
-%token ADDR
+/* --- tipos primitivos --- */
+%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
-
-%left PLUS MINUS
-%left TIMES DIVIDE INTDIVIDE MOD
-%left L_PAREN R_PAREN
+/* --- precedência e associatividade --- */
+%left  PLUS MINUS
+%left  TIMES DIVIDE MOD
+%right UMINUS
 
 %%
 
-code:
-    codeblock
-    | code codeblock
-    | KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
-    | code KW_RETURN expressao SEMICOLON {printf("Added a return statement.\n");}
+programa
+    : lista_stmts  { raiz = noBloco(stmtBuf, stmtCount); }
     ;
 
-codeblock:
-    declaracao {printf("Started as statement.\n");}
-    | expressao SEMICOLON {printf("Started as expression.\n");}
-    | atualizacao
+lista_stmts
+    : lista_stmts stmt  { stmtBuf[stmtCount++] = $2; }
+    | stmt              { stmtBuf[stmtCount++] = $1; }
     ;
 
-//tipo: .... é um agrupamento lógico.
-tipo:
-    TYPE_INT { tipo_atual_declaracao = TIPO_INT; }
-    | TYPE_FLOAT { tipo_atual_declaracao = TIPO_FLOAT; }
-    | TYPE_DOUBLE { tipo_atual_declaracao = TIPO_DOUBLE; }
-    | TYPE_CHAR { tipo_atual_declaracao = TIPO_CHAR; }
-    | TYPE_BOOL { tipo_atual_declaracao = TIPO_BOOL; }
-    | TYPE_VOID { tipo_atual_declaracao = TIPO_VOID; }
+stmt
+    : declaracao        { $$ = $1; }
+    | atualizacao       { $$ = $1; }
+    | expr SEMICOLON    { $$ = $1; }
+    | KW_RETURN expr SEMICOLON { $$ = noReturn($2); }
     ;
 
-declarador:
-    ID {
-        /* Variavel criada sem valor inicial (ex: float x;) */
-        Valor vazio;
-        vazio.tipo = tipo_atual_declaracao;
-        /* Zera o dado dependendo do tipo para nao ter lixo de memoria */
-        if (vazio.tipo == TIPO_FLOAT) vazio.dado.f = 0.0;
-        else vazio.dado.i = 0;
-
-        inserirSimbolo($1, vazio, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' declarada sem valor.\n", $1);
-    }
-    | ID INITVAR expressao {
-        /* Variavel criada com valor (ex: float x = 10;) */
-        
-        /* Sistema de Coercao (Casting Implicito) */
-        if (tipo_atual_declaracao == TIPO_FLOAT && $3.tipo == TIPO_INT) {
-            /* Converte o Int para Float silenciosamente */
-            $3.dado.f = (float)$3.dado.i;
-            $3.tipo = TIPO_FLOAT;
-        } 
-        else if (tipo_atual_declaracao == TIPO_INT && $3.tipo == TIPO_FLOAT) {
-            /* Aviso de perda de precisao (Opcional, mas muito profissional) */
-            printf("Aviso: Convertendo float para int na variavel '%s' (perda de precisao).\n", $1);
-            $3.dado.i = (int)$3.dado.f;
-            $3.tipo = TIPO_INT;
-        }
-        else if (tipo_atual_declaracao != $3.tipo) {
-            /* Erro fatal (Ex: Tentar jogar String num Int) */
-            printf("Erro Semantico: O valor atribuido a '%s' e totalmente incompativel.\n", $1);
-            exit(1);
-        }
-        
-        inserirSimbolo($1, $3, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' inicializada com sucesso.\n", $1);
-    }
+declaracao
+    : tipo declaradores SEMICOLON { $$ = $2; }
     ;
 
-declaradores:
-    declarador
-    | declaradores COMMA declarador
+tipo
+    : TYPE_INT    { tipoAtual = TIPO_INT;    }
+    | TYPE_FLOAT  { tipoAtual = TIPO_FLOAT;  }
+    | TYPE_DOUBLE { tipoAtual = TIPO_DOUBLE; }
+    | TYPE_CHAR   { tipoAtual = TIPO_CHAR;   }
+    | TYPE_BOOL   { tipoAtual = TIPO_BOOL;   }
+    | TYPE_VOID   { tipoAtual = TIPO_VOID;   }
     ;
 
-declaracao:
-    tipo declaradores SEMICOLON
+declaradores
+    : declaradores COMMA declarador { $$ = $3; }
+    | declarador                    { $$ = $1; }
     ;
 
-atualizacao:
-    ID UPDT_PLUS expressao SEMICOLON {
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor novo = fazer_operacao(atual, $3, '+');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (+).\n", $1);
-    }
-    | ID UPDT_MINUS expressao SEMICOLON {
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor novo = fazer_operacao(atual, $3, '-');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (-).\n", $1);
-    }
-    | ID UPDT_TIMES expressao SEMICOLON{
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor novo = fazer_operacao(atual, $3, '*');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (*).\n", $1);
-    }
-    | ID UPDT_DIVIDE expressao SEMICOLON{
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor novo = fazer_operacao(atual, $3, '/');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (/).\n", $1);
-    }
-    | ID UPDT_INC SEMICOLON{
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor um;
-        um.tipo = TIPO_INT;
-        um.dado.i = 1;
-        Valor novo = fazer_operacao(atual, um, '+');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (++).\n", $1);
-    }
-    | ID UPDT_DEC SEMICOLON{
-        Valor atual = buscaSimbolo($1, TabelaDeSimbolos);
-        Valor um;
-        um.tipo = TIPO_INT;
-        um.dado.i = 1;
-        Valor novo = fazer_operacao(atual, um, '-');
-        atualizarSimbolo($1, novo, TabelaDeSimbolos);
-        printf("[Memoria] Variavel '%s' atualizada (--).\n", $1);
-    }
+declarador
+    : ID               { $$ = noDecl(tipoAtual, $1);       free($1); }
+    | ID INITVAR expr  { $$ = noDeclInit(tipoAtual, $1, $3); free($1); }
     ;
 
-// STRING ou CHAR_LIT "pode ser somado" com INT(?)
-expressao:
-  expressao PLUS expressao {
-        $$ = fazer_operacao($1, $3, '+');
-    }
-  | expressao MINUS expressao {
-        $$ = fazer_operacao($1, $3, '-');
-    }
-  | expressao TIMES expressao {
-        $$ = fazer_operacao($1, $3, '*');
-    }
-  | expressao DIVIDE expressao {
-        $$ = fazer_operacao($1, $3, '/');
-    }
-  | L_PAREN expressao R_PAREN {
-        $$ = $2;
-        printf("Expressão: %f\n", $$.dado.f);
-    }
-  | NUM {
-        $$.tipo = TIPO_INT;
-        $$.dado.i = $1;
-        printf("Inteiro: %d\n", $$.dado.i);
-    }
-  | FLOAT_NUM {
-        $$.tipo = TIPO_FLOAT;
-        $$.dado.f = $1;
-        printf("Float: %f\n", $$.dado.f);
-    }
-  | STRING {
-        $$.tipo = TIPO_STR;
-        $$.dado.s = $1;
-        printf("String: %s\n", $$.dado.s);
-    }
-  | CHAR_LIT {
-        $$.tipo = TIPO_CHAR;
-        $$.dado.c = $1;
-        printf("Caractere: %c\n", $$.dado.c);
-    }
-  | ID {
-        $$ = buscaSimbolo($1, TabelaDeSimbolos);
-        
-        /* Debug visual para ajudar a equipe */
-        if ($$.tipo == TIPO_INT) printf("Lendo '%s': %d\n", $1, $$.dado.i);
-        else if ($$.tipo == TIPO_FLOAT) printf("Lendo '%s': %f\n", $1, $$.dado.f);
-    }
+atualizacao
+    : ID INITVAR expr SEMICOLON        { $$ = noAtrib($1, $3);         free($1); }
+    | ID UPDT_PLUS  expr SEMICOLON     { $$ = noAtribOp('+', $1, $3);  free($1); }
+    | ID UPDT_MINUS expr SEMICOLON     { $$ = noAtribOp('-', $1, $3);  free($1); }
+    | ID UPDT_TIMES expr SEMICOLON     { $$ = noAtribOp('*', $1, $3);  free($1); }
+    | ID UPDT_DIVIDE expr SEMICOLON    { $$ = noAtribOp('/', $1, $3);  free($1); }
+    | ID UPDT_INC SEMICOLON            { $$ = noInc($1);               free($1); }
+    | ID UPDT_DEC SEMICOLON            { $$ = noDec($1);               free($1); }
+    ;
+
+expr
+    : expr PLUS  expr   { $$ = noBinop('+', $1, $3); }
+    | expr MINUS expr   { $$ = noBinop('-', $1, $3); }
+    | expr TIMES expr   { $$ = noBinop('*', $1, $3); }
+    | expr DIVIDE expr  { $$ = noBinop('/', $1, $3); }
+    | L_PAREN expr R_PAREN    { $$ = $2; }
+    | NUM       { $$ = noInt($1);   }
+    | FLOAT_NUM { $$ = noFloat($1); }
+    | CHAR_LIT  { $$ = noChar($1);  }
+    | STRING    { $$ = noStr($1);   }
+    | ID        { $$ = noId($1); free($1); }
+    ;
 
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Linha %d, Erro sintático: %s\n", yylineno, s);
-}
-
-int main(void) {
-    /* Cria a Hash de tamanho 997 e preenche com NULL */
-    TabelaDeSimbolos = criarTabelaSimbolos();
-    
-    if (TabelaDeSimbolos == NULL) {
-        fprintf(stderr, "Erro fatal: Nao foi possivel alocar a Tabela de Simbolos.\n");
-        return 1;
-    }
-    yyparse();
-    return 0;
+    fprintf(stderr, "[Sintaxe] Linha %d: %s\n", yylineno, s);
 }

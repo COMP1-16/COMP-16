@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-EXEC = "./interpretador"
+EXEC = "lib/interpreter"
 
 # cores
 GREEN = "\033[92m"
@@ -35,9 +35,21 @@ def run_tests(folder, expect_error=False):
         out, err = run_test(path)
 
         if expect_error:
-            success = "Erro sintático" in err
+            success = (
+                        "Lexico" in err.lower() or
+                        "Sintatico" in err.lower() or
+                        "Semantico" in err.lower() or
+                        "syntax error" in err.lower() or
+                        "erro sintático" in err.lower()
+            )
         else:
-            success = "Erro sintático" not in err
+            success = (
+                        "Lexico" not in err.lower() and
+                        "Sintatico" not in err.lower() and
+                        "Semantico" not in err.lower() and
+                        "syntax error" not in err.lower() and
+                        "erro sintático" not in err.lower()
+            )
 
         if success:
             print(f"{GREEN}[OK]{RESET}   {file}")
