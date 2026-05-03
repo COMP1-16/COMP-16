@@ -1,5 +1,0 @@
-int x = 5.6;
-float x = 5;
-int x = "oi" + 1;
-int x = 'o' + 1;
-int x = y;
