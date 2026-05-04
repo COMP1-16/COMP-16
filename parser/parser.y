@@ -8,7 +8,7 @@ extern int yylineno;
 int  yylex(void);
 void yyerror(const char *s);
 
-No *raiz;
+No *raiz;D
 
 /* Buffer para acumular statements (tipos de comando) no bloco raiz */
 #define MAX_STMTS 1024

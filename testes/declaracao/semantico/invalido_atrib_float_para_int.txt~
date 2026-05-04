@@ -1,0 +1,1 @@
+float preco = 10.5; int total = preco;
