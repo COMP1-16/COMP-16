@@ -1,60 +1,28 @@
-# Escopo do Interpretador de C
+# Escopo do interpretador
+
+> Lista objetiva do que o interpretador pretende cobrir neste projeto. O contexto sobre a linguagem C e a organização desta seção da documentação está em [Linguagem e Escopo — visão geral](linguagem-e-escopo.md).
+
+| Área | O que entra no interpretador |
+|------|------------------------------|
+| Tipos e variáveis | Tipos primitivos `int`, `float`, `double`, `char`, `bool`; declaração com e sem inicialização; modificador `const`; arrays unidimensionais de tipos primitivos; strings como `char[]` / `char*` |
+| Operadores aritméticos | `+`, `-`, `*`, `/`, `%` |
+| Operadores relacionais | `==`, `!=`, `<`, `>`, `<=`, `>=` |
+| Operadores lógicos | `&&`, `||`, `!` |
+| Atribuição e atualização composta | `=`, `+=`, `-=`, `*=`, `/=` |
+| Incremento e decremento | `++`, `--` |
+| Controle de fluxo | `if`, `else if`, `else`; `while`, `do while`, `for`; `switch`, `case`, `default`; `break`, `continue`, `return` (incluindo `return 0`) |
+| Funções | Declaração e chamada com parâmetros e retorno; recursão; escopo de variáveis locais |
+| Biblioteca `stdio.h` | `printf`, `scanf` |
+| Biblioteca `math.h` | `sqrt`, `pow`, `abs`, `floor`, `ceil`, `round` |
+| Biblioteca `string.h` | `strlen`, `strcpy`, `strcmp`, `strcat`, `strchr` |
+| Biblioteca `stdlib.h` | `abs`, `rand`, `srand`, `atoi`, `atof`, `exit` |
+| Biblioteca `ctype.h` | `isalpha`, `isdigit`, `isspace` |
 
 ---
 
-## Tipos e Variáveis  
+## Histórico de Versão
 
-- Tipos primitivos: `int`, `float`, `double`, `char`, `bool`  
-- Declaração com e sem inicialização  
-- Modificador `const`  
-- Arrays unidimensionais de tipos primitivos  
-- Strings como `char[]` / `char*`  
-
----
-
-## Operadores  
-
-| Categoria | Operadores |
-|----------|-----------|
-| Aritméticos | `+`, `-`, `*`, `/`, `%` |
-| Relacionais | `==`, `!=`, `<`, `>`, `<=`, `>=` |
-| Lógicos | `&&`, `||`, `!` |
-| Atribuição | `=`, `+=`, `-=`, `*=`, `/=` |
-| Incremento/Decremento | `++`, `--` |
-
----
-
-## Controle de Fluxo  
-
-- `if / else if / else`  
-- `while`, `do while`, `for`  
-- `switch / case / default`  
-- `break`, `continue`, `return`  
-- Caso especial: `return 0`  
-
----
-
-## Funções  
-
-- Declaração e chamada com parâmetros e retorno  
-- Recursão  
-- Escopo de variáveis locais  
-
----
-
-## Biblioteca Padrão (subconjunto)  
-
-### stdio.h  
-- `printf`, `scanf`  
-
-### math.h  
-- `sqrt`, `pow`, `abs`, `floor`, `ceil`, `round`  
-
-### string.h  
-- `strlen`, `strcpy`, `strcmp`, `strcat`, `strchr`  
-
-### stdlib.h  
-- `abs`, `rand`, `srand`, `atoi`, `atof`, `exit`  
-
-### ctype.h  
-- `isalpha`, `isdigit`, `isspace`  
+| Versão | Data | Descrição | Autor |
+| :--- | :--- | :--- | :--- |
+| 1.0 | 18/04/26 | Criação da página inicial | Pedro Henrique |
+| 1.1 | 13/05/26 | Revisão do conteúdo e da estética da página | Camila Careli |

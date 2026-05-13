@@ -1,10 +1,8 @@
-# Sobre
+Ministrada pelo Prof. Dr. Sergio Freitas na Universidade de Brasília, a disciplina "Compiladores 1" visa capacitar os estudantes nos conceitos fundamentais de desenvolvimento de sistemas tradutores.
 
-## Introdução
-A disciplina 'Compiladores 1' tem como objetivo capacitar os estudantes nos conceitos básicos associados ao desenvolvimento de compiladores e interpretadores, através da integração entre aulas teóricas e projeto prático de um compilador/interpretador.
+Como parte da aplicação prática desses conceitos, a Equipe 16 (Turma 01, Semestre 2026.1) propõe o desenvolvimento de um interpretador para o escopo básico da linguagem C, utilizando as ferramentas Flex e Bison para o processamento léxico e sintático, respectivamente.
 
-## Objetivo
-A equipe 16 da turma 01 do semestre 2026.1 pretende desenvolver o projeto de um interpretador do escopo básico da linguagem C, utilizando como tecnologias principais a linguagem C e as ferramentas Flex e Bison.
+---
 
 ## Integrantes
 
@@ -17,3 +15,21 @@ A equipe 16 da turma 01 do semestre 2026.1 pretende desenvolver o projeto de um 
     <td align="center"><a href="https://github.com/UnderwaterVillager"><img src="https://avatars.githubusercontent.com/u/115714236?s=400&u=e5b6ca8f193c082dd0ec04d76dd2bd17d806ddf3&v=4" width="100px" style="border-radius: 50%;"><br/>Vinícius de Jesus<br/></a></td>
   </tr> 
 </table>
+
+---
+
+## Referências
+
+- **Professor:** [Prof. Dr. Sergio A. A. Freitas — LinkedIn](https://www.linkedin.com/in/sergioaafreitas)
+- **Linguagem C:** [cppreference.com — linguagem e biblioteca padrão C](https://en.cppreference.com/w/c)
+- **Flex:** [Manual do GNU Flex](https://www.gnu.org/software/flex/manual/)
+- **Bison:** [Manual do GNU Bison](https://www.gnu.org/software/bison/manual/)
+
+---
+
+## Histórico de Versão
+
+| Versão | Data | Descrição | Autor |
+| :--- | :--- | :--- | :--- |
+| 1.0 | 18/04/26 | Criação da página inicial | Pedro Henrique |
+| 2.0 | 13/05/26 | Adição das referências e junção do texto | Camila Careli |
