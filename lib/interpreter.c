@@ -122,6 +122,42 @@ Valor avaliar(No *no, Celula **tabela) {
         return c->valor;
     }
 
+        case NO_RELACIONAL: {
+        Valor esq = avaliar(no->esq, tabela);
+        Valor dir = avaliar(no->dir, tabela);
+        Valor resultado;
+        resultado.tipo = TIPO_BOOL;
+        float v1 = (esq.tipo == TIPO_FLOAT) ? esq.dado.f : esq.dado.i;
+        float v2 = (dir.tipo == TIPO_FLOAT) ? dir.dado.f : dir.dado.i;
+
+        switch (no->relop) {
+            case OP_EQ: resultado.dado.i = (v1 == v2); break;
+            case OP_NE: resultado.dado.i = (v1 != v2); break;
+            case OP_LT: resultado.dado.i = (v1 <  v2); break;
+            case OP_GT: resultado.dado.i = (v1 >  v2); break;
+            case OP_LE: resultado.dado.i = (v1 <= v2); break;
+            case OP_GE: resultado.dado.i = (v1 >= v2); break;
+
+            default:
+                fprintf(stderr, "[Runtime] Operador relacional invalido\n");
+                exit(1);
+        }
+        return resultado;
+    }
+
+    case NO_IF: {
+        Valor cond = avaliar(no->condicao, tabela);
+        int verdadeiro = 0;
+
+        if (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT)
+            verdadeiro = cond.dado.i;
+        if (verdadeiro)
+            return avaliar(no->thenBranch, tabela);
+        if (no->elseBranch)
+            return avaliar(no->elseBranch, tabela);
+        return resultado;
+    }
+
     case NO_BLOCO:
         for (int i = 0; i < no->count; i++)
             resultado = avaliar(no->stmts[i], tabela);

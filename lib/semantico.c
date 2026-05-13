@@ -52,6 +52,20 @@ static int resolverTipo(No *no, Celula **tabela) {
         return TIPO_INT;
     }
 
+    case NO_RELACIONAL: {
+        int te = resolverTipo(no->esq, tabela);
+        int td = resolverTipo(no->dir, tabela);
+        if (te == TIPO_ERRO || td == TIPO_ERRO)
+            return TIPO_ERRO;
+        if ((te == TIPO_STR && td != TIPO_STR) ||
+            (td == TIPO_STR && te != TIPO_STR)) {
+            erroSem("comparacao invalida");
+            return TIPO_ERRO;
+        }
+
+        return TIPO_BOOL;
+    }
+
     default:
         return TIPO_ERRO;
     }
@@ -159,6 +173,18 @@ static void checarNo(No *no, Celula **tabela) {
             if (tipoExpr != TIPO_ERRO)
                 verificarAtribuicao(c->tipo, tipoExpr, no->nome);
         }
+        break;
+    }
+
+    case NO_IF: {
+        int tipoCond = resolverTipo(no->condicao, tabela);
+        if (tipoCond != TIPO_BOOL &&
+            tipoCond != TIPO_INT) {
+            erroSem("condicao do if invalida");
+        }
+        checarNo(no->thenBranch, tabela);
+        if (no->elseBranch)
+            checarNo(no->elseBranch, tabela);
         break;
     }
 
