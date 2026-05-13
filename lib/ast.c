@@ -102,3 +102,19 @@ No *noReturn(No *expr) {
     n->esq = expr;
     return n;
 }
+
+No *noRelacional(TipoRelacional op, No *esq, No *dir) {
+    No *n = alocar(NO_RELACIONAL);
+    n->relop = op;
+    n->esq   = esq;
+    n->dir   = dir;
+    return n;
+}
+
+No *noIf(No *cond, No *thenBranch, No *elseBranch) {
+    No *n = alocar(NO_IF);
+    n->condicao  = cond;
+    n->thenBranch = thenBranch;
+    n->elseBranch = elseBranch;
+    return n;
+}

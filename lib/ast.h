@@ -7,7 +7,9 @@ typedef enum {
     NO_CHAR,     
     NO_STR,      
     NO_ID,       
-    NO_BINOP,    
+    NO_BINOP,
+    NO_RELACIONAL,
+    NO_IF, 
     NO_DECL,     
     NO_DECL_INIT,
     NO_ATRIB,    
@@ -15,8 +17,17 @@ typedef enum {
     NO_INC,      
     NO_DEC,      
     NO_BLOCO,    
-    NO_RETURN    
+    NO_RETURN   
 } TipoNo;
+
+typedef enum{
+    OP_EQ,
+    OP_NE,
+    OP_LT,
+    OP_GT,
+    OP_LE,
+    OP_GE
+} TipoRelacional;
 
 typedef struct No {
     TipoNo tipo;
@@ -43,6 +54,14 @@ typedef struct No {
     /* NO_BLOCO */
     struct No **stmts;
     int         count;
+
+    /* NO_RELACIONAL */
+    TipoRelacional relop;
+
+    /* N0_IF */
+    struct No *condicao;
+    struct No *thenBranch;
+    struct No *elseBranch;
 } No;
 
 /* ------------------------------------------------------------------ *
@@ -62,5 +81,7 @@ No *noInc     (char *nome);
 No *noDec     (char *nome);
 No *noBloco   (No **stmts, int count);
 No *noReturn  (No *expr);
+No *noRelacional(TipoRelacional op, No *esq, No *dir);
+No *noIf(No *cond, No *thenBranch, No *elseBranch);
 
 #endif

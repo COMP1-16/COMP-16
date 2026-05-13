@@ -8,7 +8,7 @@ extern int yylineno;
 int  yylex(void);
 void yyerror(const char *s);
 
-No *raiz;D
+No *raiz;
 
 /* Buffer para acumular statements (tipos de comando) no bloco raiz */
 #define MAX_STMTS 1024
@@ -39,7 +39,7 @@ static int tipoAtual;
 %token <sStr>   ID
 
 /* --- tipos de regras que produzem nós --- */
-%type <no> stmt expr declaracao declaradores declarador atualizacao
+%type <no> stmt expr declaracao declaradores declarador atualizacao if_stmt
 
 /* --- tokens de operadores e pontuação --- */
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
@@ -50,13 +50,16 @@ static int tipoAtual;
 %token AND OR NOT ADDR
 %token SEMICOLON COMMA
 %token KW_RETURN
+%token KW_IF KW_ELSE
 
 /* --- tipos primitivos --- */
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
 /* --- precedência e associatividade --- */
-%left  PLUS MINUS
-%left  TIMES DIVIDE MOD
+%left EQUAL DIFF
+%left LESSER GREATER LESS_EQ GREAT_EQ
+%left PLUS MINUS
+%left TIMES DIVIDE MOD
 %right UMINUS
 
 %%
@@ -75,6 +78,7 @@ stmt
     | atualizacao       { $$ = $1; }
     | expr SEMICOLON    { $$ = $1; }
     | KW_RETURN expr SEMICOLON { $$ = noReturn($2); }
+    | if_stmt
     ;
 
 declaracao
@@ -121,6 +125,17 @@ expr
     | CHAR_LIT  { $$ = noChar($1);  }
     | STRING    { $$ = noStr($1);   }
     | ID        { $$ = noId($1); free($1); }
+    | expr EQUAL expr { $$ = noRelacional(OP_EQ, $1, $3); }
+    | expr DIFF expr { $$ = noRelacional(OP_NE, $1, $3); }
+    | expr LESSER expr { $$ = noRelacional(OP_LT, $1, $3); }
+    | expr GREATER expr { $$ = noRelacional(OP_GT, $1, $3); }
+    | expr LESS_EQ expr { $$ = noRelacional(OP_LE, $1, $3); }
+    | expr GREAT_EQ expr { $$ = noRelacional(OP_GE, $1, $3); }    
+    ;
+
+if_stmt
+    : KW_IF L_PAREN expr R_PAREN stmt { $$ = noIf($3, $5, NULL); }
+    | KW_IF L_PAREN expr R_PAREN stmt KW_ELSE stmt { $$ = noIf($3, $5, $7); }
     ;
 
 %%
