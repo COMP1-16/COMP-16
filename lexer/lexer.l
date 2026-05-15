@@ -13,6 +13,11 @@
 [ \t\r\n]+          { /* ignora espaço em branco */ }
 "//"[^\n]*          { /* ignora comentário de linha */ }
 
+    /* --- estruturas condicionais --- */
+"if"                { return KW_IF;     }
+"else"              { return KW_ELSE;   }
+
+
     /* --- palavras-chave --- */
 "return"            { return KW_RETURN; }
 
