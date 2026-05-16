@@ -1,7 +1,7 @@
 #ifndef SIMBOLOS_H
 #define SIMBOLOS_H
 
-#include "lib/types.h"
+#include "types.h"
 
 /* ------------------------------------------------------------------ *
  * Tabela de Símbolos — estrutura de dados pura                        *
