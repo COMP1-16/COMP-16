@@ -2,23 +2,60 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funcs.h"
-#include "ast.h"
-#include "simbolos.h"
 #include "interpreter.h"
 
+// Verifica se um tipo é passível de Casting Matemático
+static int compatibilidade_casting(int tipo){ 
+    return(tipo == TIPO_INT || tipo == TIPO_FLOAT || tipo == TIPO_DOUBLE || 
+            tipo == TIPO_CHAR || tipo == TIPO_BOOL);
+}
+
+
 static Valor coercionar(Valor v, int tipoAlvo) {
-    if (v.tipo == tipoAlvo) return v;
+    if (v.tipo == tipoAlvo) return v; 
 
-    Valor resultado;
+    Valor resultado = v;
     resultado.tipo = tipoAlvo;
+    if (compatibilidade_casting(v.tipo) && compatibilidade_casting(tipoAlvo)) {
+        
+        switch (tipoAlvo) {
+            case TIPO_INT:
+                if (v.tipo == TIPO_FLOAT)       resultado.dado.i = (int)v.dado.f;
+                else if (v.tipo == TIPO_DOUBLE) resultado.dado.i = (int)v.dado.d;
+                else if (v.tipo == TIPO_CHAR)   resultado.dado.i = (int)v.dado.c;
+                else if (v.tipo == TIPO_BOOL)   resultado.dado.i = (int)v.dado.i;
+                break;
 
-    if (tipoAlvo == TIPO_FLOAT && v.tipo == TIPO_INT) {
-        resultado.dado.f = (float)v.dado.i;
-    } else if (tipoAlvo == TIPO_INT && v.tipo == TIPO_FLOAT) {
-        resultado.dado.i = (int)v.dado.f;
-    } else {
-        resultado = v;
+            case TIPO_FLOAT:
+                if (v.tipo == TIPO_INT)         resultado.dado.f = (float)v.dado.i;
+                else if (v.tipo == TIPO_DOUBLE) resultado.dado.f = (float)v.dado.d;
+                else if (v.tipo == TIPO_CHAR)   resultado.dado.f = (float)v.dado.c;
+                else if (v.tipo == TIPO_BOOL)   resultado.dado.f = (float)v.dado.i;
+                break;
+
+            case TIPO_DOUBLE:
+                if (v.tipo == TIPO_INT)         resultado.dado.d = (double)v.dado.i;
+                else if (v.tipo == TIPO_FLOAT)  resultado.dado.d = (double)v.dado.f;
+                else if (v.tipo == TIPO_CHAR)   resultado.dado.d = (double)v.dado.c;
+                else if (v.tipo == TIPO_BOOL)   resultado.dado.d = (double)v.dado.i;
+                break;
+
+            case TIPO_CHAR:
+                if (v.tipo == TIPO_INT)         resultado.dado.c = (char)v.dado.i;
+                else if (v.tipo == TIPO_FLOAT)  resultado.dado.c = (char)v.dado.f;
+                else if (v.tipo == TIPO_DOUBLE) resultado.dado.c = (char)v.dado.d;
+                else if (v.tipo == TIPO_BOOL)   resultado.dado.c = (char)v.dado.i;
+                break;
+
+            case TIPO_BOOL:
+                if (v.tipo == TIPO_INT)         resultado.dado.i = (v.dado.i != 0) ? 1 : 0;
+                else if (v.tipo == TIPO_FLOAT)  resultado.dado.i = (v.dado.f != 0.0f) ? 1 : 0;
+                else if (v.tipo == TIPO_DOUBLE) resultado.dado.i = (v.dado.d != 0.0) ? 1 : 0;
+                else if (v.tipo == TIPO_CHAR)   resultado.dado.i = (v.dado.c != 0) ? 1 : 0;
+                break;
+        }
     }
+
     return resultado;
 }
 
