@@ -134,8 +134,9 @@ expr
     ;
 
 if_stmt
-    : KW_IF L_PAREN expr R_PAREN stmt { $$ = noIf($3, $5, NULL); }
-    | KW_IF L_PAREN expr R_PAREN stmt KW_ELSE stmt { $$ = noIf($3, $5, $7); }
+    : KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET { $$ = noIf($2, $4, NULL); }
+    | KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET KW_ELSE L_CRLRBRACKET stmt R_CRLRBRACKET { $$ = noIf($2, $4, $8); }
+    | KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET KW_ELSE if_stmt { $$ = noIf($2, $4, $7); }
     ;
 
 %%
