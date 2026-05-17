@@ -3,6 +3,7 @@
 
 #include "ast.h"
 #include "simbolos.h"
+#include "types.h"
 
 int checar(No *raiz, Celula **tabela);
 
