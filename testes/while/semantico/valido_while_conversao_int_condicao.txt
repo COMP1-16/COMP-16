@@ -1,0 +1,1 @@
+	int flag = 1; while (flag) flag = 0;
