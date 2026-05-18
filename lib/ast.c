@@ -2,7 +2,6 @@
 #include <string.h>
 #include "ast.h"
 
-/* Aloca um nó zerado — campos não usados ficam NULL/0 por calloc. */
 static No *alocar(TipoNo tipo) {
     No *no = calloc(1, sizeof(No));
     no->tipo = tipo;
@@ -41,39 +40,39 @@ No *noId(char *nome) {
 
 No *noBinop(char op, No *esq, No *dir) {
     No *n = alocar(NO_BINOP);
-    n->op  = op;
-    n->esq = esq;
-    n->dir = dir;
+    n->u.bin.op = op;
+    n->u.bin.esq = esq;
+    n->u.bin.dir = dir;
     return n;
 }
 
 No *noDecl(int tipoDeclarado, char *nome) {
     No *n = alocar(NO_DECL);
     n->tipoDeclarado = tipoDeclarado;
-    n->nome          = strdup(nome);
+    n->nome = strdup(nome);
     return n;
 }
 
 No *noDeclInit(int tipoDeclarado, char *nome, No *expr) {
     No *n = alocar(NO_DECL_INIT);
     n->tipoDeclarado = tipoDeclarado;
-    n->nome          = strdup(nome);
-    n->esq           = expr;
+    n->nome = strdup(nome);
+    n->u.bin.esq = expr;
     return n;
 }
 
 No *noAtrib(char *nome, No *expr) {
     No *n = alocar(NO_ATRIB);
     n->nome = strdup(nome);
-    n->esq  = expr;
+    n->u.bin.esq = expr;
     return n;
 }
 
 No *noAtribOp(char op, char *nome, No *expr) {
     No *n = alocar(NO_ATRIB_OP);
-    n->op   = op;
     n->nome = strdup(nome);
-    n->esq  = expr;
+    n->u.bin.op = op;
+    n->u.bin.esq = expr;
     return n;
 }
 
@@ -90,31 +89,67 @@ No *noDec(char *nome) {
 }
 
 No *noBloco(No **stmts, int count) {
-    No *n    = alocar(NO_BLOCO);
-    n->stmts = malloc(count * sizeof(No *));
-    memcpy(n->stmts, stmts, count * sizeof(No *));
-    n->count = count;
+    No *n = alocar(NO_BLOCO);
+    n->u.bloco.stmts = malloc(count * sizeof(No *));
+    memcpy(n->u.bloco.stmts, stmts, count * sizeof(No *));
+    n->u.bloco.count = count;
     return n;
 }
 
 No *noReturn(No *expr) {
     No *n = alocar(NO_RETURN);
-    n->esq = expr;
+    n->u.bin.esq = expr;
     return n;
 }
 
 No *noRelacional(TipoRelacional op, No *esq, No *dir) {
     No *n = alocar(NO_RELACIONAL);
     n->relop = op;
-    n->esq   = esq;
-    n->dir   = dir;
+    n->u.bin.esq = esq;
+    n->u.bin.dir = dir;
     return n;
 }
 
 No *noIf(No *cond, No *thenBranch, No *elseBranch) {
     No *n = alocar(NO_IF);
-    n->condicao  = cond;
-    n->thenBranch = thenBranch;
-    n->elseBranch = elseBranch;
+    n->u.if_stmt.cond = cond;
+    n->u.if_stmt.thenBranch = thenBranch;
+    n->u.if_stmt.elseBranch = elseBranch;
+    return n;
+}
+
+No *noWhile(No *cond, No *body) {
+    No *n = alocar(NO_WHILE);
+    n->u.while_stmt.cond = cond;
+    n->u.while_stmt.body = body;
+    return n;
+}
+
+No *noFor(No *init, No *cond, No *inc, No *body) {
+    No *n = alocar(NO_FOR);
+    n->u.for_stmt.init = init;
+    n->u.for_stmt.cond = cond;
+    n->u.for_stmt.inc = inc;
+    n->u.for_stmt.body = body;
+    return n;
+}
+
+No *noLogicalAnd(No *esq, No *dir) {
+    No *n = alocar(NO_LOGICAL_AND);
+    n->u.bin.esq = esq;
+    n->u.bin.dir = dir;
+    return n;
+}
+
+No *noLogicalOr(No *esq, No *dir) {
+    No *n = alocar(NO_LOGICAL_OR);
+    n->u.bin.esq = esq;
+    n->u.bin.dir = dir;
+    return n;
+}
+
+No *noNot(No *expr) {
+    No *n = alocar(NO_NOT);
+    n->u.not.expr = expr;
     return n;
 }
