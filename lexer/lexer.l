@@ -16,7 +16,8 @@
     /* --- estruturas condicionais --- */
 "if"                { return KW_IF;     }
 "else"              { return KW_ELSE;   }
-
+"while"             { return KW_WHILE;  }
+"for"               { return KW_FOR;    }
 
     /* --- palavras-chave --- */
 "return"            { return KW_RETURN; }

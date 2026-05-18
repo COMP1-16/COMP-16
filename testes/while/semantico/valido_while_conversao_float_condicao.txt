@@ -1,0 +1,1 @@
+float f = 5.5; while (f) f = f - 1.0;

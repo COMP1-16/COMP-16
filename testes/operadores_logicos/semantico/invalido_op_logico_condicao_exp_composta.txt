@@ -1,0 +1,1 @@
+char s[] = "texto"; if (s && 1) { }
