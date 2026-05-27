@@ -1,1 +1,4 @@
-.vscode
+.vscodecomp16
+*.dSYM/
+test_fat.txt
+lib/interpreter
