@@ -1,4 +1,4 @@
-%option yylineno
+%option yylineno nounput noinput
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,7 @@
 
     /* --- palavras-chave --- */
 "return"            { return KW_RETURN; }
+"printf"            { return KW_PRINTF; }
 
     /* --- tipos --- */
 "int"               { return TYPE_INT;    }

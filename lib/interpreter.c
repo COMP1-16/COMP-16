@@ -50,9 +50,23 @@ static Valor coercionar(Valor v, int tipoAlvo) {
     return resultado;
 }
 
+static int has_returned = 0;
+static Valor return_val = {0};
+static Celula **tabela_global = NULL;
+
+static Celula *buscarSimboloInterpretador(char *nome, Celula **tabela) {
+    Celula *c = buscarSimbolo(nome, tabela);
+    if (!c && tabela_global && tabela != tabela_global) {
+        c = buscarSimbolo(nome, tabela_global);
+    }
+    return c;
+}
+
 Valor avaliar(No *no, Celula **tabela) {
     Valor resultado = {0};
     if (!no) return resultado;
+    
+    if (!tabela_global) tabela_global = tabela;
 
     switch (no->tipo) {
         case NO_INT:
@@ -72,7 +86,11 @@ Valor avaliar(No *no, Celula **tabela) {
             resultado.dado.s = no->sval;
             return resultado;
         case NO_ID: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
+            if (!c) {
+                fprintf(stderr, "[Runtime] Erro: variavel '%s' nao encontrada\n", no->nome);
+                exit(1);
+            }
             return c->valor;
         }
         case NO_BINOP: {
@@ -101,14 +119,22 @@ Valor avaliar(No *no, Celula **tabela) {
             return val;
         }
         case NO_ATRIB: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
+            if (!c) {
+                fprintf(stderr, "[Runtime] Erro: variavel '%s' nao encontrada\n", no->nome);
+                exit(1);
+            }
             Valor val = avaliar(no->u.bin.esq, tabela);
             val = coercionar(val, c->tipo);
             c->valor = val;
             return val;
         }
         case NO_ATRIB_OP: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
+            if (!c) {
+                fprintf(stderr, "[Runtime] Erro: variavel '%s' nao encontrada\n", no->nome);
+                exit(1);
+            }
             Valor atual = c->valor;
             Valor expr = avaliar(no->u.bin.esq, tabela);
             Valor novo = fazerOperacao(atual, expr, no->u.bin.op);
@@ -117,7 +143,7 @@ Valor avaliar(No *no, Celula **tabela) {
             return novo;
         }
         case NO_INC: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
             Valor um = { .tipo = c->tipo };
             if (c->tipo == TIPO_FLOAT) um.dado.f = 1.0f;
             else                       um.dado.i = 1;
@@ -125,7 +151,7 @@ Valor avaliar(No *no, Celula **tabela) {
             return c->valor;
         }
         case NO_DEC: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
             Valor um = { .tipo = c->tipo };
             if (c->tipo == TIPO_FLOAT) um.dado.f = 1.0f;
             else                       um.dado.i = 1;
@@ -152,10 +178,13 @@ Valor avaliar(No *no, Celula **tabela) {
         case NO_IF: {
             Valor cond = avaliar(no->u.if_stmt.cond, tabela);
             int verdadeiro = (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT) ? cond.dado.i : 0;
-            if (verdadeiro)
-                return avaliar(no->u.if_stmt.thenBranch, tabela);
-            if (no->u.if_stmt.elseBranch)
-                return avaliar(no->u.if_stmt.elseBranch, tabela);
+            if (verdadeiro) {
+                resultado = avaliar(no->u.if_stmt.thenBranch, tabela);
+                if (has_returned) return return_val;
+            } else if (no->u.if_stmt.elseBranch) {
+                resultado = avaliar(no->u.if_stmt.elseBranch, tabela);
+                if (has_returned) return return_val;
+            }
             return resultado;
         }
         case NO_WHILE: {
@@ -164,6 +193,7 @@ Valor avaliar(No *no, Celula **tabela) {
                 int verdadeiro = (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT) ? cond.dado.i : 0;
                 if (!verdadeiro) break;
                 avaliar(no->u.while_stmt.body, tabela);
+                if (has_returned) return return_val;
             }
             return resultado;
         }
@@ -177,6 +207,7 @@ Valor avaliar(No *no, Celula **tabela) {
                 }
                 if (!verdadeiro) break;
                 avaliar(no->u.for_stmt.body, tabela);
+                if (has_returned) return return_val;
                 if (no->u.for_stmt.inc) avaliar(no->u.for_stmt.inc, tabela);
             }
             return resultado;
@@ -217,11 +248,103 @@ Valor avaliar(No *no, Celula **tabela) {
             return resultado;
         }
         case NO_BLOCO:
-            for (int i = 0; i < no->u.bloco.count; i++)
+            for (int i = 0; i < no->u.bloco.count; i++) {
                 resultado = avaliar(no->u.bloco.stmts[i], tabela);
+                if (has_returned) return return_val;
+            }
             return resultado;
         case NO_RETURN:
-            return avaliar(no->u.bin.esq, tabela);
+            return_val = avaliar(no->u.bin.esq, tabela);
+            has_returned = 1;
+            return return_val;
+        case NO_PRINTF: {
+            No *args = no->u.call.args;
+            if (!args || args->u.bloco.count == 0) return resultado;
+            Valor vfmt = avaliar(args->u.bloco.stmts[0], tabela);
+            if (vfmt.tipo != TIPO_STR) {
+                fprintf(stderr, "[Runtime] Erro: printf requer string literal como primeiro argumento\n");
+                exit(1);
+            }
+            char *fmt = vfmt.dado.s;
+            int arg_idx = 1;
+            for (int i = 0; fmt[i]; i++) {
+                if (fmt[i] == '%' && fmt[i+1]) {
+                    i++;
+                    if (arg_idx >= args->u.bloco.count) {
+                        fprintf(stderr, "[Runtime] Erro: argumentos insuficientes para printf\n");
+                        exit(1);
+                    }
+                    Valor arg_val = avaliar(args->u.bloco.stmts[arg_idx++], tabela);
+                    if (fmt[i] == 'd' || fmt[i] == 'i') {
+                        printf("%d", (arg_val.tipo == TIPO_FLOAT) ? (int)arg_val.dado.f : arg_val.dado.i);
+                    } else if (fmt[i] == 'f') {
+                        printf("%f", (arg_val.tipo == TIPO_INT) ? (float)arg_val.dado.i : arg_val.dado.f);
+                    } else if (fmt[i] == 's') {
+                        printf("%s", arg_val.dado.s);
+                    } else if (fmt[i] == 'c') {
+                        printf("%c", arg_val.dado.c);
+                    } else {
+                        putchar('%');
+                        putchar(fmt[i]);
+                    }
+                } else {
+                    if (fmt[i] == '\\' && fmt[i+1] == 'n') {
+                        putchar('\n');
+                        i++;
+                    } else {
+                        putchar(fmt[i]);
+                    }
+                }
+            }
+            return resultado;
+        }
+        case NO_FUNC_DECL: {
+            Valor v = {0};
+            v.tipo = TIPO_FUNC;
+            v.dado.func_ast = no;
+            inserirSimbolo(no->nome, TIPO_FUNC, v, tabela);
+            return v;
+        }
+        case NO_FUNC_CALL: {
+            Celula *c = buscarSimboloInterpretador(no->nome, tabela);
+            if (!c || c->tipo != TIPO_FUNC) {
+                fprintf(stderr, "[Runtime] Erro: '%s' nao e uma funcao\n", no->nome);
+                exit(1);
+            }
+            No *func_ast = c->valor.dado.func_ast;
+            Celula **tabela_local = criarTabelaSimbolos();
+            
+            No *params = func_ast->u.func_decl.params;
+            No *args = no->u.call.args;
+            int param_count = params ? params->u.bloco.count : 0;
+            int arg_count = args ? args->u.bloco.count : 0;
+            
+            if (param_count != arg_count) {
+                fprintf(stderr, "[Runtime] Erro: '%s' espera %d argumentos, recebeu %d\n", no->nome, param_count, arg_count);
+                exit(1);
+            }
+            
+            for (int i = 0; i < param_count; i++) {
+                Valor arg_val = avaliar(args->u.bloco.stmts[i], tabela);
+                No *param_decl = params->u.bloco.stmts[i];
+                arg_val = coercionar(arg_val, param_decl->tipoDeclarado);
+                inserirSimbolo(param_decl->nome, param_decl->tipoDeclarado, arg_val, tabela_local);
+            }
+            
+            int old_has_returned = has_returned;
+            Valor old_return_val = return_val;
+            has_returned = 0;
+            
+            avaliar(func_ast->u.func_decl.body, tabela_local);
+            
+            Valor res = has_returned ? return_val : (Valor){.tipo = func_ast->tipoDeclarado};
+            
+            has_returned = old_has_returned;
+            return_val = old_return_val;
+            
+            liberarTabelaSimbolos(tabela_local);
+            return coercionar(res, func_ast->tipoDeclarado);
+        }
         default:
             fprintf(stderr, "[Runtime] Erro: no desconhecido tipo=%d\n", no->tipo);
             exit(1);

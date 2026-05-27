@@ -12,6 +12,9 @@
 #define TIPO_DOUBLE   4
 #define TIPO_BOOL     5
 #define TIPO_VOID     6
+#define TIPO_FUNC     7
+
+struct No; /* Forward declaration */
 
 /* Valor em runtime */
 typedef struct {
@@ -22,6 +25,7 @@ typedef struct {
         double d;
         char   c;
         char  *s;
+        struct No *func_ast;
     } dado;
 } Valor;
 

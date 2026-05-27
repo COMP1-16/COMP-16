@@ -1,0 +1,16 @@
+// invalido_recursao_infinita.txt
+// ERRO ESPERADO: Falta de caso base gera um loop infinito até estourar a memória (Stack Overflow).
+
+int recursao_infinita(int n) {
+    // ERRO: Esquecemos de colocar a condição de parada (if n <= 1)
+    return recursao_infinita(n + 1);
+}
+
+int main() {
+    printf("Iniciando recursao infinita...\n");
+    recursao_infinita(1);
+    printf("Isso nunca sera impresso.\n");
+    return 0;
+}
+
+main();

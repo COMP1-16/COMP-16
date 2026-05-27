@@ -1,0 +1,23 @@
+// 02_fibonacci.txt
+// Calcula o N-ésimo número da sequência de Fibonacci
+
+int fib(int n) {
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+int main() {
+    printf("--- TESTE 02: FIBONACCI ---\n");
+    printf("Fibonacci(0) = %d (Esperado: 0)\n", fib(0));
+    printf("Fibonacci(1) = %d (Esperado: 1)\n", fib(1));
+    printf("Fibonacci(5) = %d (Esperado: 5)\n", fib(5));
+    printf("Fibonacci(10) = %d (Esperado: 55)\n", fib(10));
+    return 0;
+}
+
+main();

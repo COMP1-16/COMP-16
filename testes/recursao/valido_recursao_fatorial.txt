@@ -1,0 +1,19 @@
+// 01_fatorial.txt
+// Calcula o fatorial de um número N de forma recursiva
+
+int fat(int n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * fat(n - 1);
+}
+
+int main() {
+    printf("--- TESTE 01: FATORIAL ---\n");
+    printf("Fatorial de 5 = %d (Esperado: 120)\n", fat(5));
+    printf("Fatorial de 7 = %d (Esperado: 5040)\n", fat(7));
+    return 0;
+}
+
+// Inicia a execução
+main();

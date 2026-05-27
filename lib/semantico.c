@@ -74,6 +74,22 @@ static int resolverTipo(No *no, Celula **tabela) {
             }
             return TIPO_BOOL;
         }
+        case NO_FUNC_CALL: {
+            Celula *c = buscarSimbolo(no->nome, tabela);
+            if (!c) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "funcao '%s' nao declarada", no->nome);
+                erroSem(msg);
+                return TIPO_ERRO;
+            }
+            if (c->tipo != TIPO_FUNC) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "'%s' nao e uma funcao", no->nome);
+                erroSem(msg);
+                return TIPO_ERRO;
+            }
+            return c->valor.dado.func_ast->tipoDeclarado;
+        }
         default:
             return TIPO_ERRO;
     }
@@ -191,6 +207,44 @@ static void checarNo(No *no, Celula **tabela) {
         case NO_RETURN:
             resolverTipo(no->u.bin.esq, tabela);
             break;
+        case NO_PRINTF:
+            if (no->u.call.args) {
+                for (int i = 0; i < no->u.call.args->u.bloco.count; i++) {
+                    resolverTipo(no->u.call.args->u.bloco.stmts[i], tabela);
+                }
+            }
+            break;
+        case NO_FUNC_DECL: {
+            if (buscarSimbolo(no->nome, tabela)) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "redeclaracao de '%s'", no->nome);
+                erroSem(msg);
+                break;
+            }
+            Valor v = {0};
+            v.tipo = TIPO_FUNC;
+            v.dado.func_ast = no;
+            inserirSimbolo(no->nome, TIPO_FUNC, v, tabela);
+
+            if (no->u.func_decl.params) checarNo(no->u.func_decl.params, tabela);
+            if (no->u.func_decl.body) checarNo(no->u.func_decl.body, tabela);
+
+            if (no->u.func_decl.params) {
+                for (int i = 0; i < no->u.func_decl.params->u.bloco.count; i++) {
+                    removerSimbolo(no->u.func_decl.params->u.bloco.stmts[i]->nome, tabela);
+                }
+            }
+            break;
+        }
+        case NO_FUNC_CALL: {
+            resolverTipo(no, tabela);
+            if (no->u.call.args) {
+                for (int i = 0; i < no->u.call.args->u.bloco.count; i++) {
+                    resolverTipo(no->u.call.args->u.bloco.stmts[i], tabela);
+                }
+            }
+            break;
+        }
         default:
             resolverTipo(no, tabela);
             break;
