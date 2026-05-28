@@ -1,6 +1,10 @@
 site_name: Interpretador de C - Compiladores 1 - Equipe 16
+site_url: https://comp1-16.github.io/COMP-16/
 repo_url: https://github.com/COMP1-16/COMP-16
 repo_name: COMP-16
+
+docs_dir: manual
+site_dir: docs
 
 theme:
   name: material

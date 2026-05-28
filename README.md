@@ -13,6 +13,12 @@ O programa usará um arquivo fonte em C e executará, a partir do retorno do ana
 - ❎: Testes;
 - 🟩: Documentação;
 
+## 📖 Documentação (GitHub Pages)
+
+- Fontes Markdown: pasta `manual/`
+- Site gerado: pasta `docs/` (`python -m mkdocs build`)
+- Publicação: branch `docs`, pasta **`/docs`** nas configurações do GitHub Pages
+
 ## ⚠️ Requisitos
 - Sistema: Ambiente Unix (Linux, WSL, macOS, etc);
 - GCC: Versão 13.3.0 ou superior;
