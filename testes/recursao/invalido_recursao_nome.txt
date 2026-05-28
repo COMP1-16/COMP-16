@@ -1,0 +1,18 @@
+// invalido_recursao_nome.txt
+// ERRO ESPERADO: Erro no Semântico (tempo de checagem), "funcao 'fato' nao declarada".
+
+int fat(int n) {
+    if (n <= 1) {
+        return 1;
+    }
+    // ERRO: Erro de digitação na chamada recursiva. Chamou 'fato' ao invés de 'fat'.
+    return n * fato(n - 1);
+}
+
+int main() {
+    printf("Tentando rodar com nome errado na chamada recursiva...\n");
+    fat(5);
+    return 0;
+}
+
+main();

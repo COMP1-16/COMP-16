@@ -4,6 +4,15 @@
 #include "semantico.h"
 
 static int erros = 0;
+static Celula **tabela_global = NULL;
+
+static Celula *buscarSimboloSemantico(char *nome, Celula **tabela) {
+    Celula *c = buscarSimbolo(nome, tabela);
+    if (!c && tabela_global && tabela != tabela_global) {
+        c = buscarSimbolo(nome, tabela_global);
+    }
+    return c;
+}
 
 /* ------------------------------------------------------------------ *
  * Helpers de relatório                                                *
@@ -31,7 +40,7 @@ static int resolverTipo(No *no, Celula **tabela) {
         case NO_CHAR:  return TIPO_CHAR;
         case NO_STR:   return TIPO_STR;
         case NO_ID: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloSemantico(no->nome, tabela);
             if (!c) {
                 char msg[128];
                 snprintf(msg, sizeof(msg), "variavel '%s' nao declarada", no->nome);
@@ -73,6 +82,44 @@ static int resolverTipo(No *no, Celula **tabela) {
                 erroSem("operador ! exige operando escalar");
             }
             return TIPO_BOOL;
+        }
+        case NO_FUNC_CALL: {
+            Celula *c = buscarSimboloSemantico(no->nome, tabela);
+            if (!c) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "funcao '%s' nao declarada", no->nome);
+                erroSem(msg);
+                return TIPO_ERRO;
+            }
+            if (c->tipo != TIPO_FUNC) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "'%s' nao e uma funcao", no->nome);
+                erroSem(msg);
+                return TIPO_ERRO;
+            }
+            No *func_ast = c->valor.dado.func_ast;
+            No *params = func_ast->u.func_decl.params;
+            No *args = no->u.call.args;
+            int param_count = params ? params->u.bloco.count : 0;
+            int arg_count = args ? args->u.bloco.count : 0;
+            if (param_count != arg_count) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "funcao '%s' espera %d argumentos, recebeu %d", no->nome, param_count, arg_count);
+                erroSem(msg);
+                return TIPO_ERRO;
+            }
+            for (int i = 0; i < param_count; i++) {
+                int tipoArg = resolverTipo(args->u.bloco.stmts[i], tabela);
+                int tipoParam = params->u.bloco.stmts[i]->tipoDeclarado;
+                if (tipoArg != TIPO_ERRO && tipoArg != tipoParam) {
+                    if (!((tipoParam == TIPO_FLOAT && tipoArg == TIPO_INT) || (tipoParam == TIPO_INT && tipoArg == TIPO_FLOAT))) {
+                        char msg[128];
+                        snprintf(msg, sizeof(msg), "tipo incompativel para argumento %d da funcao '%s'", i + 1, no->nome);
+                        erroSem(msg);
+                    }
+                }
+            }
+            return func_ast->tipoDeclarado;
         }
         default:
             return TIPO_ERRO;
@@ -130,7 +177,7 @@ static void checarNo(No *no, Celula **tabela) {
             break;
         }
         case NO_ATRIB: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloSemantico(no->nome, tabela);
             if (!c) {
                 char msg[128];
                 snprintf(msg, sizeof(msg), "variavel '%s' nao declarada", no->nome);
@@ -145,7 +192,7 @@ static void checarNo(No *no, Celula **tabela) {
         case NO_ATRIB_OP:
         case NO_INC:
         case NO_DEC: {
-            Celula *c = buscarSimbolo(no->nome, tabela);
+            Celula *c = buscarSimboloSemantico(no->nome, tabela);
             if (!c) {
                 char msg[128];
                 snprintf(msg, sizeof(msg), "variavel '%s' nao declarada", no->nome);
@@ -191,6 +238,51 @@ static void checarNo(No *no, Celula **tabela) {
         case NO_RETURN:
             resolverTipo(no->u.bin.esq, tabela);
             break;
+        case NO_PRINTF:
+            if (no->u.call.args) {
+                for (int i = 0; i < no->u.call.args->u.bloco.count; i++) {
+                    resolverTipo(no->u.call.args->u.bloco.stmts[i], tabela);
+                }
+            }
+            break;
+        case NO_FUNC_DECL: {
+            if (buscarSimbolo(no->nome, tabela)) {
+                char msg[128];
+                snprintf(msg, sizeof(msg), "redeclaracao de '%s'", no->nome);
+                erroSem(msg);
+                break;
+            }
+            Valor v = {0};
+            v.tipo = TIPO_FUNC;
+            v.dado.func_ast = no;
+            inserirSimbolo(no->nome, TIPO_FUNC, v, tabela);
+
+            Celula **tabela_local = criarTabelaSimbolos();
+            if (no->u.func_decl.params) {
+                for (int i = 0; i < no->u.func_decl.params->u.bloco.count; i++) {
+                    No *param = no->u.func_decl.params->u.bloco.stmts[i];
+                    Valor vazio = {0};
+                    vazio.tipo = param->tipoDeclarado;
+                    inserirSimbolo(param->nome, param->tipoDeclarado, vazio, tabela_local);
+                }
+            }
+
+            if (no->u.func_decl.body) {
+                checarNo(no->u.func_decl.body, tabela_local);
+            }
+
+            liberarTabelaSimbolos(tabela_local);
+            break;
+        }
+        case NO_FUNC_CALL: {
+            resolverTipo(no, tabela);
+            if (no->u.call.args) {
+                for (int i = 0; i < no->u.call.args->u.bloco.count; i++) {
+                    resolverTipo(no->u.call.args->u.bloco.stmts[i], tabela);
+                }
+            }
+            break;
+        }
         default:
             resolverTipo(no, tabela);
             break;
@@ -199,6 +291,7 @@ static void checarNo(No *no, Celula **tabela) {
 
 int checar(No *raiz, Celula **tabela) {
     erros = 0;
+    tabela_global = tabela;
     checarNo(raiz, tabela);
     return erros;
 }

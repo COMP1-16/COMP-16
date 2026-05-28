@@ -1,0 +1,16 @@
+// invalido_escopo_local.txt
+// ERRO ESPERADO: [Semantico] Erro: variavel 'y' nao declarada
+
+int f() {
+    int y = 5;
+    return 0;
+}
+
+int main() {
+    // ERRO: 'y' so existe dentro do escopo de f(). 
+    // Tentar acessa-lo em main() deve falhar.
+    y = 10; 
+    return 0;
+}
+
+main();

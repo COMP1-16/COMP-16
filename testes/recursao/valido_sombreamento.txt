@@ -1,0 +1,27 @@
+// valido_sombreamento.txt
+// Testa sombreamento (shadowing) de variaveis globais e isolamento de escopo local.
+
+int x = 10;
+
+int f() {
+    int x = 5;
+    printf("Local x em f() = %d (Esperado: 5)\n", x);
+    return 0;
+}
+
+int g() {
+    int x = 2;
+    printf("Local x em g() = %d (Esperado: 2)\n", x);
+    return 0;
+}
+
+int main() {
+    printf("--- TESTE DE SOMBREAMENTO DE VARIAVEIS ---\n");
+    printf("Global x inicial = %d (Esperado: 10)\n", x);
+    f();
+    g();
+    printf("Global x final = %d (Esperado: 10)\n", x);
+    return 0;
+}
+
+main();

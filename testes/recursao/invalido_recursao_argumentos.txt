@@ -1,0 +1,18 @@
+// invalido_recursao_argumentos.txt
+// ERRO ESPERADO: Erro no Runtime, "espera 1 argumentos, recebeu 2".
+
+int fat(int n) {
+    if (n <= 1) {
+        return 1;
+    }
+    // ERRO: Passando dois parâmetros na chamada recursiva quando a função só espera um.
+    return n * fat(n - 1, 0);
+}
+
+int main() {
+    printf("Tentando rodar fatorial com argumentos errados...\n");
+    fat(5);
+    return 0;
+}
+
+main();

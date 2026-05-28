@@ -22,7 +22,10 @@ typedef enum {
     NO_RETURN,
     NO_LOGICAL_AND,
     NO_LOGICAL_OR,
-    NO_NOT
+    NO_NOT,
+    NO_PRINTF,
+    NO_FUNC_DECL,
+    NO_FUNC_CALL
 } TipoNo;
 
 typedef enum {
@@ -88,6 +91,17 @@ typedef struct No {
             struct No **stmts;
             int         count;
         } bloco;
+        
+        /* NO_PRINTF e NO_FUNC_CALL */
+        struct {
+            struct No *args;
+        } call;
+        
+        /* NO_FUNC_DECL */
+        struct {
+            struct No *params;
+            struct No *body;
+        } func_decl;
     } u;
 } No;
 
@@ -113,5 +127,8 @@ No *noFor(No *init, No *cond, No *inc, No *body);
 No *noLogicalAnd(No *esq, No *dir);
 No *noLogicalOr(No *esq, No *dir);
 No *noNot(No *expr);
+No *noPrintf(No *args);
+No *noFuncDecl(int tipoRetorno, char *nome, No *params, No *body);
+No *noFuncCall(char *nome, No *args);
 
 #endif

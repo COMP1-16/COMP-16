@@ -10,10 +10,6 @@ void yyerror(const char *s);
 
 No *raiz;
 
-#define MAX_STMTS 1024
-static No  *stmtBuf[MAX_STMTS];
-static int  stmtCount = 0;
-
 static int tipoAtual;
 %}
 
@@ -37,6 +33,7 @@ static int tipoAtual;
 %token <sStr>   ID
 
 %type <no> stmt expr declaracao declaradores declarador atualizacao if_stmt while_stmt for_stmt for_init for_cond for_inc
+%type <no> bloco stmts param_list_opt param_list param arg_list_opt arg_list funcao_decl
 
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
 %token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE UPDT_INC UPDT_DEC
@@ -45,7 +42,7 @@ static int tipoAtual;
 %token L_PAREN R_PAREN L_SQBRACKET R_SQBRACKET L_CRLRBRACKET R_CRLRBRACKET
 %token AND OR NOT ADDR
 %token SEMICOLON COMMA
-%token KW_RETURN
+%token KW_RETURN KW_PRINTF
 %token KW_IF KW_ELSE KW_WHILE KW_FOR
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
@@ -60,19 +57,32 @@ static int tipoAtual;
 %%
 
 programa
-    : lista_stmts  { raiz = noBloco(stmtBuf, stmtCount); }
+    : stmts  { raiz = $1; }
     ;
 
-lista_stmts
-    : lista_stmts stmt  { stmtBuf[stmtCount++] = $2; }
-    | stmt              { stmtBuf[stmtCount++] = $1; }
+bloco
+    : L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = $2; }
+    | L_CRLRBRACKET R_CRLRBRACKET { $$ = noBloco(NULL, 0); }
+    ;
+
+stmts
+    : stmts stmt {
+        $$ = $1;
+        $$->u.bloco.stmts = realloc($$->u.bloco.stmts, ($$->u.bloco.count + 1) * sizeof(No*));
+        $$->u.bloco.stmts[$$->u.bloco.count++] = $2;
+    }
+    | stmt {
+        $$ = noBloco(&$1, 1);
+    }
     ;
 
 stmt
     : declaracao
+    | funcao_decl
     | atualizacao
     | expr SEMICOLON
     | KW_RETURN expr SEMICOLON { $$ = noReturn($2); }
+    | KW_PRINTF L_PAREN arg_list_opt R_PAREN SEMICOLON { $$ = noPrintf($3); }
     | if_stmt
     | while_stmt
     | for_stmt
@@ -80,6 +90,33 @@ stmt
 
 declaracao
     : tipo declaradores SEMICOLON { $$ = $2; }
+    ;
+
+funcao_decl
+    : tipo ID L_PAREN param_list_opt R_PAREN bloco {
+        $$ = noFuncDecl(tipoAtual, $2, $4, $6);
+        free($2);
+    }
+    ;
+
+param_list_opt
+    : param_list { $$ = $1; }
+    | /* vazio */ { $$ = noBloco(NULL, 0); }
+    ;
+
+param_list
+    : param_list COMMA param {
+        $$ = $1;
+        $$->u.bloco.stmts = realloc($$->u.bloco.stmts, ($$->u.bloco.count + 1) * sizeof(No*));
+        $$->u.bloco.stmts[$$->u.bloco.count++] = $3;
+    }
+    | param {
+        $$ = noBloco(&$1, 1);
+    }
+    ;
+
+param
+    : tipo ID { $$ = noDecl(tipoAtual, $2); free($2); }
     ;
 
 tipo
@@ -131,12 +168,29 @@ expr
     | CHAR_LIT          { $$ = noChar($1);  }
     | STRING            { $$ = noStr($1);   }
     | ID                { $$ = noId($1); free($1); }
+    | ID L_PAREN arg_list_opt R_PAREN { $$ = noFuncCall($1, $3); free($1); }
+    ;
+
+arg_list_opt
+    : arg_list { $$ = $1; }
+    | /* vazio */ { $$ = noBloco(NULL, 0); }
+    ;
+
+arg_list
+    : arg_list COMMA expr {
+        $$ = $1;
+        $$->u.bloco.stmts = realloc($$->u.bloco.stmts, ($$->u.bloco.count + 1) * sizeof(No*));
+        $$->u.bloco.stmts[$$->u.bloco.count++] = $3;
+    }
+    | expr {
+        $$ = noBloco(&$1, 1);
+    }
     ;
 
 if_stmt
-    : KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET { $$ = noIf($2, $4, NULL); }
-    | KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET KW_ELSE L_CRLRBRACKET stmt R_CRLRBRACKET { $$ = noIf($2, $4, $8); }
-    | KW_IF expr L_CRLRBRACKET stmt R_CRLRBRACKET KW_ELSE if_stmt { $$ = noIf($2, $4, $7); }
+    : KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, NULL); }
+    | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, $8); }
+    | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE if_stmt { $$ = noIf($2, $4, $7); }
     ;
 
 while_stmt
