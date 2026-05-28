@@ -153,3 +153,25 @@ No *noNot(No *expr) {
     n->u.not.expr = expr;
     return n;
 }
+
+No *noPrintf(No *args) {
+    No *n = alocar(NO_PRINTF);
+    n->u.call.args = args;
+    return n;
+}
+
+No *noFuncDecl(int tipoRetorno, char *nome, No *params, No *body) {
+    No *n = alocar(NO_FUNC_DECL);
+    n->tipoDeclarado = tipoRetorno;
+    n->nome = strdup(nome);
+    n->u.func_decl.params = params;
+    n->u.func_decl.body = body;
+    return n;
+}
+
+No *noFuncCall(char *nome, No *args) {
+    No *n = alocar(NO_FUNC_CALL);
+    n->nome = strdup(nome);
+    n->u.call.args = args;
+    return n;
+}

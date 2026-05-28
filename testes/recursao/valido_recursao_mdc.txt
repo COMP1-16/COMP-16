@@ -1,0 +1,22 @@
+// 03_mdc.txt
+// Calcula o Máximo Divisor Comum (MDC) usando o algoritmo de Euclides
+
+int mdc(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    // Como ainda não temos o operador módulo (%) perfeitamente validado no semântico
+    // para todos os cenários, vamos garantir a operação pura.
+    // Nossa linguagem já tem '%' (MOD) suportado no lexer/parser!
+    return mdc(b, a % b);
+}
+
+int main() {
+    printf("--- TESTE 03: MAXIMO DIVISOR COMUM (MDC) ---\n");
+    printf("MDC(48, 18) = %d (Esperado: 6)\n", mdc(48, 18));
+    printf("MDC(101, 103) = %d (Esperado: 1)\n", mdc(101, 103));
+    printf("MDC(270, 192) = %d (Esperado: 6)\n", mdc(270, 192));
+    return 0;
+}
+
+main();
