@@ -41,6 +41,7 @@ nav:
       - PC1: interpretador/pontosDeControlePc1.md
       - PC2: interpretador/pontosDeControlePc2.md
       - Entrega final: interpretador/pontosDeControleEntregaFinal.md
+  - Uso de IA: interpretador/usoDeIA.md
 
 markdown_extensions:
   - pymdownx.highlight:
