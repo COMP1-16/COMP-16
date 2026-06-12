@@ -1,0 +1,7 @@
+int g() {
+    return 42;
+    printf("inalcanceavel\n");
+}
+
+int r = g();
+printf("%d\n", r);
