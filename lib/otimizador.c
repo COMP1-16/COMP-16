@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "otimizador.h"
+#include "math.h"
 
 /* ================================================================== *
  * liberarNo — libera recursivamente uma subárvore                     *
@@ -575,6 +576,7 @@ No *otimizar(No *no) {
         case NO_STR:
         case NO_ID:
         case NO_DECL:
+        case NO_INCLUDE_MATH:
             return no;
 
         default:
@@ -621,6 +623,37 @@ No *otimizar(No *no) {
 
         case NO_ATRIB_OP:
             no = simplificarAtribOp(no);
+            break;
+
+        case NO_FUNC_CALL:
+            if ((strcmp(no->nome, "sqrt") == 0 || strcmp(no->nome, "abs") == 0 ||
+                 strcmp(no->nome, "floor") == 0 || strcmp(no->nome, "ceil") == 0 ||
+                 strcmp(no->nome, "round") == 0) &&
+                no->u.call.args && no->u.call.args->u.bloco.count == 1) {
+                
+                No *arg = no->u.call.args->u.bloco.stmts[0];
+                if (ehLiteralNum(arg)) {
+                    float fval = valorFloat(arg);
+                    float res = 0;
+                    if (strcmp(no->nome, "sqrt") == 0) res = math_sqrt(fval);
+                    else if (strcmp(no->nome, "abs") == 0) res = math_abs(fval);
+                    else if (strcmp(no->nome, "floor") == 0) res = math_floor(fval);
+                    else if (strcmp(no->nome, "ceil") == 0) res = math_ceil(fval);
+                    else if (strcmp(no->nome, "round") == 0) res = math_round(fval);
+                    
+                    liberarNo(no);
+                    return noFloat(res);
+                }
+            }
+            if (strcmp(no->nome, "pow") == 0 && no->u.call.args && no->u.call.args->u.bloco.count == 2) {
+                No *arg1 = no->u.call.args->u.bloco.stmts[0];
+                No *arg2 = no->u.call.args->u.bloco.stmts[1];
+                if (ehLiteralNum(arg1) && ehLiteralNum(arg2)) {
+                    float res = math_pow(valorFloat(arg1), valorFloat(arg2));
+                    liberarNo(no);
+                    return noFloat(res);
+                }
+            }
             break;
 
         case NO_INC:
