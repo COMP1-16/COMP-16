@@ -171,7 +171,10 @@ No *noFuncDecl(int tipoRetorno, char *nome, No *params, No *body) {
 
 No *noFuncCall(char *nome, No *args) {
     No *n = alocar(NO_FUNC_CALL);
-    n->nome = strdup(nome);
+    n->nome = strdup(nome); 
     n->u.call.args = args;
     return n;
+}
+No *noIncludeMath() {
+    return alocar(NO_INCLUDE_MATH);
 }

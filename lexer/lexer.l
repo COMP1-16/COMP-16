@@ -9,6 +9,9 @@
 
 %%
 
+    /* --- includes --- */
+"#include <math.h>" { return INCLUDE_MATH; }
+
     /* --- espaço e comentários --- */
 [ \t\r\n]+          { /* ignora espaço em branco */ }
 "//"[^\n]*          { /* ignora comentário de linha */ }

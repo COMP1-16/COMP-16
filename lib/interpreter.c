@@ -3,6 +3,7 @@
 #include <string.h>
 #include "funcs.h"
 #include "interpreter.h"
+#include "math.h"
 
 static int compatibilidade_casting(int tipo) {
     return (tipo == TIPO_INT || tipo == TIPO_FLOAT || tipo == TIPO_DOUBLE ||
@@ -69,6 +70,8 @@ Valor avaliar(No *no, Celula **tabela) {
     if (!tabela_global) tabela_global = tabela;
 
     switch (no->tipo) {
+        case NO_INCLUDE_MATH:
+            return resultado;
         case NO_INT:
             resultado.tipo = TIPO_INT;
             resultado.dado.i = no->ival;
@@ -322,6 +325,34 @@ Valor avaliar(No *no, Celula **tabela) {
             if (param_count != arg_count) {
                 fprintf(stderr, "[Runtime] Erro: '%s' espera %d argumentos, recebeu %d\n", no->nome, param_count, arg_count);
                 exit(1);
+            }
+            
+            if (strcmp(no->nome, "sqrt") == 0 || strcmp(no->nome, "abs") == 0 ||
+                strcmp(no->nome, "floor") == 0 || strcmp(no->nome, "ceil") == 0 ||
+                strcmp(no->nome, "round") == 0) {
+                Valor arg_val = avaliar(args->u.bloco.stmts[0], tabela);
+                float val = (arg_val.tipo == TIPO_FLOAT) ? arg_val.dado.f : (float)arg_val.dado.i;
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                
+                if (strcmp(no->nome, "sqrt") == 0) res.dado.f = math_sqrt(val);
+                else if (strcmp(no->nome, "abs") == 0) res.dado.f = math_abs(val);
+                else if (strcmp(no->nome, "floor") == 0) res.dado.f = math_floor(val);
+                else if (strcmp(no->nome, "ceil") == 0) res.dado.f = math_ceil(val);
+                else if (strcmp(no->nome, "round") == 0) res.dado.f = math_round(val);
+                
+                return res;
+            }
+            
+            if (strcmp(no->nome, "pow") == 0) {
+                Valor arg_base = avaliar(args->u.bloco.stmts[0], tabela);
+                Valor arg_exp = avaliar(args->u.bloco.stmts[1], tabela);
+                float b = (arg_base.tipo == TIPO_FLOAT) ? arg_base.dado.f : (float)arg_base.dado.i;
+                float e = (arg_exp.tipo == TIPO_FLOAT) ? arg_exp.dado.f : (float)arg_exp.dado.i;
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                res.dado.f = math_pow(b, e);
+                return res;
             }
             
             for (int i = 0; i < param_count; i++) {

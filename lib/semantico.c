@@ -141,10 +141,38 @@ static int verificarAtribuicao(int tipoAlvo, int tipoExpr, const char *nome) {
     return TIPO_ERRO;
 }
 
+static void injetarFuncaoMath(char *nome_funcao, int qtd_parametros, Celula **tabela) {
+    Valor v = {0};
+    v.tipo = TIPO_FUNC;
+    
+    No **params = NULL;
+    if (qtd_parametros > 0) {
+        params = malloc(qtd_parametros * sizeof(No*));
+        for (int i = 0; i < qtd_parametros; i++) {
+            params[i] = noDecl(TIPO_FLOAT, strdup("p"));
+        }
+    }
+    
+    No *bloco_params = noBloco(params, qtd_parametros);
+    No *func_ast = noFuncDecl(TIPO_FLOAT, strdup(nome_funcao), bloco_params, NULL);
+    
+    v.dado.func_ast = func_ast;
+    inserirSimbolo(nome_funcao, TIPO_FUNC, v, tabela);
+}
+
 static void checarNo(No *no, Celula **tabela) {
     if (!no) return;
 
     switch (no->tipo) {
+        case NO_INCLUDE_MATH: {
+            injetarFuncaoMath("sqrt", 1, tabela);
+            injetarFuncaoMath("pow", 2, tabela);
+            injetarFuncaoMath("abs", 1, tabela);
+            injetarFuncaoMath("floor", 1, tabela);
+            injetarFuncaoMath("ceil", 1, tabela);
+            injetarFuncaoMath("round", 1, tabela);
+            break;
+        }
         case NO_BLOCO:
             for (int i = 0; i < no->u.bloco.count; i++)
                 checarNo(no->u.bloco.stmts[i], tabela);

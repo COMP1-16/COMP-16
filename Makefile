@@ -6,7 +6,7 @@ TARGET = lib/interpreter
 CFLAGS  = -Wall -Wextra -g -I.
 
 SRCS = parser.tab.c lex.yy.c \
-       lib/ast.c lib/simbolos.c lib/semantico.c lib/otimizador.c lib/interpreter.c lib/funcs.c src/main.c
+       lib/ast.c lib/simbolos.c lib/semantico.c lib/otimizador.c lib/interpreter.c lib/funcs.c lib/math.c src/main.c
 
 all: build
 
