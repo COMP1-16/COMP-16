@@ -19,8 +19,16 @@
 "while"             { return KW_WHILE;  }
 "for"               { return KW_FOR;    }
 
+    /* --- estruturas de switch case --- */
+
+"switch"            { return KW_SWITCH; }
+"case"              { return KW_CASE; }
+"default"           { return KW_DEFAULT; }
+
+
     /* --- palavras-chave --- */
 "return"            { return KW_RETURN; }
+"break"             { return KW_BREAK; }
 "printf"            { return KW_PRINTF; }
 
     /* --- tipos --- */
@@ -91,6 +99,7 @@
 "}"                 { return R_CRLRBRACKET;  }
 ","                 { return COMMA;          }
 ";"                 { return SEMICOLON;      }
+":"                 { return COLON; }
 
     /* --- caractere inválido --- */
 .                   { fprintf(stderr, "[Lexico] Linha %d: caractere invalido '%s'\n",
