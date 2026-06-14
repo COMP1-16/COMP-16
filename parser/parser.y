@@ -32,8 +32,8 @@ static int tipoAtual;
 %token <sStr>   STRING
 %token <sStr>   ID
 
-%type <no> stmt expr declaracao declaradores declarador atualizacao if_stmt while_stmt for_stmt for_init for_cond for_inc
-%type <no> bloco stmts param_list_opt param_list param arg_list_opt arg_list funcao_decl
+%type <no> stmt expr declaracao declaradores declarador atualizacao if_stmt switch_stmt case_stmt while_stmt for_stmt for_init for_cond for_inc
+%type <no> bloco stmts switch_cases stmt_list_opt param_list_opt param_list param arg_list_opt arg_list funcao_decl
 
 %token EQUAL DIFF LESS_EQ GREAT_EQ LESSER GREATER
 %token UPDT_PLUS UPDT_MINUS UPDT_TIMES UPDT_DIVIDE UPDT_INC UPDT_DEC
@@ -41,9 +41,9 @@ static int tipoAtual;
 %token PLUS MINUS TIMES DIVIDE MOD
 %token L_PAREN R_PAREN L_SQBRACKET R_SQBRACKET L_CRLRBRACKET R_CRLRBRACKET
 %token AND OR NOT ADDR
-%token SEMICOLON COMMA
-%token KW_RETURN KW_PRINTF
-%token KW_IF KW_ELSE KW_WHILE KW_FOR
+%token SEMICOLON COMMA COLON
+%token KW_RETURN KW_BREAK KW_PRINTF
+%token KW_IF KW_ELSE KW_WHILE KW_FOR KW_SWITCH KW_CASE KW_DEFAULT
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
 
 %left EQUAL DIFF
@@ -191,6 +191,25 @@ if_stmt
     : KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, NULL); }
     | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, $8); }
     | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE if_stmt { $$ = noIf($2, $4, $7); }
+    ;
+
+case_stmt
+    : KW_CASE NUM COLON stmt_list_opt      { $$ = noCase($2, $4); }
+    | KW_CASE CHAR_LIT COLON stmt_list_opt { $$ = noCase($2, $4); }
+    | KW_DEFAULT COLON stmt_list_opt       { $$ = noDefault($3); }
+    ;
+stmt_list_opt
+    : stmts { $$ = $1; }
+    | { $$ = NULL; }/* vazio */
+    ;
+
+switch_stmt
+    : KW_SWITCH L_PAREN expr R_PAREN L_CRLRBRACKET switch_cases R_CRLRBRACKET { $$ = noSwitch($3, $6); }
+    ;
+
+switch_cases
+    : switch_cases case_stmt { $$ = $1; $$->u.bloco.stmts = realloc($$->u.bloco.stmts, ($$->u.bloco.count + 1) * sizeof(No*)); $$->u.bloco.stmts[$$->u.bloco.count++] = $2; }
+    | case_stmt { $$ = noBloco(&$1, 1); }
     ;
 
 while_stmt
