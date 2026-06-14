@@ -1,0 +1,8 @@
+switch (x) {
+    case 1:
+        y = 10;
+    default:
+        y = 0;
+    default:
+        y = 99;
+}

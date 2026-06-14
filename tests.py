@@ -2,6 +2,7 @@ import os
 import subprocess
 
 EXEC = "./lib/interpreter" # Certifique-se que o caminho está correto
+TEST = "./parser/parser_test"
 
 # Cores para o terminal
 GREEN = "\033[92m"
@@ -15,14 +16,21 @@ def run_test(file_path):
         content = f.read()
 
     result = subprocess.run(
-        [EXEC],
+        [TEST],
         input=content,
         text=True,
         capture_output=True
     )
     return result.stdout, result.stderr
 
-def run_tests(folder, expect_error=False):
+def run_tests(folder):
+
+    if "validos" in folder:
+        expect_error = False
+
+    if "invalidos" in folder:
+        expect_error = True
+
     tipo_pasta = "INVÁLIDOS (Esperando Erro)" if expect_error else "VÁLIDOS (Sucesso)"
     print(f"\n{CYAN}--- Testando: {folder} [{tipo_pasta}] ---{RESET}")
 
@@ -80,17 +88,13 @@ if __name__ == "__main__":
 
     # Estrutura plana conforme sua solicitação
     categorias = [
-        "testes/atualizacao/sintatico",
-        "testes/atualizacao/semantico",
-        "testes/declaracao/sintatico",
-        "testes/declaracao/semantico",
-        "testes/operadores-aritmeticos/sintatico"
-        "testes/operadores-aritmeticos/semantico"
+        "testes/switch_case/sintatico/invalidos",
+        "testes/switch_case/sintatico/validos",
     ]
 
     for pasta in categorias:
         # Rodamos a pasta diretamente
-        p, f = run_tests(pasta, expect_error=False)
+        p, f = run_tests(pasta)
         total_passed += p
         total_failed += f
 
