@@ -1,0 +1,11 @@
+#include <math.h>
+
+printf("sqrt(16)=%f\n", sqrt(16.0));
+printf("pow(2,3)=%f\n", pow(2.0, 3.0));
+printf("abs(-5)=%f\n", abs(-5.0));
+printf("floor(3.14)=%f\n", floor(3.14));
+printf("ceil(3.14)=%f\n", ceil(3.14));
+printf("round(3.5)=%f\n", round(3.5));
+printf("floor(-2.5)=%f\n", floor(-2.5));
+printf("ceil(-2.5)=%f\n", ceil(-2.5));
+printf("pow(2,-1)=%f\n", pow(2.0, -1.0));
