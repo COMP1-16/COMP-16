@@ -82,10 +82,12 @@ stmt
     | atualizacao
     | expr SEMICOLON
     | KW_RETURN expr SEMICOLON { $$ = noReturn($2); }
+    | KW_BREAK SEMICOLON { $$ = noBreak(); }
     | KW_PRINTF L_PAREN arg_list_opt R_PAREN SEMICOLON { $$ = noPrintf($3); }
     | if_stmt
     | while_stmt
     | for_stmt
+    | switch_stmt
     ;
 
 declaracao
@@ -194,8 +196,8 @@ if_stmt
     ;
 
 case_stmt
-    : KW_CASE NUM COLON stmt_list_opt      { $$ = noCase($2, $4); }
-    | KW_CASE CHAR_LIT COLON stmt_list_opt { $$ = noCase($2, $4); }
+    : KW_CASE NUM COLON stmt_list_opt      { $$ = noCaseInt($2, $4); }
+    | KW_CASE CHAR_LIT COLON stmt_list_opt { $$ = noCaseChar($2, $4); }
     | KW_DEFAULT COLON stmt_list_opt       { $$ = noDefault($3); }
     ;
 stmt_list_opt
