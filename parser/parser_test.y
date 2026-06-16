@@ -63,6 +63,7 @@ stmt
     | atualizacao                                            { REDUCE("stmt -> atualizacao"); }
     | expr SEMICOLON                                         { REDUCE("stmt -> expr ;"); }
     | KW_RETURN expr SEMICOLON                               { REDUCE("stmt -> return expr ;"); }
+    | KW_BREAK SEMICOLON                                    { REDUCE("stmt -> break ;"); }
     | KW_PRINTF L_PAREN arg_list_opt R_PAREN SEMICOLON      { REDUCE("stmt -> printf(arg_list_opt) ;"); }
     | if_stmt                                                { REDUCE("stmt -> if_stmt"); }
     | while_stmt                                             { REDUCE("stmt -> while_stmt"); }
