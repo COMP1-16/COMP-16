@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "otimizador.h"
 #include "math.h"
+#include "stdlib.h"
 
 /* ================================================================== *
  * liberarNo — libera recursivamente uma subárvore                     *
@@ -577,6 +578,7 @@ No *otimizar(No *no) {
         case NO_ID:
         case NO_DECL:
         case NO_INCLUDE_MATH:
+        case NO_INCLUDE_STDLIB:
             return no;
 
         default:
@@ -650,6 +652,22 @@ No *otimizar(No *no) {
                 No *arg2 = no->u.call.args->u.bloco.stmts[1];
                 if (ehLiteralNum(arg1) && ehLiteralNum(arg2)) {
                     float res = math_pow(valorFloat(arg1), valorFloat(arg2));
+                    liberarNo(no);
+                    return noFloat(res);
+                }
+            }
+            if (strcmp(no->nome, "atoi") == 0 && no->u.call.args && no->u.call.args->u.bloco.count == 1) {
+                No *arg = no->u.call.args->u.bloco.stmts[0];
+                if (arg && arg->tipo == NO_STR) {
+                    int res = stdlib_atoi(arg->sval);
+                    liberarNo(no);
+                    return noInt(res);
+                }
+            }
+            if (strcmp(no->nome, "atof") == 0 && no->u.call.args && no->u.call.args->u.bloco.count == 1) {
+                No *arg = no->u.call.args->u.bloco.stmts[0];
+                if (arg && arg->tipo == NO_STR) {
+                    float res = stdlib_atof(arg->sval);
                     liberarNo(no);
                     return noFloat(res);
                 }

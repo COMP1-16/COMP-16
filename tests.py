@@ -16,14 +16,13 @@ def _resolve_exec():
 
 EXEC = _resolve_exec()
 
-# Cores para o terminal
 GREEN = "\033[92m"
 RED = "\033[91m"
 YELLOW = "\033[93m"
 CYAN = "\033[96m"
 RESET = "\033[0m"
 
-def run_test(file_path, extra_args=None):
+def run_test_full(file_path, extra_args=None):
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -31,12 +30,19 @@ def run_test(file_path, extra_args=None):
     if extra_args:
         cmd.extend(extra_args)
 
-    result = subprocess.run(
+    return subprocess.run(
         cmd,
         input=content,
         text=True,
         capture_output=True
     )
+
+def _has_compiler_error(stderr):
+    err_lower = stderr.lower()
+    return any(tag in err_lower for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
+
+def run_test(file_path, extra_args=None):
+    result = run_test_full(file_path, extra_args)
     return result.stdout, result.stderr
 
 def run_optimizer_tests(folder="testes/otimizador"):
@@ -195,6 +201,53 @@ def run_output_tests(folder):
     print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{failed} FAIL{RESET}")
     return passed, failed
 
+def run_exitcode_tests(folder):
+    print(f"\n{CYAN}--- Testando codigo de saida (exit): {folder} ---{RESET}")
+
+    passed = 0
+    failed = 0
+
+    if not os.path.exists(folder):
+        print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} nao encontrada.")
+        return 0, 0
+
+    for file in sorted(os.listdir(folder)):
+        if not file.startswith("valido_") or not file.endswith(".txt"):
+            continue
+
+        path = os.path.join(folder, file)
+        exitcode_path = os.path.join(folder, file[:-4] + ".exitcode")
+        if not os.path.isfile(exitcode_path):
+            continue
+
+        with open(exitcode_path, "r", encoding="utf-8") as f:
+            expected = int(f.read().strip())
+
+        result = run_test_full(path)
+
+        if _has_compiler_error(result.stderr):
+            print(f"{RED}[FAIL]{RESET} {file}")
+            linhas_erro = [l for l in result.stderr.split('\n') if '[' in l or 'error' in l.lower()]
+            motivo = " | ".join(linhas_erro) if linhas_erro else result.stderr.strip()
+            print(f"   {YELLOW}-> Motivo:{RESET} {motivo}")
+            print("-" * 50)
+            failed += 1
+            continue
+
+        if result.returncode == expected:
+            print(f"{GREEN}[OK]{RESET}   {file} (exit={expected})")
+            passed += 1
+        else:
+            print(f"{RED}[FAIL]{RESET} {file}")
+            print(f"   {YELLOW}-> Motivo:{RESET} codigo de saida difere do esperado")
+            print(f"   {CYAN}-> obtido:{RESET} {result.returncode}")
+            print(f"   {CYAN}-> esperado:{RESET} {expected}")
+            print("-" * 50)
+            failed += 1
+
+    print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{failed} FAIL{RESET}")
+    return passed, failed
+
 if __name__ == "__main__":
     total_passed = 0
     total_failed = 0
@@ -219,6 +272,8 @@ if __name__ == "__main__":
         "testes/recursao",
         "testes/math/sintatico",
         "testes/math/semantico",
+        "testes/stdlib/sintatico",
+        "testes/stdlib/semantico",
     ]
 
     if len(sys.argv) > 1:
@@ -226,6 +281,7 @@ if __name__ == "__main__":
 
     run_full_suite = len(sys.argv) == 1
     run_math_execucao = run_full_suite or any("testes/math" in pasta for pasta in categorias)
+    run_stdlib_execucao = run_full_suite or any("testes/stdlib" in pasta for pasta in categorias)
 
     for pasta in categorias:
         p, fe, r = run_tests(pasta)
@@ -239,6 +295,20 @@ if __name__ == "__main__":
         total_failed += fe + r
         total_regressoes += r
         p, f = run_output_tests("testes/math/execucao")
+        total_passed += p
+        total_failed += f
+        total_regressoes += f
+
+    if run_stdlib_execucao:
+        p, fe, r = run_tests("testes/stdlib/execucao")
+        total_passed += p
+        total_failed += fe + r
+        total_regressoes += r
+        p, f = run_output_tests("testes/stdlib/execucao")
+        total_passed += p
+        total_failed += f
+        total_regressoes += f
+        p, f = run_exitcode_tests("testes/stdlib/execucao")
         total_passed += p
         total_failed += f
         total_regressoes += f

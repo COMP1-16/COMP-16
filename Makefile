@@ -6,7 +6,7 @@ TARGET = lib/interpreter
 CFLAGS  = -Wall -Wextra -g -I.
 
 SRCS = parser.tab.c lex.yy.c \
-       lib/ast.c lib/simbolos.c lib/semantico.c lib/otimizador.c lib/interpreter.c lib/funcs.c lib/math.c src/main.c
+       lib/ast.c lib/simbolos.c lib/semantico.c lib/otimizador.c lib/interpreter.c lib/funcs.c lib/math.c lib/stdlib.c src/main.c
 
 all: build
 
@@ -44,6 +44,9 @@ test: build
 
 test-math: build
 	$(call RUN_TESTS,testes/math/sintatico testes/math/semantico)
+
+test-stdlib: build
+	$(call RUN_TESTS,testes/stdlib/sintatico testes/stdlib/semantico)
 
 clean:
 	rm -f lex.yy.c parser.tab.c parser.tab.h $(TARGET)

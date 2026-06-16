@@ -45,8 +45,7 @@ static int tipoAtual;
 %token KW_RETURN KW_PRINTF
 %token KW_IF KW_ELSE KW_WHILE KW_FOR
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
-%token INCLUDE_MATH
-
+%token INCLUDE_MATH INCLUDE_STDLIB
 
 %left EQUAL DIFF
 %left LESSER GREATER LESS_EQ GREAT_EQ
@@ -89,6 +88,7 @@ stmt
     | while_stmt
     | for_stmt
     | INCLUDE_MATH { $$ = noIncludeMath(); }
+    | INCLUDE_STDLIB { $$ = noIncludeStdlib(); }
     ;
 
 declaracao
