@@ -11,6 +11,7 @@
 
     /* --- includes --- */
 "#include <math.h>" { return INCLUDE_MATH; }
+"#include <stdlib.h>" { return INCLUDE_STDLIB; }
 
     /* --- espaço e comentários --- */
 [ \t\r\n]+          { /* ignora espaço em branco */ }

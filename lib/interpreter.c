@@ -4,6 +4,8 @@
 #include "funcs.h"
 #include "interpreter.h"
 #include "math.h"
+#include "stdlib.h"
+#include "semantico.h"
 
 static int compatibilidade_casting(int tipo) {
     return (tipo == TIPO_INT || tipo == TIPO_FLOAT || tipo == TIPO_DOUBLE ||
@@ -71,6 +73,10 @@ Valor avaliar(No *no, Celula **tabela) {
 
     switch (no->tipo) {
         case NO_INCLUDE_MATH:
+            registrar_math(tabela);
+            return resultado;
+        case NO_INCLUDE_STDLIB:
+            registrar_stdlib(tabela);
             return resultado;
         case NO_INT:
             resultado.tipo = TIPO_INT;
@@ -355,13 +361,48 @@ Valor avaliar(No *no, Celula **tabela) {
                 return res;
             }
             
+            if (strcmp(no->nome, "atoi") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                if (arg.tipo != TIPO_STR) {
+                    fprintf(stderr, "[Runtime] Erro: atoi espera string\n");
+                    liberarTabelaSimbolos(tabela_local);
+                    exit(1);
+                }
+                Valor res = {0};
+                res.tipo = TIPO_INT;
+                res.dado.i = stdlib_atoi(arg.dado.s);
+                liberarTabelaSimbolos(tabela_local);
+                return res;
+            }
+
+            if (strcmp(no->nome, "atof") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                if (arg.tipo != TIPO_STR) {
+                    fprintf(stderr, "[Runtime] Erro: atof espera string\n");
+                    liberarTabelaSimbolos(tabela_local);
+                    exit(1);
+                }
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                res.dado.f = stdlib_atof(arg.dado.s);
+                liberarTabelaSimbolos(tabela_local);
+                return res;
+            }
+
+            if (strcmp(no->nome, "exit") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                int code = (arg.tipo == TIPO_FLOAT) ? (int)arg.dado.f : arg.dado.i;
+                liberarTabelaSimbolos(tabela_local);
+                stdlib_exit(code);
+            }
+
             for (int i = 0; i < param_count; i++) {
                 Valor arg_val = avaliar(args->u.bloco.stmts[i], tabela);
                 No *param_decl = params->u.bloco.stmts[i];
                 arg_val = coercionar(arg_val, param_decl->tipoDeclarado);
                 inserirSimbolo(param_decl->nome, param_decl->tipoDeclarado, arg_val, tabela_local);
             }
-            
+
             int old_has_returned = has_returned;
             Valor old_return_val = return_val;
             has_returned = 0;

@@ -178,3 +178,7 @@ No *noFuncCall(char *nome, No *args) {
 No *noIncludeMath() {
     return alocar(NO_INCLUDE_MATH);
 }
+
+No *noIncludeStdlib() {
+    return alocar(NO_INCLUDE_STDLIB);
+}
