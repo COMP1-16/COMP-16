@@ -10,6 +10,10 @@ typedef enum {
     NO_BINOP,
     NO_RELACIONAL,
     NO_IF,
+    NO_SWITCH,
+    NO_CASE_INT,
+    NO_CASE_CHAR,
+    NO_DEFAULT,
     NO_WHILE,
     NO_FOR,
     NO_DECL,
@@ -20,6 +24,7 @@ typedef enum {
     NO_DEC,
     NO_BLOCO,
     NO_RETURN,
+    NO_BREAK,
     NO_LOGICAL_AND,
     NO_LOGICAL_OR,
     NO_NOT,
@@ -72,6 +77,26 @@ typedef struct No {
             struct No *elseBranch;
         } if_stmt;
 
+        struct {
+            struct No *value;
+            struct No *cases;
+        } switch_stmt;
+
+        struct {
+            struct No *value;
+            struct No *stmts;
+        } case_int;
+
+        struct {
+            struct No *value;
+            struct No *stmts;
+        } case_char;
+
+        struct {
+            struct No *stmts;
+        } case_default;
+        
+
         /* NO_WHILE */
         struct {
             struct No *cond;
@@ -120,8 +145,13 @@ No *noInc(char *nome);
 No *noDec(char *nome);
 No *noBloco(No **stmts, int count);
 No *noReturn(No *expr);
+No *noBreak();
 No *noRelacional(TipoRelacional op, No *esq, No *dir);
 No *noIf(No *cond, No *thenBranch, No *elseBranch);
+No *noSwitch(No *value, No* cases);
+No *noCaseInt(int value, No* stmts);
+No *noCaseChar(char value, No* stmts);
+No *noDefault(No* stmts);
 No *noWhile(No *cond, No *body);
 No *noFor(No *init, No *cond, No *inc, No *body);
 No *noLogicalAnd(No *esq, No *dir);
