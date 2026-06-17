@@ -216,6 +216,65 @@ static void checarNo(No *no, Celula **tabela) {
                 checarNo(no->u.if_stmt.elseBranch, tabela);
             break;
         }
+        case NO_ID: {
+            if(!buscarSimboloSemantico(no->nome, tabela)){
+                erroSem("variavel não declarada\n");
+            }
+            break;
+        }
+        case NO_SWITCH: {
+            #define MAX_CASES 256
+            checarNo(no->u.switch_stmt.value, tabela);
+            int visto[MAX_CASES] = {0};
+            int vistoCount = 0;
+            int intToVerify;
+            int count = no->u.switch_stmt.cases->u.bloco.count;
+
+            int defaultCount = 0;
+
+            for(int i = 0; i < count; i++ ){
+                if(defaultCount >= 1){
+                    erroSem("mais de um bloco default em switch_stmt");
+                    break;
+                }
+                if(vistoCount >= MAX_CASES){
+                    erroSem("Erro: numero de cases excede o limite.");
+                }
+                switch (no->u.switch_stmt.cases->u.bloco.stmts[i]->tipo) {
+                    case NO_DEFAULT:
+                        defaultCount++;
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_default.stmts, tabela);
+                        break;
+                    case NO_CASE_INT:
+                        intToVerify = no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_int.value->ival;
+                        for(int j = 0; j < vistoCount; j++){
+                            if(visto[j] == intToVerify){
+                                char msg[35];
+                                snprintf(msg, sizeof(msg),"Case nº %d se repetiu", i+1);
+                                erroSem(msg);
+                                break;
+                            }
+                        }
+                        visto[vistoCount++] = intToVerify;
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_int.stmts, tabela);
+                        break;
+                    case NO_CASE_CHAR:
+                        intToVerify = (int) no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_char.value->cval;
+                        for(int j = 0; j < vistoCount; j++){
+                            if(visto[j] == intToVerify){
+                                char msg[35];
+                                snprintf(msg, sizeof(msg),"Case nº %d se repetiu", i);
+                                erroSem(msg);
+                                break;
+                            }
+                        }
+                        visto[vistoCount++] = intToVerify;
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_char.stmts, tabela);
+                        break;
+                }
+            }
+            break;
+        }
         case NO_WHILE: {
             int tipoCond = resolverTipo(no->u.while_stmt.cond, tabela);
             if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_ERRO) {
