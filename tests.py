@@ -104,11 +104,38 @@ def run_tests(folder, expect_error=False):
         print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} não encontrada.")
         return 0, 0, 0
 
-    for file in sorted(os.listdir(folder)):
-        path = os.path.join(folder, file)
-        
-        # Ignora pastas e arquivos que nao sao casos de teste (.txt)
-        if os.path.isdir(path) or not file.endswith(".txt"):
+    if os.path.isfile(folder):
+        arquivos = [os.path.basename(folder)]
+        pasta = os.path.dirname(folder) or "."
+    else:
+        arquivos = sorted(os.listdir(folder))
+        pasta = folder
+
+    for file in arquivos:
+        path = os.path.join(pasta, file)
+
+        if os.path.isdir(path):
+            continue
+
+        if file.endswith(".expected"):
+            txt = file[:-9] + ".txt"
+            if not os.path.isfile(os.path.join(pasta, txt)):
+                print(f"{RED}[FAIL]{RESET} {file}")
+                print(f"   {YELLOW}-> Motivo:{RESET} arquivo .expected sem par valido_*.txt correspondente")
+                print("-" * 50)
+                fail_regressao += 1
+            continue
+
+        if file.endswith(".exitcode"):
+            txt = file[:-9] + ".txt"
+            if not os.path.isfile(os.path.join(pasta, txt)):
+                print(f"{RED}[FAIL]{RESET} {file}")
+                print(f"   {YELLOW}-> Motivo:{RESET} arquivo .exitcode sem par valido_*.txt correspondente")
+                print("-" * 50)
+                fail_regressao += 1
+            continue
+
+        if not file.endswith(".txt"):
             continue
 
         if file.startswith("valido_"):
@@ -118,11 +145,9 @@ def run_tests(folder, expect_error=False):
         else:
             continue
 
-        out, err = run_test(path)
-        err_lower = err.lower()
-        
-        # Identifica se houve erro por meio das tags que vocês criaram no C
-        has_error = any(tag in err_lower for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
+        result = run_test_full(path)
+        out, err = result.stdout, result.stderr
+        has_error = _has_compiler_error(err)
 
         if expect:
             if has_error:
@@ -136,8 +161,41 @@ def run_tests(folder, expect_error=False):
                 print("-" * 50)
                 fail_regressao += 1
         elif not has_error:
-            print(f"{GREEN}[OK]{RESET}   {file}")
-            passed += 1
+            falhas_extra = []
+
+            expected_path = os.path.join(pasta, file[:-4] + ".expected")
+            if os.path.isfile(expected_path):
+                with open(expected_path, "r", encoding="utf-8") as f:
+                    expected = f.read()
+                if out != expected:
+                    falhas_extra.append("saida difere do .expected")
+                    print(f"{RED}[FAIL]{RESET} {file} (.expected)")
+                    print(f"   {CYAN}-> obtido:{RESET} {repr(out)}")
+                    print(f"   {CYAN}-> esperado:{RESET} {repr(expected)}")
+                    print("-" * 50)
+
+            exitcode_path = os.path.join(pasta, file[:-4] + ".exitcode")
+            if os.path.isfile(exitcode_path):
+                with open(exitcode_path, "r", encoding="utf-8") as f:
+                    expected_code = int(f.read().strip())
+                if result.returncode != expected_code:
+                    falhas_extra.append("exit code difere do .exitcode")
+                    print(f"{RED}[FAIL]{RESET} {file} (.exitcode)")
+                    print(f"   {CYAN}-> obtido:{RESET} {result.returncode}")
+                    print(f"   {CYAN}-> esperado:{RESET} {expected_code}")
+                    print("-" * 50)
+
+            if falhas_extra:
+                fail_regressao += 1
+            else:
+                extras = []
+                if os.path.isfile(expected_path):
+                    extras.append(".expected")
+                if os.path.isfile(exitcode_path):
+                    extras.append(f".exitcode={result.returncode}")
+                sufixo = f" ({', '.join(extras)})" if extras else ""
+                print(f"{GREEN}[OK]{RESET}   {file}{sufixo}")
+                passed += 1
         else:
             print(f"{RED}[FAIL]{RESET} {file}")
             linhas_erro = [l for l in err.split('\n') if '[' in l or 'error' in l.lower()]
@@ -152,108 +210,11 @@ def run_tests(folder, expect_error=False):
     print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{fail_total} FAIL{RESET}")
     return passed, fail_esperado, fail_regressao
 
-def run_output_tests(folder):
-    print(f"\n{CYAN}--- Testando saida esperada: {folder} ---{RESET}")
-
-    passed = 0
-    failed = 0
-
-    if not os.path.exists(folder):
-        print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} nao encontrada.")
-        return 0, 0
-
-    for file in sorted(os.listdir(folder)):
-        if not file.startswith("valido_") or not file.endswith(".txt"):
-            continue
-
-        path = os.path.join(folder, file)
-        expected_path = os.path.join(folder, file[:-4] + ".expected")
-        if not os.path.isfile(expected_path):
-            continue
-
-        with open(expected_path, "r", encoding="utf-8") as f:
-            expected = f.read()
-
-        out, err = run_test(path)
-        err_lower = err.lower()
-        has_error = any(tag in err_lower for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
-
-        if has_error:
-            print(f"{RED}[FAIL]{RESET} {file}")
-            linhas_erro = [l for l in err.split('\n') if '[' in l or 'error' in l.lower()]
-            motivo = " | ".join(linhas_erro) if linhas_erro else err.strip()
-            print(f"   {YELLOW}-> Motivo:{RESET} {motivo}")
-            print("-" * 50)
-            failed += 1
-            continue
-
-        if out == expected:
-            print(f"{GREEN}[OK]{RESET}   {file}")
-            passed += 1
-        else:
-            print(f"{RED}[FAIL]{RESET} {file}")
-            print(f"   {YELLOW}-> Motivo:{RESET} saida difere do esperado")
-            print(f"   {CYAN}-> obtido:{RESET} {repr(out)}")
-            print(f"   {CYAN}-> esperado:{RESET} {repr(expected)}")
-            print("-" * 50)
-            failed += 1
-
-    print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{failed} FAIL{RESET}")
-    return passed, failed
-
-def run_exitcode_tests(folder):
-    print(f"\n{CYAN}--- Testando codigo de saida (exit): {folder} ---{RESET}")
-
-    passed = 0
-    failed = 0
-
-    if not os.path.exists(folder):
-        print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} nao encontrada.")
-        return 0, 0
-
-    for file in sorted(os.listdir(folder)):
-        if not file.startswith("valido_") or not file.endswith(".txt"):
-            continue
-
-        path = os.path.join(folder, file)
-        exitcode_path = os.path.join(folder, file[:-4] + ".exitcode")
-        if not os.path.isfile(exitcode_path):
-            continue
-
-        with open(exitcode_path, "r", encoding="utf-8") as f:
-            expected = int(f.read().strip())
-
-        result = run_test_full(path)
-
-        if _has_compiler_error(result.stderr):
-            print(f"{RED}[FAIL]{RESET} {file}")
-            linhas_erro = [l for l in result.stderr.split('\n') if '[' in l or 'error' in l.lower()]
-            motivo = " | ".join(linhas_erro) if linhas_erro else result.stderr.strip()
-            print(f"   {YELLOW}-> Motivo:{RESET} {motivo}")
-            print("-" * 50)
-            failed += 1
-            continue
-
-        if result.returncode == expected:
-            print(f"{GREEN}[OK]{RESET}   {file} (exit={expected})")
-            passed += 1
-        else:
-            print(f"{RED}[FAIL]{RESET} {file}")
-            print(f"   {YELLOW}-> Motivo:{RESET} codigo de saida difere do esperado")
-            print(f"   {CYAN}-> obtido:{RESET} {result.returncode}")
-            print(f"   {CYAN}-> esperado:{RESET} {expected}")
-            print("-" * 50)
-            failed += 1
-
-    print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{failed} FAIL{RESET}")
-    return passed, failed
-
 if __name__ == "__main__":
     total_passed = 0
     total_failed = 0
     total_regressoes = 0
 
-    # Estrutura plana conforme sua solicitação
     categorias = [
         "testes/atualizacao_variaveis/semantico",
         "testes/atualizacao_variaveis/valido_auto_inc.txt",
@@ -274,6 +235,8 @@ if __name__ == "__main__":
         "testes/math/semantico",
         "testes/stdlib/sintatico",
         "testes/stdlib/semantico",
+        "testes/ctype/sintatico",
+        "testes/ctype/semantico",
     ]
 
     if len(sys.argv) > 1:
@@ -282,6 +245,7 @@ if __name__ == "__main__":
     run_full_suite = len(sys.argv) == 1
     run_math_execucao = run_full_suite or any("testes/math" in pasta for pasta in categorias)
     run_stdlib_execucao = run_full_suite or any("testes/stdlib" in pasta for pasta in categorias)
+    run_ctype_execucao = run_full_suite or any("testes/ctype" in pasta for pasta in categorias)
 
     for pasta in categorias:
         p, fe, r = run_tests(pasta)
@@ -294,24 +258,18 @@ if __name__ == "__main__":
         total_passed += p
         total_failed += fe + r
         total_regressoes += r
-        p, f = run_output_tests("testes/math/execucao")
-        total_passed += p
-        total_failed += f
-        total_regressoes += f
 
     if run_stdlib_execucao:
         p, fe, r = run_tests("testes/stdlib/execucao")
         total_passed += p
         total_failed += fe + r
         total_regressoes += r
-        p, f = run_output_tests("testes/stdlib/execucao")
+
+    if run_ctype_execucao:
+        p, fe, r = run_tests("testes/ctype/execucao")
         total_passed += p
-        total_failed += f
-        total_regressoes += f
-        p, f = run_exitcode_tests("testes/stdlib/execucao")
-        total_passed += p
-        total_failed += f
-        total_regressoes += f
+        total_failed += fe + r
+        total_regressoes += r
 
     if run_full_suite:
         p, f = run_optimizer_tests()

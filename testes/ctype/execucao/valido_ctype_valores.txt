@@ -1,0 +1,8 @@
+#include <ctype.h>
+
+printf("%d\n", isalpha('A'));
+printf("%d\n", isalpha('5'));
+printf("%d\n", isdigit('5'));
+printf("%d\n", isdigit('A'));
+printf("%d\n", isspace(' '));
+printf("%d\n", isspace('x'));

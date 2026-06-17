@@ -5,6 +5,7 @@
 #include "interpreter.h"
 #include "math.h"
 #include "stdlib.h"
+#include "ctype.h"
 #include "semantico.h"
 
 static int compatibilidade_casting(int tipo) {
@@ -77,6 +78,9 @@ Valor avaliar(No *no, Celula **tabela) {
             return resultado;
         case NO_INCLUDE_STDLIB:
             registrar_stdlib(tabela);
+            return resultado;
+        case NO_INCLUDE_CTYPE:
+            registrar_ctype(tabela);
             return resultado;
         case NO_INT:
             resultado.tipo = TIPO_INT;
@@ -394,6 +398,19 @@ Valor avaliar(No *no, Celula **tabela) {
                 int code = (arg.tipo == TIPO_FLOAT) ? (int)arg.dado.f : arg.dado.i;
                 liberarTabelaSimbolos(tabela_local);
                 stdlib_exit(code);
+            }
+
+            if (strcmp(no->nome, "isalpha") == 0 || strcmp(no->nome, "isdigit") == 0 ||
+                strcmp(no->nome, "isspace") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                char c = (arg.tipo == TIPO_CHAR) ? arg.dado.c : (char)arg.dado.i;
+                Valor res = {0};
+                res.tipo = TIPO_INT;
+                if (strcmp(no->nome, "isalpha") == 0) res.dado.i = ctype_isalpha(c);
+                else if (strcmp(no->nome, "isdigit") == 0) res.dado.i = ctype_isdigit(c);
+                else res.dado.i = ctype_isspace(c);
+                liberarTabelaSimbolos(tabela_local);
+                return res;
             }
 
             for (int i = 0; i < param_count; i++) {

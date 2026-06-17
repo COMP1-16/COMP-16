@@ -4,6 +4,7 @@
 #include "otimizador.h"
 #include "math.h"
 #include "stdlib.h"
+#include "ctype.h"
 
 /* ================================================================== *
  * liberarNo — libera recursivamente uma subárvore                     *
@@ -579,6 +580,7 @@ No *otimizar(No *no) {
         case NO_DECL:
         case NO_INCLUDE_MATH:
         case NO_INCLUDE_STDLIB:
+        case NO_INCLUDE_CTYPE:
             return no;
 
         default:
@@ -629,8 +631,8 @@ No *otimizar(No *no) {
 
         case NO_FUNC_CALL:
             if ((strcmp(no->nome, "sqrt") == 0 || strcmp(no->nome, "abs") == 0 ||
-                 strcmp(no->nome, "floor") == 0 || strcmp(no->nome, "ceil") == 0 ||
-                 strcmp(no->nome, "round") == 0) &&
+                strcmp(no->nome, "floor") == 0 || strcmp(no->nome, "ceil") == 0 ||
+                strcmp(no->nome, "round") == 0) &&
                 no->u.call.args && no->u.call.args->u.bloco.count == 1) {
                 
                 No *arg = no->u.call.args->u.bloco.stmts[0];
@@ -670,6 +672,19 @@ No *otimizar(No *no) {
                     float res = stdlib_atof(arg->sval);
                     liberarNo(no);
                     return noFloat(res);
+                }
+            }
+            if ((strcmp(no->nome, "isalpha") == 0 || strcmp(no->nome, "isdigit") == 0 ||
+                 strcmp(no->nome, "isspace") == 0) &&
+                no->u.call.args && no->u.call.args->u.bloco.count == 1) {
+                No *arg = no->u.call.args->u.bloco.stmts[0];
+                if (arg && arg->tipo == NO_CHAR) {
+                    int res = 0;
+                    if (strcmp(no->nome, "isalpha") == 0) res = ctype_isalpha(arg->cval);
+                    else if (strcmp(no->nome, "isdigit") == 0) res = ctype_isdigit(arg->cval);
+                    else res = ctype_isspace(arg->cval);
+                    liberarNo(no);
+                    return noInt(res);
                 }
             }
             break;
