@@ -187,6 +187,47 @@ Valor avaliar(No *no, Celula **tabela) {
             }
             return resultado;
         }
+
+        case NO_SWITCH: {
+            Valor switchArg = avaliar(no->u.switch_stmt.value, tabela);
+            No* cases = no->u.switch_stmt.cases;
+
+            int matched = 0;
+
+            for(int i = 0; i < cases->u.bloco.count; i++){
+
+                switch (cases->u.bloco.stmts[i]->tipo) {
+                
+                    case NO_CASE_INT: {
+                        if (cases->u.bloco.stmts[i]->u.case_int.value->ival == switchArg.dado.i || matched == 1){
+                            resultado = avaliar(cases->u.bloco.stmts[i]->u.case_int.stmts, tabela);
+                            matched = 1;
+                        } 
+                        break;
+                    }
+                    case NO_CASE_CHAR: {
+                        if (cases->u.bloco.stmts[i]->u.case_char.value->cval == switchArg.dado.c || matched == 1){
+                            resultado = avaliar(cases->u.bloco.stmts[i]->u.case_char.stmts, tabela);
+                            matched = 1;
+                        } 
+                        break;
+                    }
+                    case NO_DEFAULT: {
+                        resultado = avaliar(cases->u.bloco.stmts[i]->u.case_default.stmts, tabela);
+                        matched = 1;
+                        break;
+                    }
+                    
+                }
+
+                if(resultado.tipo == TIPO_BREAK){
+                    return resultado;
+                }
+
+            }
+
+            return resultado;
+        }
         case NO_WHILE: {
             while (1) {
                 Valor cond = avaliar(no->u.while_stmt.cond, tabela);
@@ -250,13 +291,20 @@ Valor avaliar(No *no, Celula **tabela) {
         case NO_BLOCO:
             for (int i = 0; i < no->u.bloco.count; i++) {
                 resultado = avaliar(no->u.bloco.stmts[i], tabela);
+                if(resultado.tipo == TIPO_BREAK) return resultado;
                 if (has_returned) return return_val;
             }
             return resultado;
-        case NO_RETURN:
+        case NO_RETURN: {
             return_val = avaliar(no->u.bin.esq, tabela);
             has_returned = 1;
             return return_val;
+        }
+        case NO_BREAK: {
+            Valor breakingPoint;
+            breakingPoint.tipo = TIPO_BREAK;
+            return breakingPoint;
+        }
         case NO_PRINTF: {
             No *args = no->u.call.args;
             if (!args || args->u.bloco.count == 0) return resultado;
