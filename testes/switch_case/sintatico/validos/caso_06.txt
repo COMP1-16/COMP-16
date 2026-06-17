@@ -1,7 +1,0 @@
-switch (x) {
-    case 1:
-    case 2:
-        y = 10;
-    default:
-        y = 0;
-}
