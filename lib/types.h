@@ -13,6 +13,7 @@
 #define TIPO_BOOL     5
 #define TIPO_VOID     6
 #define TIPO_FUNC     7
+#define TIPO_BREAK    8
 
 struct No; /* Forward declaration */
 
