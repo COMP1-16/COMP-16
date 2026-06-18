@@ -1,0 +1,5 @@
+#include <stdlib.h>
+
+printf("%d\n", atoi("-17"));
+printf("%f\n", atof("2.5"));
+printf("%d\n", atoi("  100"));

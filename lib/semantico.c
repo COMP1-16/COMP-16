@@ -141,10 +141,55 @@ static int verificarAtribuicao(int tipoAlvo, int tipoExpr, const char *nome) {
     return TIPO_ERRO;
 }
 
+static void injetarFuncao(char *nome_funcao, int qtd_parametros,
+                          const int *tipos_param, int tipo_retorno, Celula **tabela) {
+    Valor v = {0};
+    v.tipo = TIPO_FUNC;
+
+    No **params = NULL;
+    if (qtd_parametros > 0) {
+        params = malloc(qtd_parametros * sizeof(No*));
+        for (int i = 0; i < qtd_parametros; i++) {
+            params[i] = noDecl(tipos_param[i], strdup("p"));
+        }
+    }
+
+    No *bloco_params = noBloco(params, qtd_parametros);
+    No *func_ast = noFuncDecl(tipo_retorno, strdup(nome_funcao), bloco_params, NULL);
+
+    v.dado.func_ast = func_ast;
+    inserirSimbolo(nome_funcao, TIPO_FUNC, v, tabela);
+}
+
+void registrar_math(Celula **tabela) {
+    int tipo_float[] = { TIPO_FLOAT };
+    int tipo_pow[] = { TIPO_FLOAT, TIPO_FLOAT };
+    injetarFuncao("sqrt", 1, tipo_float, TIPO_FLOAT, tabela);
+    injetarFuncao("pow", 2, tipo_pow, TIPO_FLOAT, tabela);
+    injetarFuncao("abs", 1, tipo_float, TIPO_FLOAT, tabela);
+    injetarFuncao("floor", 1, tipo_float, TIPO_FLOAT, tabela);
+    injetarFuncao("ceil", 1, tipo_float, TIPO_FLOAT, tabela);
+    injetarFuncao("round", 1, tipo_float, TIPO_FLOAT, tabela);
+}
+
+void registrar_stdlib(Celula **tabela) {
+    int tipo_str[] = { TIPO_STR };
+    int tipo_int[] = { TIPO_INT };
+    injetarFuncao("atoi", 1, tipo_str, TIPO_INT, tabela);
+    injetarFuncao("atof", 1, tipo_str, TIPO_FLOAT, tabela);
+    injetarFuncao("exit", 1, tipo_int, TIPO_VOID, tabela);
+}
+
 static void checarNo(No *no, Celula **tabela) {
     if (!no) return;
 
     switch (no->tipo) {
+        case NO_INCLUDE_MATH:
+            registrar_math(tabela);
+            break;
+        case NO_INCLUDE_STDLIB:
+            registrar_stdlib(tabela);
+            break;
         case NO_BLOCO:
             for (int i = 0; i < no->u.bloco.count; i++)
                 checarNo(no->u.bloco.stmts[i], tabela);
