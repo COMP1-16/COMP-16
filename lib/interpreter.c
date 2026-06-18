@@ -3,6 +3,9 @@
 #include <string.h>
 #include "funcs.h"
 #include "interpreter.h"
+#include "math.h"
+#include "stdlib.h"
+#include "semantico.h"
 
 static int compatibilidade_casting(int tipo) {
     return (tipo == TIPO_INT || tipo == TIPO_FLOAT || tipo == TIPO_DOUBLE ||
@@ -69,6 +72,12 @@ Valor avaliar(No *no, Celula **tabela) {
     if (!tabela_global) tabela_global = tabela;
 
     switch (no->tipo) {
+        case NO_INCLUDE_MATH:
+            registrar_math(tabela);
+            return resultado;
+        case NO_INCLUDE_STDLIB:
+            registrar_stdlib(tabela);
+            return resultado;
         case NO_INT:
             resultado.tipo = TIPO_INT;
             resultado.dado.i = no->ival;
@@ -324,13 +333,76 @@ Valor avaliar(No *no, Celula **tabela) {
                 exit(1);
             }
             
+            if (strcmp(no->nome, "sqrt") == 0 || strcmp(no->nome, "abs") == 0 ||
+                strcmp(no->nome, "floor") == 0 || strcmp(no->nome, "ceil") == 0 ||
+                strcmp(no->nome, "round") == 0) {
+                Valor arg_val = avaliar(args->u.bloco.stmts[0], tabela);
+                float val = (arg_val.tipo == TIPO_FLOAT) ? arg_val.dado.f : (float)arg_val.dado.i;
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                
+                if (strcmp(no->nome, "sqrt") == 0) res.dado.f = math_sqrt(val);
+                else if (strcmp(no->nome, "abs") == 0) res.dado.f = math_abs(val);
+                else if (strcmp(no->nome, "floor") == 0) res.dado.f = math_floor(val);
+                else if (strcmp(no->nome, "ceil") == 0) res.dado.f = math_ceil(val);
+                else if (strcmp(no->nome, "round") == 0) res.dado.f = math_round(val);
+                
+                return res;
+            }
+            
+            if (strcmp(no->nome, "pow") == 0) {
+                Valor arg_base = avaliar(args->u.bloco.stmts[0], tabela);
+                Valor arg_exp = avaliar(args->u.bloco.stmts[1], tabela);
+                float b = (arg_base.tipo == TIPO_FLOAT) ? arg_base.dado.f : (float)arg_base.dado.i;
+                float e = (arg_exp.tipo == TIPO_FLOAT) ? arg_exp.dado.f : (float)arg_exp.dado.i;
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                res.dado.f = math_pow(b, e);
+                return res;
+            }
+            
+            if (strcmp(no->nome, "atoi") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                if (arg.tipo != TIPO_STR) {
+                    fprintf(stderr, "[Runtime] Erro: atoi espera string\n");
+                    liberarTabelaSimbolos(tabela_local);
+                    exit(1);
+                }
+                Valor res = {0};
+                res.tipo = TIPO_INT;
+                res.dado.i = stdlib_atoi(arg.dado.s);
+                liberarTabelaSimbolos(tabela_local);
+                return res;
+            }
+
+            if (strcmp(no->nome, "atof") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                if (arg.tipo != TIPO_STR) {
+                    fprintf(stderr, "[Runtime] Erro: atof espera string\n");
+                    liberarTabelaSimbolos(tabela_local);
+                    exit(1);
+                }
+                Valor res = {0};
+                res.tipo = TIPO_FLOAT;
+                res.dado.f = stdlib_atof(arg.dado.s);
+                liberarTabelaSimbolos(tabela_local);
+                return res;
+            }
+
+            if (strcmp(no->nome, "exit") == 0) {
+                Valor arg = avaliar(args->u.bloco.stmts[0], tabela);
+                int code = (arg.tipo == TIPO_FLOAT) ? (int)arg.dado.f : arg.dado.i;
+                liberarTabelaSimbolos(tabela_local);
+                stdlib_exit(code);
+            }
+
             for (int i = 0; i < param_count; i++) {
                 Valor arg_val = avaliar(args->u.bloco.stmts[i], tabela);
                 No *param_decl = params->u.bloco.stmts[i];
                 arg_val = coercionar(arg_val, param_decl->tipoDeclarado);
                 inserirSimbolo(param_decl->nome, param_decl->tipoDeclarado, arg_val, tabela_local);
             }
-            
+
             int old_has_returned = has_returned;
             Valor old_return_val = return_val;
             has_returned = 0;

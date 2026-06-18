@@ -1,0 +1,1 @@
+float a = sqrt(16.0); // Erro semântico: sqrt não foi declarado na tabela (falta o #include <math.h>)
