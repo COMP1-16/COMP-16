@@ -90,8 +90,7 @@ def run_tests(folder, expect_error=False):
     print(f"\n{CYAN}--- Testando: {folder} ---{RESET}")
 
     passed = 0
-    fail_esperado = 0
-    fail_regressao = 0
+    failed = 0
 
     if not os.path.exists(folder):
         print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} não encontrada.")
@@ -119,15 +118,15 @@ def run_tests(folder, expect_error=False):
 
         if expect:
             if has_error:
-                print(f"{RED}[FAIL]{RESET}   {file}")
-                fail_esperado += 1
+                print(f"{GREEN}[OK]{RESET}   {file}")
+                passed += 1
             else:
                 print(f"{RED}[FAIL]{RESET} {file}")
                 print(f"   {YELLOW}-> Motivo:{RESET} O compilador deveria ter falhado, mas passou.")
                 if out.strip():
                     print(f"   {CYAN}-> Saida Parcial:{RESET} {out.strip()[:50]}...")
                 print("-" * 50)
-                fail_regressao += 1
+                failed += 1
         elif not has_error:
             print(f"{GREEN}[OK]{RESET}   {file}")
             passed += 1
@@ -139,11 +138,11 @@ def run_tests(folder, expect_error=False):
             if out.strip():
                 print(f"   {CYAN}-> Saida Parcial:{RESET} {out.strip()[:50]}...")
             print("-" * 50)
-            fail_regressao += 1
+            failed += 1
 
-    fail_total = fail_esperado + fail_regressao
+    fail_total = failed
     print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{fail_total} FAIL{RESET}")
-    return passed, fail_esperado, fail_regressao
+    return passed, 0, failed
 
 def run_output_tests(folder):
     print(f"\n{CYAN}--- Testando saida esperada: {folder} ---{RESET}")
@@ -248,6 +247,25 @@ if __name__ == "__main__":
 
     # Estrutura plana conforme sua solicitação
     categorias = [
+        "testes/atualizacao_variaveis/semantico",
+        "testes/atualizacao_variaveis/valido_auto_inc",
+        "testes/declaracao_variaveis/sintatico",
+        "testes/declaracao_variaveis/semantico",
+        "testes/operadores_aritmeticos/sintatico",
+        "testes/operadores_aritmeticos/semantico",
+        "testes/operadores_logicos/sintatico",
+        "testes/operadores_logicos/semantico",
+        "testes/for/sintatico",
+        "testes/for/semantico",
+        "testes/while/sintatico",
+        "testes/while/semantico",
+        "testes/if_else/sintatico",
+        "testes/if_else/semantico",
+        "testes/recursao",
+        "testes/math/sintatico",
+        "testes/math/semantico",
+        "testes/stdlib/sintatico",
+        "testes/stdlib/semantico",
         "testes/switch_case/sintatico/invalidos",
         "testes/switch_case/sintatico/validos",
     ]
