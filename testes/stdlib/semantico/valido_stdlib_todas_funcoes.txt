@@ -1,0 +1,4 @@
+#include <stdlib.h>
+
+int a = atoi("-17");
+float b = atof("2.5");

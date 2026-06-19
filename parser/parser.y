@@ -45,6 +45,7 @@ static int tipoAtual;
 %token KW_RETURN KW_BREAK KW_PRINTF
 %token KW_IF KW_ELSE KW_WHILE KW_FOR KW_SWITCH KW_CASE KW_DEFAULT
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
+%token INCLUDE_MATH INCLUDE_STDLIB
 
 %left EQUAL DIFF
 %left LESSER GREATER LESS_EQ GREAT_EQ
@@ -164,6 +165,7 @@ expr
     | expr AND expr     { $$ = noLogicalAnd($1, $3); }
     | expr OR expr      { $$ = noLogicalOr($1, $3); }
     | NOT expr          { $$ = noNot($2); }
+    | MINUS expr %prec UMINUS { $$ = noBinop('-', noInt(0), $2); }
     | L_PAREN expr R_PAREN { $$ = $2; }
     | NUM               { $$ = noInt($1);   }
     | FLOAT_NUM         { $$ = noFloat($1); }

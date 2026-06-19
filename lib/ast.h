@@ -30,7 +30,9 @@ typedef enum {
     NO_NOT,
     NO_PRINTF,
     NO_FUNC_DECL,
-    NO_FUNC_CALL
+    NO_FUNC_CALL,
+    NO_INCLUDE_MATH,
+    NO_INCLUDE_STDLIB,
 } TipoNo;
 
 typedef enum {
@@ -160,5 +162,7 @@ No *noNot(No *expr);
 No *noPrintf(No *args);
 No *noFuncDecl(int tipoRetorno, char *nome, No *params, No *body);
 No *noFuncCall(char *nome, No *args);
+No *noIncludeMath();
+No *noIncludeStdlib();
 
 #endif
