@@ -102,6 +102,11 @@ No *noReturn(No *expr) {
     return n;
 }
 
+No *noBreak(){
+    No *n = alocar(NO_BREAK);
+    return n;
+}
+
 No *noRelacional(TipoRelacional op, No *esq, No *dir) {
     No *n = alocar(NO_RELACIONAL);
     n->relop = op;
@@ -117,6 +122,31 @@ No *noIf(No *cond, No *thenBranch, No *elseBranch) {
     n->u.if_stmt.elseBranch = elseBranch;
     return n;
 }
+
+No *noSwitch(No *value, No* cases) {
+    No *n = alocar(NO_SWITCH);
+    n->u.switch_stmt.cases = cases;
+    n->u.switch_stmt.value = value;
+    return n;
+};
+
+No *noCaseInt(int value, No* stmts){
+    No *n = alocar(NO_CASE_INT);
+    n->u.case_int.value = noInt(value);
+    n->u.case_int.stmts = stmts;
+    return n;
+};
+No *noCaseChar(char value, No* stmts) {
+    No *n = alocar(NO_CASE_CHAR);
+    n->u.case_char.value = noChar(value);
+    n->u.case_char.stmts = stmts;
+    return n;
+};
+No *noDefault(No* stmts) {
+    No *n = alocar(NO_DEFAULT);
+    n->u.case_default.stmts = stmts;
+    return n;
+};
 
 No *noWhile(No *cond, No *body) {
     No *n = alocar(NO_WHILE);

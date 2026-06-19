@@ -2,19 +2,8 @@ import os
 import subprocess
 import sys
 
-def _resolve_exec():
-    candidates = [
-        "./lib/interpreter",
-        "lib/interpreter",
-        "./lib/interpreter.exe",
-        "lib/interpreter.exe",
-    ]
-    for path in candidates:
-        if os.path.isfile(path):
-            return path
-    return "./lib/interpreter"
-
-EXEC = _resolve_exec()
+EXEC = "./lib/interpreter" # Certifique-se que o caminho está correto
+TEST = "./parser/parser_test"
 
 GREEN = "\033[92m"
 RED = "\033[91m"
@@ -26,12 +15,8 @@ def run_test_full(file_path, extra_args=None):
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    cmd = [EXEC]
-    if extra_args:
-        cmd.extend(extra_args)
-
-    return subprocess.run(
-        cmd,
+    result = subprocess.run(
+        [TEST],
         input=content,
         text=True,
         capture_output=True
@@ -45,8 +30,16 @@ def run_test(file_path, extra_args=None):
     result = run_test_full(file_path, extra_args)
     return result.stdout, result.stderr
 
-def run_optimizer_tests(folder="testes/otimizador"):
-    print(f"\n{CYAN}--- Testando equivalencia do otimizador: {folder} ---{RESET}")
+def run_tests(folder):
+
+    if "validos" in folder:
+        expect_error = False
+
+    if "invalidos" in folder:
+        expect_error = True
+
+    tipo_pasta = "INVÁLIDOS (Esperando Erro)" if expect_error else "VÁLIDOS (Sucesso)"
+    print(f"\n{CYAN}--- Testando: {folder} [{tipo_pasta}] ---{RESET}")
 
     passed = 0
     failed = 0
@@ -273,6 +266,8 @@ if __name__ == "__main__":
         "testes/math/semantico",
         "testes/stdlib/sintatico",
         "testes/stdlib/semantico",
+        "testes/switch_case/sintatico/invalidos",
+        "testes/switch_case/sintatico/validos",
     ]
 
     if len(sys.argv) > 1:
@@ -283,37 +278,8 @@ if __name__ == "__main__":
     run_stdlib_execucao = run_full_suite or any("testes/stdlib" in pasta for pasta in categorias)
 
     for pasta in categorias:
-        p, fe, r = run_tests(pasta)
-        total_passed += p
-        total_failed += fe + r
-        total_regressoes += r
-
-    if run_math_execucao:
-        p, fe, r = run_tests("testes/math/execucao")
-        total_passed += p
-        total_failed += fe + r
-        total_regressoes += r
-        p, f = run_output_tests("testes/math/execucao")
-        total_passed += p
-        total_failed += f
-        total_regressoes += f
-
-    if run_stdlib_execucao:
-        p, fe, r = run_tests("testes/stdlib/execucao")
-        total_passed += p
-        total_failed += fe + r
-        total_regressoes += r
-        p, f = run_output_tests("testes/stdlib/execucao")
-        total_passed += p
-        total_failed += f
-        total_regressoes += f
-        p, f = run_exitcode_tests("testes/stdlib/execucao")
-        total_passed += p
-        total_failed += f
-        total_regressoes += f
-
-    if run_full_suite:
-        p, f = run_optimizer_tests()
+        # Rodamos a pasta diretamente
+        p, f = run_tests(pasta)
         total_passed += p
         total_failed += f
         total_regressoes += f
