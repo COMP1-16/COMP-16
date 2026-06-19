@@ -1,0 +1,8 @@
+#include <math.h>
+
+float a = sqrt(16.0);
+float b = pow(2.0, 3.0);
+float c = abs(-5.0);
+float d = floor(3.14);
+float e = ceil(3.14);
+float f = round(3.5);

@@ -1,0 +1,3 @@
+#include <math.h>
+
+float a = pow(2.0); // Erro semântico/Runtime: pow espera 2 argumentos, mas recebeu 1
