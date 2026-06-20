@@ -1,4 +1,4 @@
-#include "stdlib.h"
+#include "comp_stdlib.h"
 #include <stdlib.h>
 
 static void pular_espacos(const char **s) {

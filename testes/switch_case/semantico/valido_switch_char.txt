@@ -1,0 +1,5 @@
+char c = 'a';
+switch (c) {
+    case 'a': break;
+    case 'b': break;
+}

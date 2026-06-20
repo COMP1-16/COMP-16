@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "otimizador.h"
-#include "math.h"
-#include "stdlib.h"
+#include "comp_math.h"
+#include "comp_stdlib.h"
 
 /* ================================================================== *
  * liberarNo — libera recursivamente uma subárvore                     *
@@ -57,6 +57,32 @@ void liberarNo(No *no) {
         case NO_FUNC_DECL:
             liberarNo(no->u.func_decl.params);
             liberarNo(no->u.func_decl.body);
+            break;
+        case NO_SWITCH:
+            liberarNo(no->u.switch_stmt.value);
+            if (no->u.switch_stmt.cases) {
+                for (int i = 0; i < no->u.switch_stmt.cases->u.bloco.count; i++) {
+                    No *c = no->u.switch_stmt.cases->u.bloco.stmts[i];
+                    switch (c->tipo) {
+                        case NO_CASE_INT:
+                            liberarNo(c->u.case_int.value);
+                            liberarNo(c->u.case_int.stmts);
+                            break;
+                        case NO_CASE_CHAR:
+                            liberarNo(c->u.case_char.value);
+                            liberarNo(c->u.case_char.stmts);
+                            break;
+                        case NO_DEFAULT:
+                            liberarNo(c->u.case_default.stmts);
+                            break;
+                        default:
+                            break;
+                    }
+                    free(c);
+                }
+                free(no->u.switch_stmt.cases->u.bloco.stmts);
+                free(no->u.switch_stmt.cases);
+            }
             break;
         case NO_STR:
             free(no->sval);
@@ -131,6 +157,10 @@ static No *dobrarBinop(No *no) {
             case '/':
                 if (b == 0) return no;
                 res = a / b;
+                break;
+            case '%':
+                if (b == 0) return no;
+                res = a % b;
                 break;
             default: return no;
         }
@@ -540,6 +570,28 @@ No *otimizar(No *no) {
             no->u.for_stmt.cond = otimizar(no->u.for_stmt.cond);
             no->u.for_stmt.inc  = otimizar(no->u.for_stmt.inc);
             no->u.for_stmt.body = otimizar(no->u.for_stmt.body);
+            break;
+
+        case NO_SWITCH:
+            no->u.switch_stmt.value = otimizar(no->u.switch_stmt.value);
+            if (no->u.switch_stmt.cases) {
+                for (int i = 0; i < no->u.switch_stmt.cases->u.bloco.count; i++) {
+                    No *c = no->u.switch_stmt.cases->u.bloco.stmts[i];
+                    switch (c->tipo) {
+                        case NO_CASE_INT:
+                            c->u.case_int.stmts = otimizar(c->u.case_int.stmts);
+                            break;
+                        case NO_CASE_CHAR:
+                            c->u.case_char.stmts = otimizar(c->u.case_char.stmts);
+                            break;
+                        case NO_DEFAULT:
+                            c->u.case_default.stmts = otimizar(c->u.case_default.stmts);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
             break;
 
         case NO_DECL_INIT:

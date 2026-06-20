@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lib/ast.h"
+#include "lib/ast/ast.h"
 #include "parser.tab.h"
 %}
 
@@ -42,6 +42,7 @@
 "char"              { return TYPE_CHAR;   }
 "bool"              { return TYPE_BOOL;   }
 "void"              { return TYPE_VOID;   }
+"string"            { return TYPE_STRING; }
 
     /* --- literais --- */
 [0-9]+\.[0-9]+      { yylval.fValue = atof(yytext);  return FLOAT_NUM; }

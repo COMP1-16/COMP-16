@@ -5,6 +5,9 @@
 
 static int erros = 0;
 static Celula **tabela_global = NULL;
+static int prof_break = 0;
+
+static void checarNo(No *no, Celula **tabela, int permite_break);
 
 static Celula *buscarSimboloSemantico(char *nome, Celula **tabela) {
     Celula *c = buscarSimbolo(nome, tabela);
@@ -49,10 +52,21 @@ static int resolverTipo(No *no, Celula **tabela) {
             }
             return c->tipo;
         }
+        case NO_INC:
+        case NO_DEC: {
+            Celula *c = buscarSimboloSemantico(no->nome, tabela);
+            if (!c) return TIPO_ERRO;
+            if (c->tipo == TIPO_STR) return TIPO_ERRO;
+            return c->tipo == TIPO_FLOAT ? TIPO_FLOAT : TIPO_INT;
+        }
         case NO_BINOP: {
             int te = resolverTipo(no->u.bin.esq, tabela);
             int td = resolverTipo(no->u.bin.dir, tabela);
             if (te == TIPO_ERRO || td == TIPO_ERRO) return TIPO_ERRO;
+            if (te == TIPO_STR || td == TIPO_STR) {
+                erroSem("operacao aritmetica invalida com string");
+                return TIPO_ERRO;
+            }
             if (te == TIPO_FLOAT || td == TIPO_FLOAT) return TIPO_FLOAT;
             return TIPO_INT;
         }
@@ -70,15 +84,15 @@ static int resolverTipo(No *no, Celula **tabela) {
         case NO_LOGICAL_OR: {
             int te = resolverTipo(no->u.bin.esq, tabela);
             int td = resolverTipo(no->u.bin.dir, tabela);
-            if ((te != TIPO_ERRO && te != TIPO_BOOL && te != TIPO_INT) ||
-                (td != TIPO_ERRO && td != TIPO_BOOL && td != TIPO_INT)) {
+            if ((te != TIPO_ERRO && te != TIPO_BOOL && te != TIPO_INT && te != TIPO_FLOAT && te != TIPO_CHAR) ||
+                (td != TIPO_ERRO && td != TIPO_BOOL && td != TIPO_INT && td != TIPO_FLOAT && td != TIPO_CHAR)) {
                 erroSem("operadores logicos exigem operandos escalares");
             }
             return TIPO_BOOL;
         }
         case NO_NOT: {
             int te = resolverTipo(no->u.not.expr, tabela);
-            if (te != TIPO_ERRO && te != TIPO_BOOL && te != TIPO_INT) {
+            if (te != TIPO_ERRO && te != TIPO_BOOL && te != TIPO_INT && te != TIPO_FLOAT && te != TIPO_CHAR) {
                 erroSem("operador ! exige operando escalar");
             }
             return TIPO_BOOL;
@@ -180,8 +194,9 @@ void registrar_stdlib(Celula **tabela) {
     injetarFuncao("exit", 1, tipo_int, TIPO_VOID, tabela);
 }
 
-static void checarNo(No *no, Celula **tabela) {
+static void checarNo(No *no, Celula **tabela, int permite_break) {
     if (!no) return;
+    if (permite_break) prof_break++;
 
     switch (no->tipo) {
         case NO_INCLUDE_MATH:
@@ -192,7 +207,7 @@ static void checarNo(No *no, Celula **tabela) {
             break;
         case NO_BLOCO:
             for (int i = 0; i < no->u.bloco.count; i++)
-                checarNo(no->u.bloco.stmts[i], tabela);
+                checarNo(no->u.bloco.stmts[i], tabela, 0);
             break;
         case NO_DECL: {
             if (buscarSimbolo(no->nome, tabela)) {
@@ -244,6 +259,10 @@ static void checarNo(No *no, Celula **tabela) {
                 erroSem(msg);
                 break;
             }
+            if (c->tipo == TIPO_STR) {
+                erroSem("operacao invalida em string");
+                break;
+            }
             if (no->tipo == NO_ATRIB_OP && no->u.bin.esq) {
                 int tipoExpr = resolverTipo(no->u.bin.esq, tabela);
                 if (tipoExpr != TIPO_ERRO)
@@ -253,12 +272,12 @@ static void checarNo(No *no, Celula **tabela) {
         }
         case NO_IF: {
             int tipoCond = resolverTipo(no->u.if_stmt.cond, tabela);
-            if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_ERRO) {
+            if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_FLOAT && tipoCond != TIPO_ERRO) {
                 erroSem("condicao do if invalida");
             }
-            checarNo(no->u.if_stmt.thenBranch, tabela);
+            checarNo(no->u.if_stmt.thenBranch, tabela, 0);
             if (no->u.if_stmt.elseBranch)
-                checarNo(no->u.if_stmt.elseBranch, tabela);
+                checarNo(no->u.if_stmt.elseBranch, tabela, 0);
             break;
         }
         case NO_ID: {
@@ -269,7 +288,7 @@ static void checarNo(No *no, Celula **tabela) {
         }
         case NO_SWITCH: {
             #define MAX_CASES 256
-            checarNo(no->u.switch_stmt.value, tabela);
+            checarNo(no->u.switch_stmt.value, tabela, 0);
             int visto[MAX_CASES] = {0};
             int vistoCount = 0;
             int intToVerify;
@@ -288,7 +307,7 @@ static void checarNo(No *no, Celula **tabela) {
                 switch (no->u.switch_stmt.cases->u.bloco.stmts[i]->tipo) {
                     case NO_DEFAULT:
                         defaultCount++;
-                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_default.stmts, tabela);
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_default.stmts, tabela, 1);
                         break;
                     case NO_CASE_INT:
                         intToVerify = no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_int.value->ival;
@@ -301,7 +320,7 @@ static void checarNo(No *no, Celula **tabela) {
                             }
                         }
                         visto[vistoCount++] = intToVerify;
-                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_int.stmts, tabela);
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_int.stmts, tabela, 1);
                         break;
                     case NO_CASE_CHAR:
                         intToVerify = (int) no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_char.value->cval;
@@ -314,7 +333,7 @@ static void checarNo(No *no, Celula **tabela) {
                             }
                         }
                         visto[vistoCount++] = intToVerify;
-                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_char.stmts, tabela);
+                        checarNo(no->u.switch_stmt.cases->u.bloco.stmts[i]->u.case_char.stmts, tabela, 1);
                         break;
                 }
             }
@@ -322,23 +341,27 @@ static void checarNo(No *no, Celula **tabela) {
         }
         case NO_WHILE: {
             int tipoCond = resolverTipo(no->u.while_stmt.cond, tabela);
-            if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_ERRO) {
+            if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_FLOAT && tipoCond != TIPO_ERRO) {
                 erroSem("condicao do while deve ser booleana ou inteira");
             }
-            checarNo(no->u.while_stmt.body, tabela);
+            checarNo(no->u.while_stmt.body, tabela, 1);
             break;
         }
         case NO_FOR: {
-            if (no->u.for_stmt.init) checarNo(no->u.for_stmt.init, tabela);
+            if (no->u.for_stmt.init) checarNo(no->u.for_stmt.init, tabela, 0);
             if (no->u.for_stmt.cond) {
                 int tipoCond = resolverTipo(no->u.for_stmt.cond, tabela);
-                if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_ERRO)
+                if (tipoCond != TIPO_BOOL && tipoCond != TIPO_INT && tipoCond != TIPO_FLOAT && tipoCond != TIPO_ERRO)
                     erroSem("condicao do for deve ser booleana ou inteira");
             }
             if (no->u.for_stmt.inc) resolverTipo(no->u.for_stmt.inc, tabela);
-            checarNo(no->u.for_stmt.body, tabela);
+            checarNo(no->u.for_stmt.body, tabela, 1);
             break;
         }
+        case NO_BREAK:
+            if (prof_break == 0)
+                erroSem("break fora de loop ou switch");
+            break;
         case NO_RETURN:
             resolverTipo(no->u.bin.esq, tabela);
             break;
@@ -372,7 +395,7 @@ static void checarNo(No *no, Celula **tabela) {
             }
 
             if (no->u.func_decl.body) {
-                checarNo(no->u.func_decl.body, tabela_local);
+                checarNo(no->u.func_decl.body, tabela_local, 0);
             }
 
             liberarTabelaSimbolos(tabela_local);
@@ -391,11 +414,13 @@ static void checarNo(No *no, Celula **tabela) {
             resolverTipo(no, tabela);
             break;
     }
+
+    if (permite_break) prof_break--;
 }
 
 int checar(No *raiz, Celula **tabela) {
     erros = 0;
     tabela_global = tabela;
-    checarNo(raiz, tabela);
+    checarNo(raiz, tabela, 0);
     return erros;
 }
