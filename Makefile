@@ -1,16 +1,52 @@
-CC     = gcc
+# MSYS2: no shell MSYS puro, gcc fica no prefixo da toolchain (ucrt64/mingw64)
+CC     ?= gcc
+
+MSYS2_PREFIX :=
+ifneq ($(wildcard /ucrt64/bin/gcc),)
+  MSYS2_PREFIX := /ucrt64
+else ifneq ($(wildcard /mingw64/bin/gcc),)
+  MSYS2_PREFIX := /mingw64
+endif
+ifneq ($(MSYS2_PREFIX),)
+  export PATH := $(MSYS2_PREFIX)/bin:$(PATH)
+  ifeq ($(shell command -v $(CC) 2>/dev/null),)
+    CC := $(MSYS2_PREFIX)/bin/gcc
+  endif
+endif
+
 LEX    = flex
 YACC   = bison
+ifeq ($(OS),Windows_NT)
+TARGET = lib/interpreter.exe
+else
 TARGET = lib/interpreter
+endif
 
-CFLAGS  = -Wall -Wextra -g -I.
+CFLAGS  = -Wall -Wextra -g -I. \
+	-Ilib/ast -Ilib/types -Ilib/simbols \
+	-Ilib/analysis -Ilib/exec -Ilib/libs
 
 SRCS = parser.tab.c lex.yy.c \
-		lib/ast.c lib/simbolos.c lib/semantico.c lib/interpreter.c lib/funcs.c src/main.c
+	lib/ast/ast.c \
+	lib/simbols/simbolos.c \
+	lib/analysis/semantico.c \
+	lib/analysis/otimizador.c \
+	lib/exec/interpreter.c \
+	lib/exec/funcs.c \
+	lib/libs/math.c \
+	lib/libs/stdlib.c \
+	src/main.c
 
 build: $(TARGET)
 
+check-env:
+	@echo "CC=$(CC)"
+	@echo "PATH=$(PATH)"
+	@$(CC) --version
+	@$(CC) -dumpmachine
+
 $(TARGET): $(SRCS)
+	@echo "Compilando $(TARGET) com $(CC)..."
 	$(CC) $(CFLAGS) $^ -o $@
 
 parser.tab.c parser.tab.h: parser/parser.y
@@ -46,8 +82,17 @@ test-math: build
 test-stdlib: build
 	$(call RUN_TESTS,testes/stdlib/sintatico testes/stdlib/semantico)
 
+test-switch: build
+	$(call RUN_TESTS,testes/switch_case/sintatico/validos testes/switch_case/sintatico/invalidos testes/switch_case/semantico testes/switch_case)
+
+test-otimizador: build
+	$(call RUN_TESTS,testes/otimizador)
+
+test-execucao: build
+	$(call RUN_TESTS,testes/recursao testes/math/execucao testes/stdlib/execucao testes/switch_case testes/otimizador)
+
 clean:
-	rm -f lex.yy.c parser.tab.c parser.tab.h $(TARGET)
+	rm -f lex.yy.c parser.tab.c parser.tab.h lib/interpreter lib/interpreter.exe $(TARGET)
 
 PARSER_TEST_TARGET = parser/test_parser
 PARSER_TEST_SRCS = parser_test.tab.c lex.test.c

@@ -3,8 +3,8 @@
 #include <string.h>
 #include "funcs.h"
 #include "interpreter.h"
-#include "math.h"
-#include "stdlib.h"
+#include "comp_math.h"
+#include "comp_stdlib.h"
 #include "semantico.h"
 
 static int compatibilidade_casting(int tipo) {
@@ -65,6 +65,12 @@ static Celula *buscarSimboloInterpretador(char *nome, Celula **tabela) {
     return c;
 }
 
+static int ehVerdadeiro(Valor v) {
+    if (v.tipo == TIPO_BOOL || v.tipo == TIPO_INT) return v.dado.i != 0;
+    if (v.tipo == TIPO_FLOAT) return v.dado.f != 0.0f;
+    return 0;
+}
+
 Valor avaliar(No *no, Celula **tabela) {
     Valor resultado = {0};
     if (!no) return resultado;
@@ -105,11 +111,12 @@ Valor avaliar(No *no, Celula **tabela) {
         case NO_BINOP: {
             Valor esq = avaliar(no->u.bin.esq, tabela);
             Valor dir = avaliar(no->u.bin.dir, tabela);
-            if (no->u.bin.op == '/') {
+            if (no->u.bin.op == '/' || no->u.bin.op == '%') {
                 int zeroint   = (dir.tipo == TIPO_INT  && dir.dado.i == 0);
                 int zerofloat = (dir.tipo == TIPO_FLOAT && dir.dado.f == 0.0f);
                 if (zeroint || zerofloat) {
-                    fprintf(stderr, "[Runtime] Erro: divisao por zero\n");
+                    fprintf(stderr, "[Runtime] Erro: %s por zero\n",
+                            no->u.bin.op == '/' ? "divisao" : "modulo");
                     exit(1);
                 }
             }
@@ -186,8 +193,7 @@ Valor avaliar(No *no, Celula **tabela) {
         }
         case NO_IF: {
             Valor cond = avaliar(no->u.if_stmt.cond, tabela);
-            int verdadeiro = (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT) ? cond.dado.i : 0;
-            if (verdadeiro) {
+            if (ehVerdadeiro(cond)) {
                 resultado = avaliar(no->u.if_stmt.thenBranch, tabela);
                 if (has_returned) return return_val;
             } else if (no->u.if_stmt.elseBranch) {
@@ -240,9 +246,9 @@ Valor avaliar(No *no, Celula **tabela) {
         case NO_WHILE: {
             while (1) {
                 Valor cond = avaliar(no->u.while_stmt.cond, tabela);
-                int verdadeiro = (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT) ? cond.dado.i : 0;
-                if (!verdadeiro) break;
-                avaliar(no->u.while_stmt.body, tabela);
+                if (!ehVerdadeiro(cond)) break;
+                Valor body = avaliar(no->u.while_stmt.body, tabela);
+                if (body.tipo == TIPO_BREAK) break;
                 if (has_returned) return return_val;
             }
             return resultado;
@@ -253,10 +259,11 @@ Valor avaliar(No *no, Celula **tabela) {
                 int verdadeiro = 1;
                 if (no->u.for_stmt.cond) {
                     Valor cond = avaliar(no->u.for_stmt.cond, tabela);
-                    verdadeiro = (cond.tipo == TIPO_BOOL || cond.tipo == TIPO_INT) ? cond.dado.i : 0;
+                    verdadeiro = ehVerdadeiro(cond);
                 }
                 if (!verdadeiro) break;
-                avaliar(no->u.for_stmt.body, tabela);
+                Valor body = avaliar(no->u.for_stmt.body, tabela);
+                if (body.tipo == TIPO_BREAK) break;
                 if (has_returned) return return_val;
                 if (no->u.for_stmt.inc) avaliar(no->u.for_stmt.inc, tabela);
             }

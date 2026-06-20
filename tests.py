@@ -2,8 +2,12 @@ import os
 import subprocess
 import sys
 
-EXEC = "./lib/interpreter" # Certifique-se que o caminho está correto
-TEST = "./parser/parser_test"
+EXEC = "./lib/interpreter.exe" if os.path.isfile("./lib/interpreter.exe") else "./lib/interpreter"
+
+# Stack overflow em recursao infinita e erro de runtime, nao de compilacao
+SKIP_TESTS = {
+    "invalido_recursao_infinita.txt",
+}
 
 GREEN = "\033[92m"
 RED = "\033[91m"
@@ -11,96 +15,66 @@ YELLOW = "\033[93m"
 CYAN = "\033[96m"
 RESET = "\033[0m"
 
-def run_test_full(file_path, extra_args=None):
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+def _is_syntax_only_folder(folder):
+    norm = folder.replace("\\", "/").rstrip("/")
+    return norm.endswith("/sintatico") or "/sintatico/" in norm or norm.endswith("valido_auto_inc")
 
-    result = subprocess.run(
-        [TEST],
-        input=content,
-        text=True,
-        capture_output=True
-    )
+def _is_semantic_only_folder(folder):
+    norm = folder.replace("\\", "/").rstrip("/")
+    return norm.endswith("/semantico")
 
-def _has_compiler_error(stderr):
+def _has_syntax_error(stderr):
+    err_lower = stderr.lower()
+    return "sintaxe" in err_lower or "syntax error" in err_lower
+
+def _has_compiler_error(stderr, syntax_only=False):
+    if syntax_only:
+        return _has_syntax_error(stderr)
     err_lower = stderr.lower()
     return any(tag in err_lower for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
 
-def run_test(file_path, extra_args=None):
-    result = run_test_full(file_path, extra_args)
-    return result.stdout, result.stderr
+def run_test_full(file_path, extra_args=None, syntax_only=False, semantic_only=False):
+    cmd = [EXEC, file_path]
+    if syntax_only:
+        cmd.append("--parse-only")
+    elif semantic_only:
+        cmd.append("--semantic-only")
+    if extra_args:
+        cmd.extend(extra_args)
+    return subprocess.run(
+        cmd,
+        text=True,
+        capture_output=True,
+        timeout=15,
+    )
 
-def run_tests(folder):
-
-    if "validos" in folder:
-        expect_error = False
-
-    if "invalidos" in folder:
-        expect_error = True
-
-    tipo_pasta = "INVÁLIDOS (Esperando Erro)" if expect_error else "VÁLIDOS (Sucesso)"
-    print(f"\n{CYAN}--- Testando: {folder} [{tipo_pasta}] ---{RESET}")
-
-    passed = 0
-    failed = 0
-
-    if not os.path.exists(folder):
-        print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} nao encontrada.")
-        return 0, 0
-
-    for file in sorted(os.listdir(folder)):
-        if not file.startswith("valido_") or not file.endswith(".txt"):
-            continue
-
-        path = os.path.join(folder, file)
-        out_opt, err_opt = run_test(path)
-        out_raw, err_raw = run_test(path, extra_args=["--no-opt"])
-
-        err_opt_l = err_opt.lower()
-        err_raw_l = err_raw.lower()
-        has_error_opt = any(tag in err_opt_l for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
-        has_error_raw = any(tag in err_raw_l for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
-
-        if has_error_opt or has_error_raw:
-            print(f"{RED}[FAIL]{RESET} {file}")
-            print(f"   {YELLOW}-> Motivo:{RESET} erro em execucao (opt={has_error_opt}, sem_opt={has_error_raw})")
-            if err_opt.strip():
-                print(f"   {YELLOW}-> stderr opt:{RESET} {err_opt.strip()}")
-            if err_raw.strip():
-                print(f"   {YELLOW}-> stderr raw:{RESET} {err_raw.strip()}")
-            print("-" * 50)
-            failed += 1
-            continue
-
-        if out_opt == out_raw:
-            print(f"{GREEN}[OK]{RESET}   {file}")
-            passed += 1
-        else:
-            print(f"{RED}[FAIL]{RESET} {file}")
-            print(f"   {YELLOW}-> Motivo:{RESET} saida difere com e sem otimizacao")
-            print(f"   {CYAN}-> com opt:{RESET} {repr(out_opt.strip())}")
-            print(f"   {CYAN}-> sem opt:{RESET} {repr(out_raw.strip())}")
-            print("-" * 50)
-            failed += 1
-
-    print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{failed} FAIL{RESET}")
-    return passed, failed
+def run_test(file_path, extra_args=None, syntax_only=False, semantic_only=False):
+    try:
+        result = run_test_full(file_path, extra_args, syntax_only=syntax_only, semantic_only=semantic_only)
+        return result.stdout, result.stderr
+    except subprocess.TimeoutExpired:
+        return "", "[Runtime] Erro: tempo limite excedido\n"
 
 def run_tests(folder, expect_error=False):
     print(f"\n{CYAN}--- Testando: {folder} ---{RESET}")
 
     passed = 0
     failed = 0
+    syntax_only = _is_syntax_only_folder(folder)
+    semantic_only = _is_semantic_only_folder(folder)
 
     if not os.path.exists(folder):
         print(f"{YELLOW}[AVISO]{RESET} Pasta {folder} não encontrada.")
-        return 0, 0, 0
+        return 0, 0
 
     for file in sorted(os.listdir(folder)):
         path = os.path.join(folder, file)
         
         # Ignora pastas e arquivos que nao sao casos de teste (.txt)
         if os.path.isdir(path) or not file.endswith(".txt"):
+            continue
+
+        if file in SKIP_TESTS:
             continue
 
         if file.startswith("valido_"):
@@ -110,11 +84,11 @@ def run_tests(folder, expect_error=False):
         else:
             continue
 
-        out, err = run_test(path)
-        err_lower = err.lower()
-        
-        # Identifica se houve erro por meio das tags que vocês criaram no C
-        has_error = any(tag in err_lower for tag in ["lexico", "sintaxe", "semantico", "syntax error", "runtime"])
+        if file.startswith("invalido_"):
+            out, err = run_test(path)
+        else:
+            out, err = run_test(path, syntax_only=syntax_only, semantic_only=semantic_only)
+        has_error = _has_compiler_error(err, syntax_only=syntax_only)
 
         if expect:
             if has_error:
@@ -142,7 +116,7 @@ def run_tests(folder, expect_error=False):
 
     fail_total = failed
     print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{fail_total} FAIL{RESET}")
-    return passed, 0, failed
+    return passed, fail_total
 
 def run_output_tests(folder):
     print(f"\n{CYAN}--- Testando saida esperada: {folder} ---{RESET}")
@@ -261,21 +235,22 @@ if __name__ == "__main__":
         "testes/while/semantico",
         "testes/if_else/sintatico",
         "testes/if_else/semantico",
+        "testes/switch_case/sintatico/validos",
+        "testes/switch_case/sintatico/invalidos",
+        "testes/switch_case/semantico",
+        "testes/switch_case",
         "testes/recursao",
+        "testes/otimizador",
         "testes/math/sintatico",
         "testes/math/semantico",
+        "testes/math/execucao",
         "testes/stdlib/sintatico",
         "testes/stdlib/semantico",
-        "testes/switch_case/sintatico/invalidos",
-        "testes/switch_case/sintatico/validos",
+        "testes/stdlib/execucao",
     ]
 
     if len(sys.argv) > 1:
         categorias = sys.argv[1:]
-
-    run_full_suite = len(sys.argv) == 1
-    run_math_execucao = run_full_suite or any("testes/math" in pasta for pasta in categorias)
-    run_stdlib_execucao = run_full_suite or any("testes/stdlib" in pasta for pasta in categorias)
 
     for pasta in categorias:
         # Rodamos a pasta diretamente

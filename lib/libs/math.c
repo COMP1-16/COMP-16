@@ -1,4 +1,4 @@
-#include "math.h"
+#include "comp_math.h"
 
 // Aqui utilizamos métodos numéricos para implementar funções matemáticas de forma computacional.
 

@@ -15,6 +15,7 @@ Valor fazerOperacao(Valor a, Valor b, char op) {
             case '-': resultado.dado.i = a.dado.i - b.dado.i; break;
             case '*': resultado.dado.i = a.dado.i * b.dado.i; break;
             case '/': resultado.dado.i = a.dado.i / b.dado.i; break;
+            case '%': resultado.dado.i = a.dado.i % b.dado.i; break;
         }
         return resultado;
     }

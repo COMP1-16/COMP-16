@@ -1,8 +1,8 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "lib/ast.h"
-#include "lib/types.h"
+#include "lib/ast/ast.h"
+#include "lib/types/types.h"
 
 extern int yylineno;
 int  yylex(void);
@@ -14,8 +14,8 @@ static int tipoAtual;
 %}
 
 %code requires {
-#include "lib/ast.h"
-#include "lib/types.h"
+#include "lib/ast/ast.h"
+#include "lib/types/types.h"
 }
 
 %union {
@@ -44,7 +44,7 @@ static int tipoAtual;
 %token SEMICOLON COMMA COLON
 %token KW_RETURN KW_BREAK KW_PRINTF
 %token KW_IF KW_ELSE KW_WHILE KW_FOR KW_SWITCH KW_CASE KW_DEFAULT
-%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID
+%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID TYPE_STRING
 %token INCLUDE_MATH INCLUDE_STDLIB
 
 %left EQUAL DIFF
@@ -85,10 +85,14 @@ stmt
     | KW_RETURN expr SEMICOLON { $$ = noReturn($2); }
     | KW_BREAK SEMICOLON { $$ = noBreak(); }
     | KW_PRINTF L_PAREN arg_list_opt R_PAREN SEMICOLON { $$ = noPrintf($3); }
+    | INCLUDE_MATH { $$ = noIncludeMath(); }
+    | INCLUDE_STDLIB { $$ = noIncludeStdlib(); }
     | if_stmt
     | while_stmt
     | for_stmt
     | switch_stmt
+    | bloco { $$ = $1; }
+    | SEMICOLON { $$ = NULL; }
     ;
 
 declaracao
@@ -129,11 +133,18 @@ tipo
     | TYPE_CHAR   { tipoAtual = TIPO_CHAR;   }
     | TYPE_BOOL   { tipoAtual = TIPO_BOOL;   }
     | TYPE_VOID   { tipoAtual = TIPO_VOID;   }
+    | TYPE_STRING { tipoAtual = TIPO_STR;    }
     ;
 
 declaradores
-    : declaradores COMMA declarador { $$ = $3; }
-    | declarador                    { $$ = $1; }
+    : declaradores COMMA declarador {
+        $$ = $1;
+        $$->u.bloco.stmts = realloc($$->u.bloco.stmts, ($$->u.bloco.count + 1) * sizeof(No*));
+        $$->u.bloco.stmts[$$->u.bloco.count++] = $3;
+    }
+    | declarador {
+        $$ = noBloco(&$1, 1);
+    }
     ;
 
 declarador
@@ -156,6 +167,7 @@ expr
     | expr MINUS expr   { $$ = noBinop('-', $1, $3); }
     | expr TIMES expr   { $$ = noBinop('*', $1, $3); }
     | expr DIVIDE expr  { $$ = noBinop('/', $1, $3); }
+    | expr MOD expr     { $$ = noBinop('%', $1, $3); }
     | expr EQUAL expr   { $$ = noRelacional(OP_EQ, $1, $3); }
     | expr DIFF expr    { $$ = noRelacional(OP_NE, $1, $3); }
     | expr LESSER expr  { $$ = noRelacional(OP_LT, $1, $3); }
@@ -172,6 +184,8 @@ expr
     | CHAR_LIT          { $$ = noChar($1);  }
     | STRING            { $$ = noStr($1);   }
     | ID                { $$ = noId($1); free($1); }
+    | ID UPDT_INC       { $$ = noInc($1); free($1); }
+    | ID UPDT_DEC       { $$ = noDec($1); free($1); }
     | ID L_PAREN arg_list_opt R_PAREN { $$ = noFuncCall($1, $3); free($1); }
     ;
 
@@ -192,9 +206,9 @@ arg_list
     ;
 
 if_stmt
-    : KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, NULL); }
-    | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE L_CRLRBRACKET stmts R_CRLRBRACKET { $$ = noIf($2, $4, $8); }
-    | KW_IF expr L_CRLRBRACKET stmts R_CRLRBRACKET KW_ELSE if_stmt { $$ = noIf($2, $4, $7); }
+    : KW_IF L_PAREN expr R_PAREN stmt { $$ = noIf($3, $5, NULL); }
+    | KW_IF L_PAREN expr R_PAREN stmt KW_ELSE stmt { $$ = noIf($3, $5, $7); }
+    | KW_IF L_PAREN expr R_PAREN stmt KW_ELSE if_stmt { $$ = noIf($3, $5, $7); }
     ;
 
 case_stmt
@@ -226,9 +240,10 @@ for_stmt
     ;
 
 for_init
-    : declaracao          { $$ = $1; }
-    | expr SEMICOLON      { $$ = $1; }
-    | SEMICOLON           { $$ = NULL; }
+    : tipo declaradores { $$ = $2; }
+    | ID INITVAR expr   { $$ = noAtrib($1, $3); free($1); }
+    | expr              { $$ = $1; }
+    | /* vazio */       { $$ = NULL; }
     ;
 
 for_cond
@@ -238,6 +253,9 @@ for_cond
 
 for_inc
     : expr                { $$ = $1; }
+    | ID INITVAR expr     { $$ = noAtrib($1, $3); free($1); }
+    | ID UPDT_INC         { $$ = noInc($1); free($1); }
+    | ID UPDT_DEC         { $$ = noDec($1); free($1); }
     |                     { $$ = NULL; }
     ;
 
