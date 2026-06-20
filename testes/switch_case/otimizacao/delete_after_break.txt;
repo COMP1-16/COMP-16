@@ -1,0 +1,12 @@
+int x = 2;
+    int y;
+    switch (x) {
+    case 1:
+        y = 10;
+        break;
+        printf("Oi");
+    case 2:
+        y = 20;
+    default:
+        y = 0;
+    }

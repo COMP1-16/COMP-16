@@ -236,9 +236,12 @@ Valor avaliar(No *no, Celula **tabela) {
                 }
 
                 if(resultado.tipo == TIPO_BREAK){
-                    return resultado;
+                    break;
                 }
 
+            }
+            if(resultado.tipo == TIPO_BREAK){
+                    break;
             }
 
             return resultado;
