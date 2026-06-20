@@ -2,8 +2,10 @@ int x = 2;
     int y;
     switch (x) {
     case 1:
+        break;
         y = 10;
         break;
+        x = 3+5;
         printf("Oi");
     case 2:
         y = 20;
