@@ -355,6 +355,24 @@ static No *eliminarDeadCodeAposReturn(No *no) {
     return no;
 }
 
+static No *eliminarDeadCodeAposBreak(No *no){
+    if (!no || no->tipo != NO_BLOCO) return no;
+    int break_idx = -1;
+    for (int i = 0; i < no->u.bloco.count; i++) {
+        if (no->u.bloco.stmts[i]->tipo == NO_BREAK) {
+            break_idx = i;
+            break;
+        }
+    }
+    if (break_idx < 0) return no;
+
+    for (int i = break_idx + 1; i < no->u.bloco.count; i++)
+        liberarNo(no->u.bloco.stmts[i]);
+
+    no->u.bloco.count = break_idx + 1;
+    return no;
+};
+
 /* ================================================================== *
  * Constant folding para RELACIONAL                                    *
  * ================================================================== */
@@ -579,13 +597,13 @@ No *otimizar(No *no) {
                     No *c = no->u.switch_stmt.cases->u.bloco.stmts[i];
                     switch (c->tipo) {
                         case NO_CASE_INT:
-                            c->u.case_int.stmts = otimizar(c->u.case_int.stmts);
+                            c->u.case_int.stmts = eliminarDeadCodeAposBreak(otimizar(c->u.case_int.stmts));
                             break;
                         case NO_CASE_CHAR:
-                            c->u.case_char.stmts = otimizar(c->u.case_char.stmts);
+                            c->u.case_char.stmts = eliminarDeadCodeAposBreak(otimizar(c->u.case_char.stmts));
                             break;
                         case NO_DEFAULT:
-                            c->u.case_default.stmts = otimizar(c->u.case_default.stmts);
+                            c->u.case_default.stmts = eliminarDeadCodeAposBreak(otimizar(c->u.case_default.stmts));
                             break;
                         default:
                             break;
