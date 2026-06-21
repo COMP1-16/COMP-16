@@ -4,3 +4,5 @@ switch (c) {
     case 'a': r = 1; break;
     case 'b': r = 2; break;
 }
+
+printf("%d", r);

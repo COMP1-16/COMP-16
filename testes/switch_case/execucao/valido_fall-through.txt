@@ -1,0 +1,14 @@
+int x = 10;
+int y;
+
+switch (x) {
+    case 10:
+        y = 10;
+    case 2:
+        y = 20;
+	break;
+    default:
+        y = 30;
+}
+
+printf("%d", y);

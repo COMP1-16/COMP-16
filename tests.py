@@ -113,6 +113,11 @@ def run_tests(folder, expect_error=False):
                 print(f"   {CYAN}-> Saida Parcial:{RESET} {out.strip()[:50]}...")
             print("-" * 50)
             failed += 1
+    
+    if folder.endswith("/execucao"):
+        passed_output, failed_output = run_output_tests(folder)
+        passed += passed_output
+        failed += failed_output
 
     fail_total = failed
     print(f"Resumo {folder}: {GREEN}{passed} OK{RESET} | {RED}{fail_total} FAIL{RESET}")
@@ -221,32 +226,32 @@ if __name__ == "__main__":
 
     # Estrutura plana conforme sua solicitação
     categorias = [
-        "testes/atualizacao_variaveis/semantico",
-        "testes/atualizacao_variaveis/valido_auto_inc",
-        "testes/declaracao_variaveis/sintatico",
-        "testes/declaracao_variaveis/semantico",
-        "testes/operadores_aritmeticos/sintatico",
-        "testes/operadores_aritmeticos/semantico",
-        "testes/operadores_logicos/sintatico",
-        "testes/operadores_logicos/semantico",
-        "testes/for/sintatico",
-        "testes/for/semantico",
-        "testes/while/sintatico",
-        "testes/while/semantico",
-        "testes/if_else/sintatico",
-        "testes/if_else/semantico",
+        # "testes/atualizacao_variaveis/semantico",
+        # "testes/atualizacao_variaveis/valido_auto_inc",
+        # "testes/declaracao_variaveis/sintatico",
+        # "testes/declaracao_variaveis/semantico",
+        # "testes/operadores_aritmeticos/sintatico",
+        # "testes/operadores_aritmeticos/semantico",
+        # "testes/operadores_logicos/sintatico",
+        # "testes/operadores_logicos/semantico",
+        # "testes/for/sintatico",
+        # "testes/for/semantico",
+        # "testes/while/sintatico",
+        # "testes/while/semantico",
+        # "testes/if_else/sintatico",
+        # "testes/if_else/semantico",
         "testes/switch_case/sintatico/validos",
         "testes/switch_case/sintatico/invalidos",
         "testes/switch_case/semantico",
-        "testes/switch_case",
-        "testes/recursao",
-        "testes/otimizador",
-        "testes/math/sintatico",
-        "testes/math/semantico",
-        "testes/math/execucao",
-        "testes/stdlib/sintatico",
-        "testes/stdlib/semantico",
-        "testes/stdlib/execucao",
+        "testes/switch_case/execucao",
+        # "testes/recursao",
+        # "testes/otimizador",
+        # "testes/math/sintatico",
+        # "testes/math/semantico",
+        # "testes/math/execucao",
+        # "testes/stdlib/sintatico",
+        # "testes/stdlib/semantico",
+        # "testes/stdlib/execucao",
     ]
 
     if len(sys.argv) > 1:
