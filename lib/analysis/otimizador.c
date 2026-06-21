@@ -356,6 +356,7 @@ static No *eliminarDeadCodeAposReturn(No *no) {
 }
 
 static No *eliminarDeadCodeAposBreak(No *no){
+    if (!no || no->tipo != NO_BLOCO) return no;
     int break_idx = -1;
     for (int i = 0; i < no->u.bloco.count; i++) {
         if (no->u.bloco.stmts[i]->tipo == NO_BREAK) {

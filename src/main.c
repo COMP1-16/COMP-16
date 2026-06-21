@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
     int skip_opt = 0;
     int parse_only = 0;
     int semantic_only = 0;
+    int optimize_only = 0;
     char *input_file = NULL;
 
     for (int i = 1; i < argc; i++) {
@@ -24,6 +25,8 @@ int main(int argc, char **argv) {
             parse_only = 1;
         else if (strcmp(argv[i], "--semantic-only") == 0)
             semantic_only = 1;
+        else if (strcmp(argv[i], "--optimize-only") == 0)
+            optimize_only = 1;
         else
             input_file = argv[i];
     }
@@ -66,6 +69,11 @@ int main(int argc, char **argv) {
     /* --- fase 3: otimização da AST --- */
     if (!skip_opt)
         raiz = otimizar(raiz);
+
+    if (optimize_only) {
+        liberarTabelaSimbolos(tabela);
+        return 0;
+    }
 
     /* --- fase 4: execução --- */
     liberarTabelaSimbolos(tabela);

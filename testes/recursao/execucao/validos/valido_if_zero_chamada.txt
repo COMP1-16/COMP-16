@@ -1,0 +1,1 @@
+int f(int n) { if (0) f(n); return 1; }

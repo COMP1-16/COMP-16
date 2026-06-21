@@ -1,0 +1,2 @@
+#include <math.h>
+float a = floor(1.7); float b = ceil(1.2);

@@ -1,0 +1,1 @@
+float f = 1.0; while (f) { f = 0; } printf("%f", f);
