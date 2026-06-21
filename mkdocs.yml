@@ -29,19 +29,16 @@ theme:
 
 nav:
   - Início: index.md
-  - Linguagem e Escopo:
-      - Visão geral: interpretador/linguagem-e-escopo.md
+  - O interpretador:
+      - Linguagem e Escopo: interpretador/linguagem-e-escopo.md
       - Linguagem interpretada: interpretador/linguagemInterpretada.md
       - Escopo: interpretador/escopo.md
-  - Estrutura do interpretador: interpretador/estrutura.md
-  - Como executar o interpretador: interpretador/comoExecutar.md
-  - Casos de teste: interpretador/casosTeste.md
-  - Pontos de controle:
-      - Visão geral: interpretador/pontosDeControle.md
-      - PC1: interpretador/pontosDeControlePc1.md
-      - PC2: interpretador/pontosDeControlePc2.md
-      - Entrega final: interpretador/pontosDeControleEntregaFinal.md
-  - Uso de IA: interpretador/usoDeIA.md
+      - Estrutura do interpretador: interpretador/estrutura.md
+      - Como executar o interpretador: interpretador/comoExecutar.md
+      - Casos de teste: interpretador/casosTeste.md
+  - Organização da equipe: organizacao.md
+  - Pontos de controle: pontosDeControle.md
+  - Qualidade: qualidade.md
 
 markdown_extensions:
   - pymdownx.highlight:

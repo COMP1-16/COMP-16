@@ -1,6 +1,6 @@
-Ministrada pelo Prof. Dr. Sergio Freitas na Universidade de Brasília, a disciplina "Compiladores 1" visa capacitar os estudantes nos conceitos fundamentais de desenvolvimento de sistemas tradutores.
+Ministrada pelo Prof. Dr. Sergio Freitas [[1]](#1) na Universidade de Brasília [[2]](#2), a disciplina "Compiladores 1" visa capacitar os estudantes nos conceitos fundamentais de desenvolvimento de sistemas tradutores.
 
-Como parte da aplicação prática desses conceitos, a Equipe 16 (Turma 01, Semestre 2026.1) propõe o desenvolvimento de um interpretador para o escopo básico da linguagem C, utilizando as ferramentas Flex e Bison para o processamento léxico e sintático, respectivamente.
+Como parte da aplicação prática desses conceitos, a Equipe 16 (Turma 01, Semestre 2026.1) propõe o desenvolvimento de um interpretador para o escopo básico da linguagem C [[3]](#3), utilizando as ferramentas Flex [[4]](#4) e Bison [[5]](#5) para o processamento léxico e sintático, respectivamente.
 
 ---
 
@@ -13,17 +13,22 @@ Como parte da aplicação prática desses conceitos, a Equipe 16 (Turma 01, Seme
     <td align="center"><a href="https://github.com/Pedro-Henrique3"><img src="https://avatars.githubusercontent.com/u/141349792?v=4" width="100px" style="border-radius: 50%;"><br/>Pedro Henrique<br/></a></td>
     <td align="center"><a href="https://github.com/Mateus0xC"><img src="https://avatars.githubusercontent.com/u/185991436?v=4" width="100px" style="border-radius: 50%;"><br/>Mateus Barreto<br/></a></td>
     <td align="center"><a href="https://github.com/UnderwaterVillager"><img src="https://avatars.githubusercontent.com/u/115714236?s=400&u=e5b6ca8f193c082dd0ec04d76dd2bd17d806ddf3&v=4" width="100px" style="border-radius: 50%;"><br/>Vinícius de Jesus<br/></a></td>
-  </tr> 
+  </tr> 
 </table>
 
 ---
 
 ## Referências
 
-- **Professor:** [Prof. Dr. Sergio A. A. Freitas — LinkedIn](https://www.linkedin.com/in/sergioaafreitas)
-- **Linguagem C:** [cppreference.com — linguagem e biblioteca padrão C](https://en.cppreference.com/w/c)
-- **Flex:** [Manual do GNU Flex](https://www.gnu.org/software/flex/manual/)
-- **Bison:** [Manual do GNU Bison](https://www.gnu.org/software/bison/manual/)
+<a id="1"></a>[1] FREITAS, Sergio A. A. Perfil profissional. LinkedIn, [2026]. Disponível em: <https://www.linkedin.com/in/sergioaafreitas>.
+
+<a id="2"></a>[2] UNIVERSIDADE DE BRASÍLIA. Departamento de Ciência da Computação. Disciplina CIC0094 — Compiladores 1: plano de ensino. Brasília: UnB, 2026.
+
+<a id="3"></a>[3] CPPREFERENCE. C language reference. [S. l.], 2026. Disponível em: <https://en.cppreference.com/w/c>. 
+
+<a id="4"></a>[4] FLEX: the fast lexical analyzer generator. Versão 2.6.4. Free Software Foundation, 2017. Disponível em: <https://www.gnu.org/software/flex/manual/>. 
+
+<a id="5"></a>[5] BISON: GNU general-purpose parser generator. Versão 3.8.1. Free Software Foundation, 2021. Disponível em: <https://www.gnu.org/software/bison/manual/>. 
 
 ---
 
@@ -33,3 +38,4 @@ Como parte da aplicação prática desses conceitos, a Equipe 16 (Turma 01, Seme
 | :--- | :--- | :--- | :--- |
 | 1.0 | 18/04/26 | Criação da página inicial | Pedro Henrique |
 | 2.0 | 13/05/26 | Adição das referências e junção do texto | Camila Careli |
+| 2.1 | 21/06/26 | Adição de âncora nas referências numéricas | Camila Careli |
