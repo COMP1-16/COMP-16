@@ -1,0 +1,2 @@
+#include <math.h>
+float x = abs(-5.0);

@@ -1,0 +1,10 @@
+int x = 2;
+int y = 1;
+
+switch (x) {
+    case 2: {
+        y = 2;
+    }
+}
+
+printf("%d", y);

@@ -1,0 +1,1 @@
+int f(int n) { return g(n); } int main() { return 0; }

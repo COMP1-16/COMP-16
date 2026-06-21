@@ -1,0 +1,1 @@
+int n = 3; for (; n > 0; n--) { } printf("%d", n);

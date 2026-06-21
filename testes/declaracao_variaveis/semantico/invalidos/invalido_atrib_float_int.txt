@@ -1,0 +1,1 @@
+float p = 10.5; string s = p;

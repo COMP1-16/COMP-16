@@ -37,6 +37,19 @@ SRCS = parser.tab.c lex.yy.c \
 	lib/libs/stdlib.c \
 	src/main.c
 
+FEATURES = atualizacao_variaveis declaracao_variaveis for if_else while \
+           operadores_aritmeticos operadores_logicos math stdlib \
+           switch_case recursao otimizador
+
+define FEATURE_LAYERS
+testes/$(1)/sintatico/validos testes/$(1)/sintatico/invalidos \
+testes/$(1)/semantico/validos testes/$(1)/semantico/invalidos \
+testes/$(1)/execucao/validos testes/$(1)/execucao/invalidos
+endef
+
+ALL_TEST_DIRS := $(foreach f,$(FEATURES),$(call FEATURE_LAYERS,$(f)))
+EXEC_TEST_DIRS := $(foreach f,$(FEATURES),testes/$(f)/execucao/validos testes/$(f)/execucao/invalidos)
+
 build: $(TARGET)
 
 check-env:
@@ -74,22 +87,46 @@ define RUN_TESTS
 endef
 
 test: build
-	$(call RUN_TESTS,)
-
-test-math: build
-	$(call RUN_TESTS,testes/math/sintatico testes/math/semantico)
-
-test-stdlib: build
-	$(call RUN_TESTS,testes/stdlib/sintatico testes/stdlib/semantico)
-
-test-switch: build
-	$(call RUN_TESTS,testes/switch_case/sintatico/validos testes/switch_case/sintatico/invalidos testes/switch_case/semantico testes/switch_case)
-
-test-otimizador: build
-	$(call RUN_TESTS,testes/otimizador)
+	$(call RUN_TESTS,$(ALL_TEST_DIRS))
 
 test-execucao: build
-	$(call RUN_TESTS,testes/recursao testes/math/execucao testes/stdlib/execucao testes/switch_case testes/otimizador)
+	$(call RUN_TESTS,$(EXEC_TEST_DIRS))
+
+test-switch: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,switch_case))
+
+test-math: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,math))
+
+test-stdlib: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,stdlib))
+
+test-otimizador: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,otimizador))
+
+test-for: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,for))
+
+test-while: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,while))
+
+test-if-else: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,if_else))
+
+test-decl: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,declaracao_variaveis))
+
+test-atrib: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,atualizacao_variaveis))
+
+test-op-arit: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,operadores_aritmeticos))
+
+test-op-log: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,operadores_logicos))
+
+test-recursao: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,recursao))
 
 clean:
 	rm -f lex.yy.c parser.tab.c parser.tab.h lib/interpreter lib/interpreter.exe $(TARGET)
