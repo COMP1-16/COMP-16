@@ -1,0 +1,2 @@
+#include <stdlib.h>
+float x = atof("3.14");
