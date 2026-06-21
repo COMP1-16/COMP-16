@@ -5,3 +5,5 @@ switch (x) {
     case 2: r = 2; break;
 }
 r = 3;
+
+printf("%d", r);
