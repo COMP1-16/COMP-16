@@ -1,0 +1,1 @@
+int nota = 10; float nota = 9.5;

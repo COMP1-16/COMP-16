@@ -1,0 +1,1 @@
+string s = "oi"; int x = 10; int res = s + x;

@@ -1,0 +1,1 @@
+int c = 10; float d = 1.0; d += c;

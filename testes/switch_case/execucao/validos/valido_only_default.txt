@@ -1,0 +1,9 @@
+int x;
+int y;
+
+switch (x) {
+    default:
+        y = 2;
+}
+
+printf("%d", y);

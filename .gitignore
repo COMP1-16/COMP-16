@@ -1,0 +1,9 @@
+.vscodecomp16
+*.dSYM/
+test_fat.txt
+lib/interpreter
+.DS_Store
+comp16
+lex.yy.c
+parser.tab.c
+parser.tab.h

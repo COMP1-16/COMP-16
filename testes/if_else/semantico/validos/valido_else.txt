@@ -1,0 +1,3 @@
+	int x=0; if(x){} else{x=1;}
+
+    // OK — x acessível e mutável no else
