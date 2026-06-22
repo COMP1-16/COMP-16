@@ -34,7 +34,7 @@ nav:
       - Linguagem interpretada: interpretador/linguagemInterpretada.md
       - Escopo: interpretador/escopo.md
       - Estrutura do interpretador: interpretador/estrutura.md
-      - Como executar o interpretador: interpretador/comoExecutar.md
+      - Como executar: interpretador/comoExecutar.md
       - Casos de teste: interpretador/casosTeste.md
   - Organização da equipe: organizacao.md
   - Pontos de controle: pontosDeControle.md
