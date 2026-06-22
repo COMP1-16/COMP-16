@@ -1,8 +1,8 @@
 # Como executar e testar o interpretador
 
-> Este guia descreve o fluxo recomendado para compilar o projeto, rodar o binário com código de entrada e validar o comportamento com a suíte de testes automatizada.
+> Esta seção descreve o fluxo recomendado para compilar o projeto, rodar o binário com código de entrada e validar o comportamento com a suíte de testes automatizada.
 
-## Pré-requisitos
+## Pre-requisitos
 
 Instale as ferramentas na versão mínima indicada no repositório (ou superior compatível):
 
@@ -42,7 +42,7 @@ ou explicitamente:
 make build
 ```
 
-Isso invoca o Bison e o Flex sobre os arquivos da gramática e do lexer, gera os fontes intermediários e produz o executável **`interpretador`** na raiz do projeto.
+Isso invoca o Bison e o Flex sobre os arquivos da gramática e do lexer, gera os fontes intermediários e produz o executável em **`lib/interpreter`** (ou `lib/interpreter.exe` no Windows).
 
 Para remover artefatos de build e o binário:
 
@@ -54,23 +54,21 @@ make clean
 
 ## Executar o interpretador
 
-O ponto de entrada (`main`) chama `yyparse()` e lê o programa pela entrada padrão (stdin). Não é obrigatório passar o nome do arquivo como argumento; o uso típico é redirecionar ou encanar um arquivo fonte.
+O ponto de entrada (`main`) lê o programa pela entrada padrão (stdin). O uso típico é redirecionar ou encanar um arquivo fonte.
 
 **Exemplo com redirecionamento:**
 
 ```bash
-./interpretador < caminho/para/arquivo.c
+./lib/interpreter < caminho/para/arquivo.txt
 ```
 
 **Exemplo com pipe:**
 
 ```bash
-cat caminho/para/arquivo.c | ./interpretador
+cat caminho/para/arquivo.txt | ./lib/interpreter
 ```
 
-O alvo `make run` apenas compila (se necessário) e executa `./interpretador` sem redirecionar entrada; nesse caso você precisaria digitar o código (ou colar) e finalizar a entrada com **Ctrl+D** (EOF) no terminal.
-
-Para depuração rápida, um arquivo pequeno em C no subconjunto aceito pode ser mantido na raiz ou em `tests/valid/` e usado com `<` ou `cat`.
+O alvo `make run` apenas compila (se necessário) e executa `./lib/interpreter` sem redirecionar entrada; nesse caso você precisaria digitar o código (ou colar) e finalizar a entrada com **Ctrl+D** (EOF) no terminal.
 
 ---
 
@@ -88,25 +86,52 @@ Equivalente manual, após `make build`:
 python3 tests.py
 ```
 
+Também é possível rodar testes de uma categoria específica:
+
+```bash
+make test-for
+make test-while
+make test-if-else
+make test-switch
+make test-recursao
+make test-otimizador
+make test-math
+make test-stdlib
+make test-decl
+make test-atrib
+make test-op-arit
+make test-op-log
+```
+
 ### O que o script verifica
 
-O executável é sempre `./interpretador` (caminho relativo à raiz do repositório, como no `Makefile`).
+Os testes estão organizados em `testes/<categoria>/<fase>/<validos|invalidos>/`. O script roda o interpretador para cada arquivo `.txt` e verifica o resultado de acordo com a fase:
 
-- **`tests/valid/`** — para cada arquivo, o conteúdo é enviado ao interpretador via stdin. O teste passa se não aparecer a mensagem `Erro sintático` na saída de erro padrão (`stderr`).
-- **`tests/invalid/`** — o teste passa se aparecer `Erro sintático` em `stderr`, ou seja, o analisador deve rejeitar entradas inválidas de forma consistente com o que o script espera.
+| Fase | Argumento passado | Criterio de sucesso (validos) | Criterio de sucesso (invalidos) |
+|------|-------------------|-------------------------------|----------------------------------|
+| `sintatico` | `--parse-only` | Nenhum erro reportado | Erro lexico ou sintatico presente |
+| `semantico` | `--semantic-only` | Nenhum erro reportado | Erro semantico presente |
+| `execucao` | nenhum | Nenhum erro reportado | Qualquer erro presente |
 
-No final, o script imprime um resumo por pasta e o total de casos que passaram ou falharam.
+Para os casos de `execucao/validos`, o script realiza tres passagens:
 
-### Boas práticas ao testar
+1. **Execucao principal** — verifica se o programa roda sem erros
+2. **Saida esperada** — se existir um arquivo `.expected`, compara a saida do interpretador com ele
+3. **Exit code** — se existir um arquivo `.exitcode`, compara o codigo de saida com o valor esperado
+4. O arquivo `invalido_recursao_infinita.txt` e ignorado automaticamente pelo script pois causaria um loop infinito. Ele consta na lista `SKIP_TESTS` do `tests.py`.
 
-1. Sempre rode `make test` a partir da raiz do repositório, para que `./interpretador` e os caminhos `tests/valid` e `tests/invalid` existam.
+### Boas praticas ao testar
+
+1. Sempre rode `make test` a partir da raiz do repositório, para que `./lib/interpreter` e os caminhos de testes existam.
 2. Após mudanças na gramática ou no lexer, execute `make clean && make test` para garantir que não restaram artefatos antigos de Bison/Flex.
-4. Se um teste falhar, o script mostra trechos de `stdout` e `stderr`; use isso para comparar com uma execução manual `./interpretador < tests/valid/seu_arquivo.txt`.
+3. Se um teste falhar, o script mostra trechos de `stdout` e `stderr`; use isso para comparar com uma execução manual `./lib/interpreter < testes/<categoria>/<fase>/<validos|invalidos>/arquivo.txt`.
+4. Para isolar uma categoria com problema, use os alvos específicos como `make test-for` em vez de rodar toda a suíte.
 
 ---
 
-## Histórico de Versão
+## Historico de Versao
 
 | Versão | Data | Descrição | Autor |
 | :--- | :--- | :--- | :--- |
 | 1.0 | 13/05/26 | Criação da página com seu respectivo conteúdo | Camila Careli |
+| 1.1 | 21/06/26 | Atualização da seção de testes | Camila Careli |
