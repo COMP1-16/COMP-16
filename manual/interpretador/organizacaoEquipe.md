@@ -49,7 +49,7 @@ O cronograma abaixo reflete o planejamento e o andamento das issues no GitHub Pr
 | Issue | Atividade | Descrição | Responsáveis |
 |-------|-----------|-----------|--------------|
 | [#17](https://github.com/COMP1-16/COMP-16/issues/17) | Implementar Tabela de Símbolos | Implementar inserção, consulta e remoção de símbolos (`simbolos.c` / `simbolos.h`). | Davi Severiano |
-| [#24](https://github.com/COMP1-16/COMP-16/issues/24) | Análise léxica + sintática: Comparações e Loops | Adicionar lexer e parser para operadores relacionais, lógicos e estruturas de loop. | Pedro 
+| [#24](https://github.com/COMP1-16/COMP-16/issues/24) | Análise léxica + sintática: Comparações e Loops | Adicionar lexer e parser para operadores relacionais, lógicos e estruturas de loop. | Pedro Henrique, Davi Severiano |
 | [#25](https://github.com/COMP1-16/COMP-16/issues/25) | Análise semântica e interpretação: Comparações e Loops | Implementar semântica e interpretador para operadores relacionais, lógicos e loops. | Vinícius de Jesus, Camila Careli, Mateus Barreto |
 | [#39](https://github.com/COMP1-16/COMP-16/issues/39) | Estrutura do interpretador | Documentar no GitPages a arquitetura e organização de pastas do projeto. | Camila Careli |
 
