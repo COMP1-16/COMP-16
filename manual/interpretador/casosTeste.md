@@ -2,24 +2,28 @@
 
 > Esta seção descreve os casos de teste do interpretador, organizados por categoria de funcionalidade e fase de análise (sintático, semântico e execução). Cada caso inclui a entrada utilizada e, quando aplicável, a saída esperada ou o código de saída.
 
-## Sobre os numeros
+## Sobre os números
 
-O repositorio possui **361 arquivos de teste** (.txt), distribuidos entre 12 categorias.
-Ao rodar `make test`, o terminal reporta **421 verificacoes** — a diferenca ocorre porque
-o script `tests.py` trata as pastas `execucao/validos` em tres passagens distintas:
+Há **361 casos de teste** no repositório — são os arquivos `.txt` espalhados pelas 12 categorias
+descritas abaixo. Quando você roda `make test`, porém, o terminal mostra **421 verificações**.
+Não é erro: alguns casos passam por mais de uma checagem.
 
-| Passagem | O que faz | Contagem |
-|----------|-----------|:--------:|
-| Execucao principal | Roda o interpretador e verifica se passou ou falhou | 115 |
-| Saida esperada | Compara a saida com o arquivo `.expected` (59 casos possuem um) | 59 |
-| Exit code | Compara o codigo de saida com o arquivo `.exitcode` (2 casos possuem um) | 2 |
-| **Subtotal extra** | | **61** |
+Na prática, quase todo `.txt` roda **uma vez**. Só o `invalido_recursao_infinita.txt` fica de fora
+(o script ignora esse arquivo para não entrar em loop infinito). Isso dá **360 execuções** no total.
 
-Alem disso, o arquivo `invalido_recursao_infinita.txt` e ignorado pelo script (`SKIP_TESTS`),
-pois causaria loop infinito — por isso **361 arquivos geram 360 execucoes** mais 61 verificacoes
-extras, totalizando **421**.
+O que aumenta a conta são os testes de **execução válidos** (`execucao/validos`). São **115** casos
+espalhados pelas categorias. Depois que o interpretador roda, o `tests.py` pode conferir de novo o
+resultado — mas só quando existe arquivo auxiliar na mesma pasta:
 
-Na documentacao, o numero correto a reportar e **361 casos de teste**.
+- **59** casos têm um `.expected` e a saída do programa é comparada com ele;
+- **2** casos têm um `.exitcode` e o código de retorno também é verificado.
+
+Essas **61** checagens extras se somam às **360** execuções normais: **360 + 61 = 421**. Os 115 casos
+de `execucao/validos` já estão incluídos nas 360 — as 61 não são arquivos novos, só passagens a mais
+do mesmo teste.
+
+Para documentação e relatórios, use **361 casos de teste**. O **421** aparece apenas na saída do
+`make test`.
 
 ---
 
