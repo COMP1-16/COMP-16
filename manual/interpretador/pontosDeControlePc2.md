@@ -4,10 +4,11 @@
 
 ## Resumo das entregas
 
-No PC2, o interpretador passou de um núcleo aritmético para um subconjunto expressivo de C, com controle de fluxo, funções e bibliotecas principais.
+No PC2, foi finalizada a tabela de símbolos e o interpretador passou de um núcleo aritmético para um subconjunto expressivo de C, controle de fluxo, funções e bibliotecas principais.
 
-### Sprint 3 — Comparações, condicionais e loops
+### Sprint 3 — Tabela de símbolos, comparações, condicionais e loops
 
+- Tabela de símbolos para variáveis e escopos ([#17](https://github.com/COMP1-16/COMP-16/issues/17)).
 - Análise léxica e sintática de operadores relacionais e lógicos, `else if` e estruturas de repetição ([#24](https://github.com/COMP1-16/COMP-16/issues/24)).
 - Análise semântica e interpretação de `if`/`else`, `while` e `for` ([#25](https://github.com/COMP1-16/COMP-16/issues/25)).
 - Documentação da estrutura do interpretador no GitPages ([#39](https://github.com/COMP1-16/COMP-16/issues/39)).

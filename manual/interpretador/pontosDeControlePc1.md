@@ -22,7 +22,6 @@ No PC1, a equipe estabeleceu a base do interpretador e da documentação do proj
 ### Estrutura de execução
 
 - Estrutura da AST e funções de criação de nós ([#15](https://github.com/COMP1-16/COMP-16/issues/15)).
-- Tabela de símbolos para variáveis e escopos ([#17](https://github.com/COMP1-16/COMP-16/issues/17)).
 - Percorrimento da AST para execução ([#16](https://github.com/COMP1-16/COMP-16/issues/16)).
 - Interpretação do escopo inicial: literais, declarações, atribuições e operadores aritméticos ([#14](https://github.com/COMP1-16/COMP-16/issues/14)).
 
