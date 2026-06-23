@@ -9,14 +9,6 @@ O núcleo do projeto segue o modelo clássico Flex + Bison em C:
 - O analisador léxico lê a entrada padrão e produz tokens;
 - O analisador sintático (gramática LALR) consome esses tokens e executa ações semânticas associadas às regras (por exemplo, avaliação parcial de expressões e impressão de depuração).
 
-```mermaid
-flowchart LR
-  A[Entrada stdin] --> B["lexer/lexer.l → yylex()"]
-  B --> C["parser/parser.y → yyparse()"]
-  C --> D["parser/funcs.c + types.h"]
-  C --> E[Saída stdout / stderr]
-```
-
 - **`lexer/`** — especificação do **Flex**: padrões de texto, palavras-chave, literais e operadores mapeados para tokens compartilhados com o Bison.
 - **`parser/`** — especificação do **Bison** (`parser.y`), tipos usados na união semântica (`types.h`) e funções auxiliares usadas nas ações (`funcs.c` / `funcs.h`).
 - **Raiz** — `Makefile` orquestra Bison e Flex, compila os fontes gerados com o utilitário em C e gera o executável **`interpretador`**.
@@ -27,41 +19,55 @@ Arquivos gerados na pasta raiz (e removidos com `make clean`): `lex.yy.c`, `pars
 
 ## Organização de pastas e arquivos
 
-Árvore simplificada do que costuma estar versionado (sem `site/`, gerado pelo MkDocs localmente):
-
 ```text
 COMP-16/
-├── Makefile              # build: bison → flex → gcc
-├── interpretador         # executável (após make build; não versionado)
-├── lex.yy.c              # gerado pelo Flex
-├── parser.tab.c          # gerado pelo Bison
-├── parser.tab.h          # gerado pelo Bison (tokens e YYSTYPE)
-├── tests.py              # suíte: stdin → interpretador; valida stderr
+├── Makefile              # build do interpretador (Flex + Bison + GCC)
+├── testes.py              # suíte de testes automatizados (Python 3)
 ├── README.md
 ├── lexer/
 │   └── lexer.l           # regras léxicas e retorno de tokens
 ├── parser/
-│   ├── parser.y          # gramática, união %union, main + yyerror
-│   ├── types.h           # tipo Valor (valores em expressões)
-│   ├── funcs.c           # operações auxiliares (ex.: fazer_operacao)
-│   └── funcs.h
-├── tests/
-│   ├── valid/            # entradas que não devem gerar erro sintático
-│   └── invalid/          # entradas que devem gerar "Erro sintático"
-├── docs/                 # fonte do GitHub Pages (MkDocs)
-│   ├── index.md
-│   └── interpretador/
-│       ├── linguagem-e-escopo.md
-│       ├── linguagemInterpretada.md
-│       ├── escopo.md
-│       ├── estrutura.md
-│       ├── comoExecutar.md
-│       ├── casosTeste.md
-│       ├── pontosDeControle.md
-│       ├── pontosDeControlePc1.md
-│       ├── pontosDeControlePc2.md
-│       └── pontosDeControleEntregaFinal.md
-└── mkdocs.yml            # tema, navegação e extensões do site
+│   └── parser.y          # gramática, união %union, main + yyerror
+|
+├── lib/
+|   ├── analysis
+|   │   ├── otimizador.c  # funções de otimização do código intermediário
+|   │   ├── otimizador.h
+|   │   ├── semantico.c   # funções de análise semântica do código intermediário
+|   │   └── semantico.h
+|   |
+|   ├── ast
+|   │   ├── ast.c         # funções de manipulação e definição da árvore de sintaxe abstrata
+|   │   └── ast.h
+|   |
+|   ├── exec
+|   │   ├── funcs.c       # funções auxiliares de interpretação
+|   │   ├── funcs.h
+|   │   ├── interpreter.c # funções de interpretação do programa
+|   │   └── interpreter.h
+|   |
+|   ├── interpreter
+|   ├── libs              # bibliotecas padrão do interpretador (math.h, stdlib.h)
+|   │   ├── comp_math.h
+|   │   ├── comp_stdlib.h
+|   │   ├── math.c
+|   │   └── stdlib.c
+|   |
+|   ├── simbols           # tabela de símbolos e sua manipulação
+|   │   ├── simbolos.c
+|   │   └── simbolos.h
+|   └── types
+|       └── types.h
+|
+├── testes/               # Teste das estruturas implementadas no interpretador
+|                         # nas etapas de execução, analise sintática e semântica, e
+|                         # otimização do código, avaliando acertos e falhas
+|
+├── src/                  # código-fonte do interpretador (C)
+|   └── main.c            # ponto de entrada do interpretador
+|
+└── docs/                 # documentação do interpretador (Markdown + MkDocs)
+└── mkdocs.yml            # configuração do MkDocs (tema Material)
 ```
 
 ### `lexer/lexer.l`
@@ -72,7 +78,11 @@ Define o alfabeto de tokens reconhecido na entrada: tipos, identificadores, lite
 
 Concentra a gramática (`%%` … regras), declaração de tokens e tipos (`%token`, `%type`, `%union`), precedência de operadores quando aplicável, ponto de entrada **`main`** (chamada a `yyparse()`) e `yyerror` para mensagens de erro sintático (incluindo número de linha via `yylineno` do Flex).
 
-### `parser/types.h` e `parser/funcs.*`
+### `lib/` e subpastas
+
+Concentra as implementações de funções auxiliares, interpretação, análise semântica, otimização, manipulação da árvore de sintaxe abstrata, tabela de símbolos e bibliotecas. Cada subpasta tem seu próprio cabeçalho (`.h`) e implementação (`.c`).
+
+### `types.h` e `funcs.*`
 
 - `types.h` — estruturas compartilhadas entre lexer (onde faz sentido), parser e funções auxiliares; hoje inclui o agregado `Valor` (tipo discriminado + união de `int` / `float` / `char` / string).
 - `funcs.c` / `funcs.h` — lógica reutilizável nas ações da gramática (por exemplo, normalização para float e avaliação de operadores aritméticos binários).
@@ -81,11 +91,11 @@ Assim, a gramática permanece mais legível e a lógica numérica pode evoluir s
 
 ### `Makefile`
 
-Encadeia `bison -d parser/parser.y` e `flex lexer/lexer.l`, depois invoca o GCC unindo `parser.tab.c`, `lex.yy.c` e `parser/funcs.c`, com `-I.` para resolver includes como `parser/types.h`. É o contrato oficial de “como o interpretador é construído” no ambiente Unix/WSL descrito no README.
+Encadeia `bison -d parser/parser.y` e `flex lexer/lexer.l`, depois invoca o GCC unindo `parser.tab.c`, `lex.yy.c`, e as implementações em `lib/` e o fluxo de controle `main.c`, com `-I.` para resolver includes como `types.h`. É o contrato oficial de “como o interpretador é construído” no ambiente Unix/WSL descrito no README.
 
-### `tests/` e `tests.py`
+### `testes/` e `tests.py`
 
-Organização em duas classes de exemplos de programa em texto, alinhadas ao critério documentado em [Casos de teste](casosTeste.md): válidos versus inválidos no nível sintático esperado pelo projeto atual.
+Organização em duas classes de exemplos de programa em texto, alinhadas ao critério documentado em [Casos de teste](casosTeste.md): válidos versus inválidos em niveis sintático, semântico e de execução esperado pelo projeto atual.
 
 ### `docs/` e `mkdocs.yml`
 

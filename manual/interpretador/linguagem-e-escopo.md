@@ -21,6 +21,18 @@ O interpretador da Equipe 16 não pretende cobrir a norma inteira da linguagem; 
 
 ---
 
+## Sobre o escopo do interpretador
+
+Este projeto implementa um interpretador para um subconjunto da linguagem C, com foco em tipos primitivos, operadores, controle de fluxo e funções. O escopo do interpretador é definido para atender aos objetivos do curso de Compiladores, permitindo a execução de programas escritos nesse subconjunto.
+
+Se inclui no escopo:
+
+- **Tipos primitivos**: `int`, `float`, `double`, `char`, `bool`, `void`, `string`;
+- **Operadores aritméticos, relacionais e lógicos**;
+- **Controle de fluxo**: `if`, `else`, `while`, `for`, `switch`, `case`, `default`, `break`, `return`;
+- **Funções**, incluindo declaração, definição e chamada, com suporte a parâmetros e retorno de valores;
+- **Bibliotecas padrão**: `math.h` e `stdlib.h`, com funções como `printf`.
+
 ## Referências
 
 - [C (linguagem de programação) — Wikipédia, a enciclopédia livre](https://pt.wikipedia.org/wiki/C_(linguagem_de_programa%C3%A7%C3%A3o))
