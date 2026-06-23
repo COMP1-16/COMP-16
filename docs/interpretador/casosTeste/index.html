@@ -570,7 +570,7 @@
   <a href="#sobre-os-numeros" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sobre os numeros
+        Sobre os números
       
     </span>
   </a>
@@ -1861,7 +1861,7 @@
   <a href="#sobre-os-numeros" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sobre os numeros
+        Sobre os números
       
     </span>
   </a>
@@ -2910,45 +2910,24 @@
 <blockquote>
 <p>Esta seção descreve os casos de teste do interpretador, organizados por categoria de funcionalidade e fase de análise (sintático, semântico e execução). Cada caso inclui a entrada utilizada e, quando aplicável, a saída esperada ou o código de saída.</p>
 </blockquote>
-<h2 id="sobre-os-numeros">Sobre os numeros</h2>
-<p>O repositorio possui <strong>361 arquivos de teste</strong> (.txt), distribuidos entre 12 categorias.
-Ao rodar <code>make test</code>, o terminal reporta <strong>421 verificacoes</strong> — a diferenca ocorre porque
-o script <code>tests.py</code> trata as pastas <code>execucao/validos</code> em tres passagens distintas:</p>
-<table>
-<thead>
-<tr>
-<th>Passagem</th>
-<th>O que faz</th>
-<th style="text-align: center;">Contagem</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Execucao principal</td>
-<td>Roda o interpretador e verifica se passou ou falhou</td>
-<td style="text-align: center;">115</td>
-</tr>
-<tr>
-<td>Saida esperada</td>
-<td>Compara a saida com o arquivo <code>.expected</code> (59 casos possuem um)</td>
-<td style="text-align: center;">59</td>
-</tr>
-<tr>
-<td>Exit code</td>
-<td>Compara o codigo de saida com o arquivo <code>.exitcode</code> (2 casos possuem um)</td>
-<td style="text-align: center;">2</td>
-</tr>
-<tr>
-<td><strong>Subtotal extra</strong></td>
-<td></td>
-<td style="text-align: center;"><strong>61</strong></td>
-</tr>
-</tbody>
-</table>
-<p>Alem disso, o arquivo <code>invalido_recursao_infinita.txt</code> e ignorado pelo script (<code>SKIP_TESTS</code>),
-pois causaria loop infinito — por isso <strong>361 arquivos geram 360 execucoes</strong> mais 61 verificacoes
-extras, totalizando <strong>421</strong>.</p>
-<p>Na documentacao, o numero correto a reportar e <strong>361 casos de teste</strong>.</p>
+<h2 id="sobre-os-numeros">Sobre os números</h2>
+<p>Há <strong>361 casos de teste</strong> no repositório — são os arquivos <code>.txt</code> espalhados pelas 12 categorias
+descritas abaixo. Quando você roda <code>make test</code>, porém, o terminal mostra <strong>421 verificações</strong>.
+Não é erro: alguns casos passam por mais de uma checagem.</p>
+<p>Na prática, quase todo <code>.txt</code> roda <strong>uma vez</strong>. Só o <code>invalido_recursao_infinita.txt</code> fica de fora
+(o script ignora esse arquivo para não entrar em loop infinito). Isso dá <strong>360 execuções</strong> no total.</p>
+<p>O que aumenta a conta são os testes de <strong>execução válidos</strong> (<code>execucao/validos</code>). São <strong>115</strong> casos
+espalhados pelas categorias. Depois que o interpretador roda, o <code>tests.py</code> pode conferir de novo o
+resultado — mas só quando existe arquivo auxiliar na mesma pasta:</p>
+<ul>
+<li><strong>59</strong> casos têm um <code>.expected</code> e a saída do programa é comparada com ele;</li>
+<li><strong>2</strong> casos têm um <code>.exitcode</code> e o código de retorno também é verificado.</li>
+</ul>
+<p>Essas <strong>61</strong> checagens extras se somam às <strong>360</strong> execuções normais: <strong>360 + 61 = 421</strong>. Os 115 casos
+de <code>execucao/validos</code> já estão incluídos nas 360 — as 61 não são arquivos novos, só passagens a mais
+do mesmo teste.</p>
+<p>Para documentação e relatórios, use <strong>361 casos de teste</strong>. O <strong>421</strong> aparece apenas na saída do
+<code>make test</code>.</p>
 <hr />
 <h2 id="resumo-geral">Resumo Geral</h2>
 <table>
