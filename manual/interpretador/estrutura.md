@@ -4,16 +4,16 @@
 
 ## Visão geral da arquitetura
 
-O núcleo do projeto segue o modelo clássico Flex + Bison em C:
+![Arquitetura](../images/arquitetura.png)
+
+O núcleo do projeto segue o modelo clássico Flex + Bison em C para formar a árvore:
 
 - O analisador léxico lê a entrada padrão e produz tokens;
-- O analisador sintático (gramática LALR) consome esses tokens e executa ações semânticas associadas às regras (por exemplo, avaliação parcial de expressões e impressão de depuração).
-
-- **`lexer/`** — especificação do **Flex**: padrões de texto, palavras-chave, literais e operadores mapeados para tokens compartilhados com o Bison.
-- **`parser/`** — especificação do **Bison** (`parser.y`), tipos usados na união semântica (`types.h`) e funções auxiliares usadas nas ações (`funcs.c` / `funcs.h`).
-- **Raiz** — `Makefile` orquestra Bison e Flex, compila os fontes gerados com o utilitário em C e gera o executável **`interpretador`**.
-
-Arquivos gerados na pasta raiz (e removidos com `make clean`): `lex.yy.c`, `parser.tab.c`, `parser.tab.h`, além do binário `interpretador`.
+- O analisador sintático (gramática LALR) consome esses tokens e executa ações semânticas associadas às regras (por exemplo, avaliação parcial de expressões e impressão de depuração);
+- O otimizador opcional percorre a árvore de sintaxe abstrata e aplica transformações para reduzir o tamanho do código intermediário;
+- Por fim, o interpretador percorre a árvore de sintaxe abstrata e executa as instruções do programa;
+- Estão disponíveis para uso funções auxiliares de interpretação, análise semântica, otimização, manipulação da árvore de sintaxe abstrata, tabela de símbolos e implementação de bibliotecas padrão.
+- Arquivos gerados pelo interpretador (como `parser.tab.c`, `lex.yy.c` e `parser.tab.h`) são temporários e não devem ser versionados.
 
 ---
 
@@ -72,7 +72,7 @@ COMP-16/
 
 ### `lexer/lexer.l`
 
-Define o alfabeto de tokens reconhecido na entrada: tipos, identificadores, literais numéricos e de texto, operadores, delimitadores e tratamento de caracteres inválidos. Inclui cabeçalhos do analisador sintático (`parser.tab.h`) e de tipos (`parser/types.h`) para manter yylval alinhado à `%union` do Bison.
+Define o alfabeto de tokens reconhecido na entrada: tipos, identificadores, literais numéricos e de texto, operadores, delimitadores e tratamento de caracteres inválidos. Inclui cabeçalhos do analisador sintático (`parser.tab.h`) e de tipos (`types.h`) para manter yylval alinhado à `%union` do Bison.
 
 ### `parser/parser.y`
 
@@ -82,7 +82,7 @@ Concentra a gramática (`%%` … regras), declaração de tokens e tipos (`%toke
 
 Concentra as implementações de funções auxiliares, interpretação, análise semântica, otimização, manipulação da árvore de sintaxe abstrata, tabela de símbolos e bibliotecas. Cada subpasta tem seu próprio cabeçalho (`.h`) e implementação (`.c`).
 
-### `types.h` e `funcs.*`
+### `lib/types.h` e `lib/funcs.*`
 
 - `types.h` — estruturas compartilhadas entre lexer (onde faz sentido), parser e funções auxiliares; hoje inclui o agregado `Valor` (tipo discriminado + união de `int` / `float` / `char` / string).
 - `funcs.c` / `funcs.h` — lógica reutilizável nas ações da gramática (por exemplo, normalização para float e avaliação de operadores aritméticos binários).
@@ -91,7 +91,7 @@ Assim, a gramática permanece mais legível e a lógica numérica pode evoluir s
 
 ### `Makefile`
 
-Encadeia `bison -d parser/parser.y` e `flex lexer/lexer.l`, depois invoca o GCC unindo `parser.tab.c`, `lex.yy.c`, e as implementações em `lib/` e o fluxo de controle `main.c`, com `-I.` para resolver includes como `types.h`. É o contrato oficial de “como o interpretador é construído” no ambiente Unix/WSL descrito no README.
+Encadeia `bison -d parser/parser.y` e `flex lexer/lexer.l`, depois invoca o GCC unindo `parser.tab.c`, `lex.yy.c`, e as implementações em `lib/` e o fluxo de controle `main.c`, com `-I.` para resolver includes como `lib/types.h`. É o contrato oficial de “como o interpretador é construído” no ambiente Unix/WSL descrito no README.
 
 ### `testes/` e `tests.py`
 
@@ -108,3 +108,4 @@ Conteúdo estático em Markdown servido pelo MkDocs (tema Material) como GitHub 
 | Versão | Data | Descrição | Autor |
 | :--- | :--- | :--- | :--- |
 | 1.0 | 13/05/26 | Criação da página com seu respectivo conteúdo | Camila Careli |
+| 1.1 | 23/06/26 | Atualização de informações sobre a arquitetura do projeto e organização de pastas e arquivos | Vinícius de Jesus |
