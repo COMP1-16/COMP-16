@@ -16,7 +16,7 @@
 
 - Organização da equipe: processo de trabalho, cronograma e pontos de controle ([#41](https://github.com/COMP1-16/COMP-16/issues/41)).
 - Casos de teste da sprint 7 ([#38](https://github.com/COMP1-16/COMP-16/issues/38)) — em andamento.
-- Registro transparente do [uso de IA](usoDeIA.md) no projeto.
+- Registro transparente do [uso de IA](../qualidade.md) no projeto.
 
 ## Bibliotecas e escopo
 

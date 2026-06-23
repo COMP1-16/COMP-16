@@ -3,21 +3,10 @@
     <url>
          <loc>https://comp1-16.github.io/COMP-16/</loc>
          <lastmod>2026-06-23</lastmod>
-<<<<<<< Updated upstream
-    </url>
-    <url>
-         <loc>https://comp1-16.github.io/COMP-16/organizacao/</loc>
-         <lastmod>2026-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://comp1-16.github.io/COMP-16/pontosDeControle/</loc>
-         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
          <loc>https://comp1-16.github.io/COMP-16/qualidade/</loc>
          <lastmod>2026-06-23</lastmod>
-=======
->>>>>>> Stashed changes
     </url>
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/casosTeste/</loc>
@@ -26,8 +15,6 @@
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/comoExecutar/</loc>
          <lastmod>2026-06-23</lastmod>
-<<<<<<< Updated upstream
-=======
     </url>
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/escopo-status/</loc>
@@ -36,7 +23,6 @@
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/escopo/</loc>
          <lastmod>2026-06-23</lastmod>
->>>>>>> Stashed changes
     </url>
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/estrutura/</loc>
@@ -49,8 +35,6 @@
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/linguagemInterpretada/</loc>
          <lastmod>2026-06-23</lastmod>
-<<<<<<< Updated upstream
-=======
     </url>
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/organizacaoEquipe/</loc>
@@ -71,10 +55,5 @@
     <url>
          <loc>https://comp1-16.github.io/COMP-16/interpretador/pontosDeControlePc2/</loc>
          <lastmod>2026-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://comp1-16.github.io/COMP-16/interpretador/usoDeIA/</loc>
-         <lastmod>2026-06-23</lastmod>
->>>>>>> Stashed changes
     </url>
 </urlset>
