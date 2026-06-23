@@ -32,7 +32,6 @@ nav:
   - O interpretador:
       - Linguagem e Escopo: interpretador/linguagem-e-escopo.md
       - Linguagem interpretada: interpretador/linguagemInterpretada.md
-      - Escopo: interpretador/escopo.md
       - Estrutura do interpretador: interpretador/estrutura.md
       - Como executar: interpretador/comoExecutar.md
       - Casos de teste: interpretador/casosTeste.md
