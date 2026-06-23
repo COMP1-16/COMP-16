@@ -14,7 +14,7 @@
         <link rel="prev" href="../linguagem-e-escopo/">
       
       
-        <link rel="next" href="../escopo/">
+        <link rel="next" href="../estrutura/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#linguagem-interpretada" class="md-skip">
+        <a href="#gramatica-e-tokens-do-interpretador" class="md-skip">
           Pular para conteúdo
         </a>
       
@@ -301,7 +301,7 @@
   
   
   <span class="md-ellipsis">
-    Linguagem e Escopo
+    O interpretador
     
   </span>
   
@@ -312,7 +312,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Linguagem e Escopo
+            O interpretador
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -328,7 +328,7 @@
   
   
   <span class="md-ellipsis">
-    Visão geral
+    Linguagem e Escopo
     
   </span>
   
@@ -396,75 +396,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sintaxe-e-semantica-da-linguagem-c" class="md-nav__link">
+  <a href="#1-tabela-de-tokens-lexerl" class="md-nav__link">
     <span class="md-ellipsis">
-      Sintaxe e Semântica da Linguagem C
+      1. Tabela de Tokens (lexer.l)
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Sintaxe e Semântica da Linguagem C">
+    <nav class="md-nav" aria-label="1. Tabela de Tokens (lexer.l)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sintaxe" class="md-nav__link">
+  <a href="#casos-especiais-sem-retorno-de-token" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Sintaxe
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Sintaxe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-tokens-os-tokens-sao-os-elementos-basicos-da-linguagem" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.1 Tokens: Os tokens são os elementos básicos da linguagem:
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.1 Tokens: Os tokens são os elementos básicos da linguagem:">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#palavras-chave" class="md-nav__link">
-    <span class="md-ellipsis">
-      Palavras-chave
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#identificadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Identificadores
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#literais" class="md-nav__link">
-    <span class="md-ellipsis">
-      Literais
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#operadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Operadores
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delimitadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Delimitadores
+      Casos especiais (sem retorno de token)
     </span>
   </a>
   
@@ -474,243 +418,95 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#12-estrutura-de-um-programa" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#2-gramatica" class="md-nav__link">
     <span class="md-ellipsis">
-      1.2 Estrutura de um programa
+      2. Gramática
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#13-declaracoes" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.3 Declarações
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.3 Declarações">
+    <nav class="md-nav" aria-label="2. Gramática">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#prototipos" class="md-nav__link">
+  <a href="#21-programa-e-blocos" class="md-nav__link">
     <span class="md-ellipsis">
-      Protótipos:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#14-instrucoes-e-blocos" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.4 Instruções e blocos
+      2.1 Programa e blocos
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#15-estruturas-de-controle" class="md-nav__link">
+  <a href="#22-statement-comando" class="md-nav__link">
     <span class="md-ellipsis">
-      1.5 Estruturas de controle
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.5 Estruturas de controle">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#condicional" class="md-nav__link">
-    <span class="md-ellipsis">
-      Condicional
+      2.2 Statement (comando)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#while" class="md-nav__link">
+  <a href="#23-declaracoes-e-funcoes" class="md-nav__link">
     <span class="md-ellipsis">
-      While
+      2.3 Declarações e funções
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#do-while" class="md-nav__link">
+  <a href="#24-atualizacao-de-variaveis" class="md-nav__link">
     <span class="md-ellipsis">
-      Do-while
+      2.4 Atualização de variáveis
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#for" class="md-nav__link">
+  <a href="#25-expressoes" class="md-nav__link">
     <span class="md-ellipsis">
-      For
+      2.5 Expressões
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#switch" class="md-nav__link">
+  <a href="#26-condicional" class="md-nav__link">
     <span class="md-ellipsis">
-      Switch
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#16-erros-sintaticos" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.6 Erros sintáticos
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-semantica" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Semântica
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Semântica">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#21-tipos" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.1 Tipos
+      2.6 Condicional
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-operadores" class="md-nav__link">
+  <a href="#27-switch-case" class="md-nav__link">
     <span class="md-ellipsis">
-      2.2 Operadores
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.2 Operadores">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#incremento" class="md-nav__link">
-    <span class="md-ellipsis">
-      Incremento:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#23-ponteiros" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.3 Ponteiros
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.3 Ponteiros">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#array" class="md-nav__link">
-    <span class="md-ellipsis">
-      Array:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#24-escopo" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.4 Escopo
+      2.7 Switch / case
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#25-funcoes" class="md-nav__link">
+  <a href="#28-while" class="md-nav__link">
     <span class="md-ellipsis">
-      2.5 Funções
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.5 Funções">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#passagem-por-valor" class="md-nav__link">
-    <span class="md-ellipsis">
-      Passagem por valor:
+      2.8 While
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#por-referencia" class="md-nav__link">
+  <a href="#29-for" class="md-nav__link">
     <span class="md-ellipsis">
-      Por referência:
+      2.9 For
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#26-comportamento-indefinido" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.6 Comportamento indefinido
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -744,36 +540,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../escopo/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Escopo
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../estrutura/" class="md-nav__link">
         
   
@@ -788,9 +554,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -801,7 +568,7 @@
   
   
   <span class="md-ellipsis">
-    Como executar o interpretador
+    Como executar
     
   </span>
   
@@ -810,9 +577,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -832,135 +600,6 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Pontos de controle
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            Pontos de controle
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pontosDeControle/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Visão geral
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pontosDeControlePc1/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    PC1
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pontosDeControlePc2/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    PC2
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pontosDeControleEntregaFinal/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Entrega final
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
               
             
           </ul>
@@ -977,12 +616,56 @@
   
   
     <li class="md-nav__item">
-      <a href="../usoDeIA/" class="md-nav__link">
+      <a href="../../organizacao/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Uso de IA
+    Organização da equipe
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pontosDeControle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pontos de controle
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../qualidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qualidade
     
   </span>
   
@@ -1019,75 +702,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sintaxe-e-semantica-da-linguagem-c" class="md-nav__link">
+  <a href="#1-tabela-de-tokens-lexerl" class="md-nav__link">
     <span class="md-ellipsis">
-      Sintaxe e Semântica da Linguagem C
+      1. Tabela de Tokens (lexer.l)
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Sintaxe e Semântica da Linguagem C">
+    <nav class="md-nav" aria-label="1. Tabela de Tokens (lexer.l)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sintaxe" class="md-nav__link">
+  <a href="#casos-especiais-sem-retorno-de-token" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Sintaxe
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Sintaxe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-tokens-os-tokens-sao-os-elementos-basicos-da-linguagem" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.1 Tokens: Os tokens são os elementos básicos da linguagem:
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.1 Tokens: Os tokens são os elementos básicos da linguagem:">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#palavras-chave" class="md-nav__link">
-    <span class="md-ellipsis">
-      Palavras-chave
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#identificadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Identificadores
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#literais" class="md-nav__link">
-    <span class="md-ellipsis">
-      Literais
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#operadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Operadores
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delimitadores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Delimitadores
+      Casos especiais (sem retorno de token)
     </span>
   </a>
   
@@ -1097,243 +724,95 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#12-estrutura-de-um-programa" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#2-gramatica" class="md-nav__link">
     <span class="md-ellipsis">
-      1.2 Estrutura de um programa
+      2. Gramática
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#13-declaracoes" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.3 Declarações
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.3 Declarações">
+    <nav class="md-nav" aria-label="2. Gramática">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#prototipos" class="md-nav__link">
+  <a href="#21-programa-e-blocos" class="md-nav__link">
     <span class="md-ellipsis">
-      Protótipos:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#14-instrucoes-e-blocos" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.4 Instruções e blocos
+      2.1 Programa e blocos
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#15-estruturas-de-controle" class="md-nav__link">
+  <a href="#22-statement-comando" class="md-nav__link">
     <span class="md-ellipsis">
-      1.5 Estruturas de controle
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1.5 Estruturas de controle">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#condicional" class="md-nav__link">
-    <span class="md-ellipsis">
-      Condicional
+      2.2 Statement (comando)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#while" class="md-nav__link">
+  <a href="#23-declaracoes-e-funcoes" class="md-nav__link">
     <span class="md-ellipsis">
-      While
+      2.3 Declarações e funções
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#do-while" class="md-nav__link">
+  <a href="#24-atualizacao-de-variaveis" class="md-nav__link">
     <span class="md-ellipsis">
-      Do-while
+      2.4 Atualização de variáveis
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#for" class="md-nav__link">
+  <a href="#25-expressoes" class="md-nav__link">
     <span class="md-ellipsis">
-      For
+      2.5 Expressões
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#switch" class="md-nav__link">
+  <a href="#26-condicional" class="md-nav__link">
     <span class="md-ellipsis">
-      Switch
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#16-erros-sintaticos" class="md-nav__link">
-    <span class="md-ellipsis">
-      1.6 Erros sintáticos
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-semantica" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Semântica
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Semântica">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#21-tipos" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.1 Tipos
+      2.6 Condicional
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-operadores" class="md-nav__link">
+  <a href="#27-switch-case" class="md-nav__link">
     <span class="md-ellipsis">
-      2.2 Operadores
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.2 Operadores">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#incremento" class="md-nav__link">
-    <span class="md-ellipsis">
-      Incremento:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#23-ponteiros" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.3 Ponteiros
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.3 Ponteiros">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#array" class="md-nav__link">
-    <span class="md-ellipsis">
-      Array:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#24-escopo" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.4 Escopo
+      2.7 Switch / case
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#25-funcoes" class="md-nav__link">
+  <a href="#28-while" class="md-nav__link">
     <span class="md-ellipsis">
-      2.5 Funções
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.5 Funções">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#passagem-por-valor" class="md-nav__link">
-    <span class="md-ellipsis">
-      Passagem por valor:
+      2.8 While
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#por-referencia" class="md-nav__link">
+  <a href="#29-for" class="md-nav__link">
     <span class="md-ellipsis">
-      Por referência:
+      2.9 For
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#26-comportamento-indefinido" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.6 Comportamento indefinido
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1370,176 +849,341 @@
   
 
 
-<h1 id="linguagem-interpretada">Linguagem interpretada</h1>
 <blockquote>
-<p>Especificação técnica de referência para o projeto: tokens, exemplos de sintaxe, semântica ilustrativa e erros típicos. Para o contexto geral sobre a linguagem C e a relação com o escopo do interpretador, veja <a href="../linguagem-e-escopo/">Linguagem e Escopo — visão geral</a>.</p>
+<p>Este documento descreve as estruturas escolhidas para implementação e suas especificações técnicas. Ele é parte da seção de <strong>Linguagem e Escopo</strong> da documentação do interpretador, que cobre o que é a linguagem C e o que o projeto se propõe a implementar.</p>
 </blockquote>
-<h2 id="sintaxe-e-semantica-da-linguagem-c">Sintaxe e Semântica da Linguagem C</h2>
-<p>Toda linguagem possui duas dimensões fundamentais: </p>
-<ul>
-<li><strong>Sintaxe</strong>: regras de escrita correta;</li>
-<li><strong>Semântica</strong>: significado do código.</li>
-</ul>
-<h3 id="1-sintaxe">1. Sintaxe</h3>
-<h4 id="11-tokens-os-tokens-sao-os-elementos-basicos-da-linguagem">1.1 Tokens: Os tokens são os elementos básicos da linguagem:</h4>
-<h5 id="palavras-chave">Palavras-chave</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="p">,</span><span class="w"> </span><span class="k">if</span><span class="p">,</span><span class="w"> </span><span class="k">else</span><span class="p">,</span><span class="w"> </span><span class="k">while</span><span class="p">,</span><span class="w"> </span><span class="k">for</span><span class="p">,</span><span class="w"> </span><span class="k">do</span><span class="p">,</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">return</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="p">,</span><span class="w"> </span><span class="k">union</span><span class="p">,</span><span class="w"> </span><span class="k">typedef</span><span class="p">,</span><span class="w"> </span><span class="k">enum</span><span class="p">,</span><span class="w"> </span><span class="k">switch</span><span class="p">,</span><span class="w"> </span><span class="k">case</span><span class="p">,</span><span class="w"> </span><span class="no">break</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="no">continue</span><span class="p">,</span><span class="w"> </span><span class="no">goto</span><span class="p">,</span><span class="w"> </span><span class="no">sizeof</span><span class="p">,</span><span class="w"> </span><span class="no">static</span><span class="p">,</span><span class="w"> </span><span class="no">extern</span><span class="p">,</span><span class="w"> </span><span class="no">const</span><span class="p">,</span><span class="w"> </span><span class="no">volatile</span>
-</code></pre></div>
-<h5 id="identificadores">Identificadores</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">contador</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">float</span><span class="w"> </span><span class="n">temperatura_media</span><span class="p">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kt">char</span><span class="w"> </span><span class="n">_buffer</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
-</code></pre></div>
-<h5 id="literais">Literais</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="mi">42</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="mf">3.14</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="sc">&#39;A&#39;</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s">&quot;linguagem&quot;</span>
-</code></pre></div>
-<h5 id="operadores">Operadores</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="o">+</span><span class="w">  </span><span class="o">-</span><span class="w">  </span><span class="o">*</span><span class="w">  </span><span class="o">/</span><span class="w">  </span><span class="o">%</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="o">==</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">&gt;=</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">&gt;&gt;</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="o">=</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="o">/=</span>
-</code></pre></div>
-<h5 id="delimitadores">Delimitadores</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">,</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">{}</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">()</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">[]</span>
-</code></pre></div>
-<h4 id="12-estrutura-de-um-programa">1.2 Estrutura de um programa</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Olá, mundo!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
-</code></pre></div>
-<h4 id="13-declaracoes">1.3 Declarações</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">idade</span><span class="p">;</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">float</span><span class="w"> </span><span class="n">salario</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3500.00</span><span class="p">;</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kt">char</span><span class="w"> </span><span class="n">inicial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;M&#39;</span><span class="p">;</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.141592653589793</span><span class="p">;</span>
-</code></pre></div>
-<h5 id="prototipos">Protótipos:</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kt">int</span><span class="w"> </span><span class="nf">somar</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">float</span><span class="w"> </span><span class="nf">calcular_media</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">notas</span><span class="p">[],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">quantidade</span><span class="p">);</span>
-</code></pre></div>
-<h4 id="14-instrucoes-e-blocos">1.4 Instruções e blocos</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">temp</span><span class="p">;</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp</span><span class="p">;</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
-</code></pre></div>
-<h4 id="15-estruturas-de-controle">1.5 Estruturas de controle</h4>
-<h5 id="condicional">Condicional</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">expressão</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="c1">// instruções</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="c1">// instruções alternativas</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">}</span>
-</code></pre></div>
-<h5 id="while">While</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">expressão</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="c1">// instruções</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="p">}</span>
-</code></pre></div>
-<h5 id="do-while">Do-while</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">do</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="c1">// instruções</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">expressão</span><span class="p">);</span>
-</code></pre></div>
-<h5 id="for">For</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
-</code></pre></div>
-<h5 id="switch">Switch</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">expressão</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">valor1</span><span class="p">:</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">        </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">valor2</span><span class="p">:</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">        </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="k">default</span><span class="o">:</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="p">}</span>
-</code></pre></div>
-<h4 id="16-erros-sintaticos">1.6 Erros sintáticos</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="w">        </span><span class="c1">// falta ;</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">if</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w">        </span><span class="c1">// falta ()</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kt">int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">          </span><span class="c1">// identificador ausente</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="kt">float</span><span class="w"> </span><span class="mi">2</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.0</span><span class="p">;</span><span class="w">   </span><span class="c1">// inválido</span>
-</code></pre></div>
+<h1 id="gramatica-e-tokens-do-interpretador">Gramática e Tokens do Interpretador</h1>
+<blockquote>
+<p>Referência técnica das estruturas recuperadas pelo <code>lexer.l</code>, arranjadas pelo <code>parser.y</code> e interpretadas pelo <code>interpreter.c</code>. </p>
+</blockquote>
 <hr />
-<h3 id="2-semantica">2. Semântica</h3>
-<h4 id="21-tipos">2.1 Tipos</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="kt">double</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-</code></pre></div>
-<h4 id="22-operadores">2.2 Operadores</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
-</code></pre></div>
-<h5 id="incremento">Incremento:</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">++</span><span class="p">;</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">++</span><span class="n">a</span><span class="p">;</span>
-</code></pre></div>
-<h4 id="23-ponteiros">2.3 Ponteiros</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">;</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
-</code></pre></div>
-<h5 id="array">Array:</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">};</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-</code></pre></div>
-<h4 id="24-escopo">2.4 Escopo</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="kt">void</span><span class="w"> </span><span class="nf">funcao</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="p">}</span>
-</code></pre></div>
-<h4 id="25-funcoes">2.5 Funções</h4>
-<h5 id="passagem-por-valor">Passagem por valor:</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">dobrar</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">}</span>
-</code></pre></div>
-<h5 id="por-referencia">Por referência:</h5>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">dobrar</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">    </span><span class="o">*</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="p">}</span>
-</code></pre></div>
-<h4 id="26-comportamento-indefinido">2.6 Comportamento indefinido</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">v</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span>
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
-<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
-<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
-<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2147483647</span><span class="p">;</span>
-<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>
-<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
-<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-</code></pre></div>
+<h2 id="1-tabela-de-tokens-lexerl">1. Tabela de Tokens (lexer.l)</h2>
+<p><a id="lit"></a>
+<a id="id"></a>
+<a id="aritimeticos"></a>
+<a id="relacionais"></a>
+<a id="logicos"></a></p>
+<table>
+<thead>
+<tr>
+<th>Categoria</th>
+<th>Token</th>
+<th>Padrão / Exemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Includes</td>
+<td><code>INCLUDE_MATH</code>, <code>INCLUDE_STDLIB</code></td>
+<td><code>#include &lt;math.h&gt;</code>, <code>#include &lt;stdlib.h&gt;</code></td>
+</tr>
+<tr>
+<td>Condicionais</td>
+<td><code>KW_IF</code>, <code>KW_ELSE</code>, <code>KW_WHILE</code>, <code>KW_FOR</code></td>
+<td><code>if</code>, <code>else</code>, <code>while</code>, <code>for</code></td>
+</tr>
+<tr>
+<td>Switch</td>
+<td><code>KW_SWITCH</code>, <code>KW_CASE</code>, <code>KW_DEFAULT</code></td>
+<td><code>switch</code>, <code>case</code>, <code>default</code></td>
+</tr>
+<tr>
+<td>Controle de fluxo</td>
+<td><code>KW_RETURN</code>, <code>KW_BREAK</code></td>
+<td><code>return</code>, <code>break</code></td>
+</tr>
+<tr>
+<td>Saída</td>
+<td><code>KW_PRINTF</code></td>
+<td><code>printf</code></td>
+</tr>
+<tr>
+<td>Tipos</td>
+<td><code>TYPE_INT</code>, <code>TYPE_FLOAT</code>, <code>TYPE_DOUBLE</code>, <code>TYPE_CHAR</code>, <code>TYPE_BOOL</code>, <code>TYPE_VOID</code>, <code>TYPE_STRING</code></td>
+<td><code>int</code>, <code>float</code>, <code>double</code>, <code>char</code>, <code>bool</code>, <code>void</code>, <code>string</code></td>
+</tr>
+<tr>
+<td>Literais</td>
+<td><code>NUM</code>, <code>FLOAT_NUM</code>, <code>STRING</code>, <code>CHAR_LIT</code></td>
+<td><code>42</code>, <code>3.14</code>, <code>"texto"</code>, <code>'A'</code></td>
+</tr>
+<tr>
+<td>Identificador</td>
+<td><code>ID</code></td>
+<td><code>variavel</code></td>
+</tr>
+<tr>
+<td>Relacionais</td>
+<td><code>EQUAL</code>, <code>DIFF</code>, <code>LESS_EQ</code>, <code>GREAT_EQ</code>, <code>LESSER</code>, <code>GREATER</code></td>
+<td><code>==</code>, <code>!=</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&gt;</code></td>
+</tr>
+<tr>
+<td>Atualização</td>
+<td><code>UPDT_PLUS</code>, <code>UPDT_MINUS</code>, <code>UPDT_TIMES</code>, <code>UPDT_DIVIDE</code>, <code>UPDT_INC</code>, <code>UPDT_DEC</code></td>
+<td><code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>++</code>, <code>--</code></td>
+</tr>
+<tr>
+<td>Atribuição</td>
+<td><code>INITVAR</code></td>
+<td><code>=</code></td>
+</tr>
+<tr>
+<td>Aritméticos</td>
+<td><code>PLUS</code>, <code>MINUS</code>, <code>TIMES</code>, <code>DIVIDE</code>, <code>MOD</code></td>
+<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td>
+</tr>
+<tr>
+<td>Lógicos</td>
+<td><code>AND</code>, <code>OR</code>, <code>NOT</code></td>
+<td><code>&amp;&amp;</code>, <code>\|\|</code>, <code>!</code></td>
+</tr>
+<tr>
+<td>Delimitadores</td>
+<td><code>L_PAREN</code>, <code>R_PAREN</code>, <code>L_CRLRBRACKET</code>, <code>R_CRLRBRACKET</code>, <code>COMMA</code>, <code>SEMICOLON</code>, <code>COLON</code></td>
+<td><code>( ) { } , ; :</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="casos-especiais-sem-retorno-de-token">Casos especiais (sem retorno de token)</h3>
+<ul>
+<li><code>[ \t\r\n]+</code> → ignora espaço em branco</li>
+<li><code>"//"[^\n]*</code> → ignora comentário de linha</li>
+<li><code>.</code> (qualquer outro caractere) → erro léxico reportado em <code>stderr</code></li>
+</ul>
+<hr />
+<h2 id="2-gramatica">2. Gramática</h2>
+<blockquote>
+<p>Baseada nas produções de <code>parser.y</code>. Convenções: <code>?</code> = opcional, <code>*</code> = zero ou mais repetições, <code>+</code> = uma ou mais repetições.</p>
+</blockquote>
+<h3 id="21-programa-e-blocos">2.1 Programa e blocos</h3>
+<p><a id="stmt"></a></p>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>O que agrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>programa</strong></td>
+<td>raiz do programa</td>
+<td>contém uma lista de declarações e funções</td>
+</tr>
+<tr>
+<td><strong>bloco</strong></td>
+<td>bloco de instruções delimitado por chaves ou ser um único comando</td>
+<td>contém uma lista de comandos (stmts)</td>
+</tr>
+<tr>
+<td><strong>stmts</strong></td>
+<td>lista de comandos, podendo ser vazia</td>
+<td>contém uma lista de comandos (<a href="#stmt">stmt</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-statement-comando">2.2 Statement (comando)</h3>
+<p><strong>stmt</strong>:</p>
+<ul>
+<li>Declaração de variável ou função;</li>
+<li>Atualização de variável;</li>
+<li>Expressão seguida de ponto e vírgula;</li>
+<li>Comando de controle de fluxo (if, while, for, switch);</li>
+<li>Bloco de comandos;</li>
+<li>Comando de saída (printf);</li>
+<li>Inclusão de biblioteca (math.h, stdlib.h);</li>
+<li>Comando de retorno (return);</li>
+<li>Comando de quebra (break);</li>
+<li>Comando vazio (apenas ';');</li>
+</ul>
+<h3 id="23-declaracoes-e-funcoes">2.3 Declarações e funções</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>tipo</strong></td>
+<td>tipo de dado de variável/função</td>
+<td>(1) <code>'int'</code><br>(2)<code>'float'</code><br>(3)<code>'double'</code><br>(4)<code>'char'</code><br>(5)<code>'bool'</code><br>(6)<code>'void'</code><br>(7)<code>'string'</code></td>
+</tr>
+<tr>
+<td><strong>declarador</strong></td>
+<td>declarador de variável com ou sem atribuição inicial</td>
+<td>(1)<code>ID '=' expr</code><br>(2)<code>ID</code></td>
+</tr>
+<tr>
+<td><strong>declaradores</strong></td>
+<td>lista de declaradores, separados por vírgula</td>
+<td><code>declarador</code> (<code>',' declarador</code>)*</td>
+</tr>
+<tr>
+<td><strong>declaracao</strong></td>
+<td>declaração de variável</td>
+<td>(1) <code>tipo declarador;</code><br>(2) <code>tipo declaradores;</code></td>
+</tr>
+<tr>
+<td><strong>funcao_decl</strong></td>
+<td>declaração de função</td>
+<td><code>tipo ID '(' **param_list_opt** ')' bloco</code></td>
+</tr>
+<tr>
+<td><strong>param_list_opt</strong></td>
+<td>lista de parâmetros opcional</td>
+<td>(1) <code>{ }</code><br>(2) <code>param_list</code></td>
+</tr>
+<tr>
+<td><strong>param_list</strong></td>
+<td>lista de parâmetros</td>
+<td><code>param</code> (<code>',' param</code>)*</td>
+</tr>
+<tr>
+<td><strong>param</strong></td>
+<td>parâmetro de função</td>
+<td><code>tipo ID</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-atualizacao-de-variaveis">2.4 Atualização de variáveis</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>atualizacao</td>
+<td>(1) atualização de variável<br>(2) atualização de variável com acréssimo<br>(3) atualização de variável com decremento<br>(4) atulização de variável com produto<br>(5) atualização de variável com quociente<br>(6) incremento pós-fixado<br>(7) decremento pós-fixado</td>
+<td>(1) <code>ID '=' expr</code><br>(2) <code>ID '+=' expr</code><br>(3) <code>ID '-=' expr</code><br>(4) <code>ID '*=' expr</code><br>(5) <code>ID '/=' expr</code><br>(6) <code>ID '++'</code><br>(7) <code>ID '--'</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-expressoes">2.5 Expressões</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>expr</strong></td>
+<td>expressão</td>
+<td>(1) <a href="#lit">Literais</a><br>(2) <a href="#id">Identificadores</a><br>(3) <code>ID '('arg_list_opt')'</code> <br>(4) <code>expr</code> <a href="#aritimeticos">Aritméticos</a> <code>expr</code><br>(5) <code>expr</code> <a href="#relacionais">Relacionais</a> <code>expr</code><br>(6) <code>expr</code> <a href="#logicos">Lógicos</a> <code>expr</code><br>(7) <code>'!' expr</code><br>(8) <code>'-' expr</code><br>(9) <code>ID'(' expr ')'</code><br>(10) <code>'(' expr ')'</code><br>(11) <code>ID'++'</code><br>(12) <code>ID'--'</code></td>
+</tr>
+<tr>
+<td><strong>arg_list_opt</strong></td>
+<td>lista de argumentos opcional</td>
+<td>(1) <code>{ }</code><br>(2) <code>arg_list</code></td>
+</tr>
+<tr>
+<td><strong>arg_list</strong></td>
+<td>lista de argumentos</td>
+<td><code>expr</code> (<code>',' expr</code>)*</td>
+</tr>
+</tbody>
+</table>
+<h3 id="26-condicional">2.6 Condicional</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>if_stmt</strong></td>
+<td>comando condicional</td>
+<td>(1) <code>'if' '(' expr ')' stmt</code><br>(2) <code>'if' '(' expr ')' stmt 'else' stmt</code><br>(3) <code>'if' '(' expr ')' stmt 'else' if_stmt</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="27-switch-case">2.7 Switch / case</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>switch_stmt</strong></td>
+<td>comando switch</td>
+<td><code>'switch' '(' expr ')' '{' case_stmt+ '}'</code></td>
+</tr>
+<tr>
+<td><strong>case_stmt</strong></td>
+<td>comando case</td>
+<td>(1) <code>'case' NUM ':' stmts</code>?<br>(2) <code>'case' CHAR_LIT ':' stmts</code>?<br>(3) <code>'default' ':' stmts</code>?</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Observação: não há <code>break</code> obrigatório aqui por se expandir em <code>stmts</code>.</p>
+</blockquote>
+<h3 id="28-while">2.8 While</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>while_stmt</strong></td>
+<td>comando while</td>
+<td><code>'while' '(' expr ')' stmt</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="29-for">2.9 For</h3>
+<table>
+<thead>
+<tr>
+<th>Estrutura</th>
+<th>Descrição</th>
+<th>Expande para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>for_stmt</strong></td>
+<td>comando for</td>
+<td><code>'for' '(' for_init ';' for_cond ';' for_inc ')' stmt</code></td>
+</tr>
+<tr>
+<td><strong>for_init</strong></td>
+<td>inicialização do for</td>
+<td>(1) <code>tipo declarador (',' declarador)*</code><br>(2) <code>ID '=' expr</code><br>(3) <code>expr</code><br>(4) /<em> vazio </em>/</td>
+</tr>
+<tr>
+<td><strong>for_cond</strong></td>
+<td>condição do for</td>
+<td>(1) <code>expr</code><br>(2) /<em> vazio </em>/</td>
+</tr>
+<tr>
+<td><strong>for_inc</strong></td>
+<td>incremento do for</td>
+<td>(1) <code>expr</code><br>(2) <code>ID '=' expr</code><br>(3) <code>ID '++'</code><br>(4) <code>ID '--'</code><br>(5) /<em> vazio </em>/</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <h2 id="historico-de-versao">Histórico de Versão</h2>
 <table>
@@ -1563,6 +1207,12 @@
 <td style="text-align: left;">13/05/26</td>
 <td style="text-align: left;">Revisão do conteúdo e da estética da página</td>
 <td style="text-align: left;">Camila Careli</td>
+</tr>
+<tr>
+<td style="text-align: left;">1.2</td>
+<td style="text-align: left;">23/06/26</td>
+<td style="text-align: left;">Revisão de seção de acordo com os recursos implementados</td>
+<td style="text-align: left;">Vinícius de Jesus</td>
 </tr>
 </tbody>
 </table>
