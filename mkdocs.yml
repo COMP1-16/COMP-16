@@ -21,6 +21,12 @@ nav:
       - Como executar o interpretador: interpretador/comoExecutar.md
       - Casos de teste: interpretador/casosTeste.md
       - Glossário de termos: interpretador/glossarioTermos.md
+  - Organização da equipe: interpretador/organizacaoEquipe.md
+  - Pontos de controle:
+      - Visão geral: interpretador/pontosDeControle.md
+      - PC1: interpretador/pontosDeControlePc1.md
+      - PC2: interpretador/pontosDeControlePc2.md
+      - Entrega final: interpretador/pontosDeControleEntregaFinal.md
 
 markdown_extensions:
   - pymdownx.highlight:
