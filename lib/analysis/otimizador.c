@@ -4,6 +4,7 @@
 #include "otimizador.h"
 #include "comp_math.h"
 #include "comp_stdlib.h"
+#include "comp_ctype.h"
 
 /* ================================================================== *
  * liberarNo — libera recursivamente uma subárvore                     *
@@ -649,6 +650,7 @@ No *otimizar(No *no) {
         case NO_DECL:
         case NO_INCLUDE_MATH:
         case NO_INCLUDE_STDLIB:
+        case NO_INCLUDE_CTYPE:
             return no;
 
         default:
@@ -740,6 +742,19 @@ No *otimizar(No *no) {
                     float res = stdlib_atof(arg->sval);
                     liberarNo(no);
                     return noFloat(res);
+                }
+            }
+            if ((strcmp(no->nome, "isalpha") == 0 || strcmp(no->nome, "isdigit") == 0 ||
+                 strcmp(no->nome, "isspace") == 0) &&
+                no->u.call.args && no->u.call.args->u.bloco.count == 1) {
+                No *arg = no->u.call.args->u.bloco.stmts[0];
+                if (arg && arg->tipo == NO_CHAR) {
+                    int res = 0;
+                    if (strcmp(no->nome, "isalpha") == 0) res = ctype_isalpha(arg->cval);
+                    else if (strcmp(no->nome, "isdigit") == 0) res = ctype_isdigit(arg->cval);
+                    else res = ctype_isspace(arg->cval);
+                    liberarNo(no);
+                    return noInt(res);
                 }
             }
             break;

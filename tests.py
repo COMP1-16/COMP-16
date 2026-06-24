@@ -18,6 +18,7 @@ FEATURES = [
     "operadores_logicos",
     "math",
     "stdlib",
+    "ctype",
     "switch_case",
     "recursao",
     "otimizador",

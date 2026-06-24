@@ -217,3 +217,7 @@ No *noIncludeMath() {
 No *noIncludeStdlib() {
     return alocar(NO_INCLUDE_STDLIB);
 }
+
+No *noIncludeCtype() {
+    return alocar(NO_INCLUDE_CTYPE);
+}

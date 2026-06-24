@@ -34,6 +34,7 @@ typedef enum {
     NO_FUNC_CALL,
     NO_INCLUDE_MATH,
     NO_INCLUDE_STDLIB,
+    NO_INCLUDE_CTYPE,
 } TipoNo;
 
 typedef enum {
@@ -166,5 +167,6 @@ No *noFuncDecl(int tipoRetorno, char *nome, No *params, No *body);
 No *noFuncCall(char *nome, No *args);
 No *noIncludeMath();
 No *noIncludeStdlib();
+No *noIncludeCtype();
 
 #endif

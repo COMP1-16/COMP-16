@@ -1,0 +1,1 @@
+int a = isalpha('A');
