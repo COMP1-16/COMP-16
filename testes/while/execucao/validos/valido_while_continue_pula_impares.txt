@@ -1,0 +1,13 @@
+int main() {
+    int i = 0;
+    int soma = 0;
+    while (i < 5) {
+        if (i % 2 != 0) {
+            i = i + 1;
+            continue;
+        }
+        soma = soma + i;
+        i = i + 1;
+    }
+    return soma;  // ESPERADO: 0+2+4 = 6
+}

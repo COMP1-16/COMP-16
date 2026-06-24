@@ -1,0 +1,17 @@
+int main() {
+    int i = 0;
+    int total = 0;
+    while (i < 2) {
+        int j = 0;
+        while (j < 3) {
+            if (j == 1) {
+                j = j + 1;
+                continue;  // afeta so o while interno
+            }
+            total = total + 1;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return total;  // ESPERADO: 2 * 2 = 4
+}

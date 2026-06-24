@@ -1,0 +1,4 @@
+int main() {
+    continue;  // ERRO: continue statement not within a loop
+    return 0;
+}

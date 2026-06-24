@@ -1,0 +1,17 @@
+int f() {
+    int i = 0;
+    int soma = 0;
+    while (i < 4) {
+        i = i + 1;
+        if (i == 1) {
+            continue;
+            soma = soma + 999;  // CODIGO MORTO: deve ser eliminado/marcado
+        }
+        soma = soma + i;
+    }
+    return soma;
+}
+
+int res = f();
+
+printf("%d\n", res);  // ESPERADO: 2+3+4 = 9 (codigo morto apos continue)

@@ -1,0 +1,19 @@
+int func() {
+    int i;
+    int soma = 0;
+    for (i = 0; i < 10; i = i + 1) {
+        if (i == 5) {
+            break;
+        }
+        if (i % 2 != 0) {
+            continue;
+        }
+        soma = soma + i;
+    }
+
+    return soma;  // ESPERADO: 0+2+4 = 6 (para no i=5)
+}
+
+int result = func();
+
+printf("%d\n", result);

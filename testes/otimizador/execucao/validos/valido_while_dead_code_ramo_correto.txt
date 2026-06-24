@@ -1,0 +1,18 @@
+int f() {
+    int i = 0;
+    int soma = 0;
+    while (i < 4) {
+        i = i + 1;
+        if (i % 2 == 0) {
+            continue;
+            soma = soma + 999;  // CODIGO MORTO (so este ramo)
+        } else {
+            soma = soma + i;   // NAO e codigo morto
+        }
+    }
+    return soma;
+}
+
+int res = f();
+
+printf("%d\n", res);  // ESPERADO: 1+3 = 4 (codigo morto apos continue)
