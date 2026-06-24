@@ -45,7 +45,7 @@ static int tipoAtual;
 %token KW_RETURN KW_BREAK KW_CONTINUE KW_PRINTF
 %token KW_IF KW_ELSE KW_WHILE KW_FOR KW_SWITCH KW_CASE KW_DEFAULT
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL TYPE_VOID TYPE_STRING
-%token INCLUDE_MATH INCLUDE_STDLIB
+%token INCLUDE_MATH INCLUDE_STDLIB INCLUDE_CTYPE
 
 %left EQUAL DIFF
 %left LESSER GREATER LESS_EQ GREAT_EQ
@@ -88,6 +88,7 @@ stmt
     | KW_PRINTF L_PAREN arg_list_opt R_PAREN SEMICOLON { $$ = noPrintf($3); }
     | INCLUDE_MATH { $$ = noIncludeMath(); }
     | INCLUDE_STDLIB { $$ = noIncludeStdlib(); }
+    | INCLUDE_CTYPE { $$ = noIncludeCtype(); }
     | if_stmt
     | while_stmt
     | for_stmt

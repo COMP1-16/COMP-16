@@ -8,5 +8,6 @@
 int checar(No *raiz, Celula **tabela);
 void registrar_math(Celula **tabela);
 void registrar_stdlib(Celula **tabela);
+void registrar_ctype(Celula **tabela);
 
 #endif

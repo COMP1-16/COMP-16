@@ -195,6 +195,13 @@ void registrar_stdlib(Celula **tabela) {
     injetarFuncao("exit", 1, tipo_int, TIPO_VOID, tabela);
 }
 
+void registrar_ctype(Celula **tabela) {
+    int tipo_char[] = { TIPO_CHAR };
+    injetarFuncao("isalpha", 1, tipo_char, TIPO_INT, tabela);
+    injetarFuncao("isdigit", 1, tipo_char, TIPO_INT, tabela);
+    injetarFuncao("isspace", 1, tipo_char, TIPO_INT, tabela);
+}
+
 static void checarNo(No *no, Celula **tabela, int permite_break, int permite_continue) {
     if (!no) return;
     if (permite_break) prof_break++;
@@ -206,6 +213,9 @@ static void checarNo(No *no, Celula **tabela, int permite_break, int permite_con
             break;
         case NO_INCLUDE_STDLIB:
             registrar_stdlib(tabela);
+            break;
+        case NO_INCLUDE_CTYPE:
+            registrar_ctype(tabela);
             break;
         case NO_BLOCO:
             for (int i = 0; i < no->u.bloco.count; i++)

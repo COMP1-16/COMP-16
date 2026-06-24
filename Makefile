@@ -35,10 +35,11 @@ SRCS = parser.tab.c lex.yy.c \
 	lib/exec/funcs.c \
 	lib/libs/math.c \
 	lib/libs/stdlib.c \
+	lib/libs/ctype.c \
 	src/main.c
 
 FEATURES = atualizacao_variaveis declaracao_variaveis for if_else while \
-           operadores_aritmeticos operadores_logicos math stdlib \
+           operadores_aritmeticos operadores_logicos math stdlib ctype \
            switch_case recursao otimizador
 
 define FEATURE_LAYERS
@@ -100,6 +101,9 @@ test-math: build
 
 test-stdlib: build
 	$(call RUN_TESTS,$(call FEATURE_LAYERS,stdlib))
+
+test-ctype: build
+	$(call RUN_TESTS,$(call FEATURE_LAYERS,ctype))
 
 test-otimizador: build
 	$(call RUN_TESTS,$(call FEATURE_LAYERS,otimizador))

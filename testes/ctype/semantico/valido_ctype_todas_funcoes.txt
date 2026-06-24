@@ -1,0 +1,5 @@
+#include <ctype.h>
+
+int a = isalpha('A');
+int b = isdigit('5');
+int c = isspace(' ');
