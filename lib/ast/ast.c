@@ -107,6 +107,11 @@ No *noBreak(){
     return n;
 }
 
+No *noContinue(){
+    No *n = alocar(NO_CONTINUE);
+    return n;
+}
+
 No *noRelacional(TipoRelacional op, No *esq, No *dir) {
     No *n = alocar(NO_RELACIONAL);
     n->relop = op;

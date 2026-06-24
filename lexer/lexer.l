@@ -33,6 +33,7 @@
     /* --- palavras-chave --- */
 "return"            { return KW_RETURN; }
 "break"             { return KW_BREAK; }
+"continue"          { return KW_CONTINUE; }
 "printf"            { return KW_PRINTF; }
 
     /* --- tipos --- */

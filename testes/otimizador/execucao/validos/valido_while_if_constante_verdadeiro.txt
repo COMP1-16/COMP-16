@@ -1,0 +1,16 @@
+int f() {
+    int i = 0;
+    int soma = 0;
+    while (i < 4) {
+        i = i + 1;
+        if (1) {
+            continue;
+        }
+        soma = soma + i;  // CODIGO MORTO: if(1) sempre entra, nunca alcancado
+    }
+    return soma;
+}
+
+int res = f();
+
+printf("%d\n", res);  // ESPERADO: 0 (codigo morto apos continue)

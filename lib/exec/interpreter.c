@@ -235,8 +235,10 @@ Valor avaliar(No *no, Celula **tabela) {
                     
                 }
 
-                if(resultado.tipo == TIPO_BREAK){
+                if(resultado.tipo == TIPO_BREAK || resultado.tipo == TIPO_CONTINUE){
                     break;
+                }else if (has_returned){
+                    return return_val;
                 }
 
             }
@@ -251,6 +253,7 @@ Valor avaliar(No *no, Celula **tabela) {
                 if (!ehVerdadeiro(cond)) break;
                 Valor body = avaliar(no->u.while_stmt.body, tabela);
                 if (body.tipo == TIPO_BREAK) break;
+                if (body.tipo == TIPO_CONTINUE) continue;
                 if (has_returned) return return_val;
             }
             return resultado;
@@ -268,6 +271,7 @@ Valor avaliar(No *no, Celula **tabela) {
                 if (body.tipo == TIPO_BREAK) break;
                 if (has_returned) return return_val;
                 if (no->u.for_stmt.inc) avaliar(no->u.for_stmt.inc, tabela);
+                if (body.tipo == TIPO_CONTINUE) continue;
             }
             return resultado;
         }
@@ -310,6 +314,7 @@ Valor avaliar(No *no, Celula **tabela) {
             for (int i = 0; i < no->u.bloco.count; i++) {
                 resultado = avaliar(no->u.bloco.stmts[i], tabela);
                 if(resultado.tipo == TIPO_BREAK) return resultado;
+                if(resultado.tipo == TIPO_CONTINUE) return resultado;
                 if (has_returned) return return_val;
             }
             return resultado;
@@ -322,6 +327,11 @@ Valor avaliar(No *no, Celula **tabela) {
             Valor breakingPoint;
             breakingPoint.tipo = TIPO_BREAK;
             return breakingPoint;
+        }
+        case NO_CONTINUE: {
+            Valor continuePoint;
+            continuePoint.tipo = TIPO_CONTINUE;
+            return continuePoint;
         }
         case NO_PRINTF: {
             No *args = no->u.call.args;

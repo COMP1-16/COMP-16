@@ -1,0 +1,17 @@
+int func() {
+    int soma = 0;
+    for (int i = 1; i < 4; i++) {
+        switch (i) {
+            case 1:
+                continue;  // deve continuar o FOR, nao o switch
+            default:
+                soma = soma + i;  // deve continuar o FOR, nao o switch
+        }
+    }
+
+    return soma;
+}
+
+int result = func();
+
+printf("%d\n", result);

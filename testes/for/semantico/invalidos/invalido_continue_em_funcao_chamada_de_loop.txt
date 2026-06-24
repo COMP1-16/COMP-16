@@ -1,0 +1,11 @@
+void foo() {
+    continue;  // ERRO: nao ha loop lexico envolvendo este continue
+}
+
+int main() {
+    int i;
+    for (i = 0; i < 3; i = i + 1) {
+        foo();
+    }
+    return 0;
+}

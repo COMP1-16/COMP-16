@@ -1,0 +1,17 @@
+int soma_pares(int n) {
+    int i = 0;
+    int soma = 0;
+    while (i < n) {
+        if (i % 2 != 0) {
+            i = i + 1;
+            continue;
+        }
+        soma = soma + i;
+        i = i + 1;
+    }
+    return soma;
+}
+
+int main() {
+    return soma_pares(5);  // ESPERADO: 0+2+4 = 6
+}
