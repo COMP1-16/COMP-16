@@ -1,0 +1,15 @@
+int main() {
+    int i = 0;
+    int soma = 0;
+    while (i < 4) {
+        switch (i) {
+            case 1:
+                i = i + 1;
+                continue;  // deve continuar o WHILE, nao o switch
+            default:
+                soma = soma + i;
+        }
+        i = i + 1;
+    }
+    return soma;  // ESPERADO: 0+2+3 = 5
+}

@@ -14,6 +14,7 @@
 #define TIPO_VOID     6
 #define TIPO_FUNC     7
 #define TIPO_BREAK    8
+#define TIPO_CONTINUE 9
 
 struct No; /* Forward declaration */
 

@@ -1,0 +1,10 @@
+int main() {
+    int x = 2;
+    switch (x) {
+        case 2:
+            continue;  // ERRO: switch isolado nao conta como loop
+        default:
+            x = 0;
+    }
+    return 0;
+}

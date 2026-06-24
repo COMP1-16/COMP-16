@@ -25,6 +25,7 @@ typedef enum {
     NO_BLOCO,
     NO_RETURN,
     NO_BREAK,
+    NO_CONTINUE,
     NO_LOGICAL_AND,
     NO_LOGICAL_OR,
     NO_NOT,
@@ -148,6 +149,7 @@ No *noDec(char *nome);
 No *noBloco(No **stmts, int count);
 No *noReturn(No *expr);
 No *noBreak();
+No *noContinue();
 No *noRelacional(TipoRelacional op, No *esq, No *dir);
 No *noIf(No *cond, No *thenBranch, No *elseBranch);
 No *noSwitch(No *value, No* cases);
