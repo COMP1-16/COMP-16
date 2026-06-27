@@ -421,34 +421,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../escopo-status/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Status do escopo
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../estrutura/" class="md-nav__link">
         
   
@@ -1003,7 +975,6 @@
 <li>Implementação parcial de <code>stdlib.h</code>: <code>atoi</code>, <code>atof</code> e <code>exit</code> (<a href="https://github.com/COMP1-16/COMP-16/issues/34">#34</a>).</li>
 <li>Suíte de testes padronizada em <code>testes/</code> com quatro camadas por feature (sintático, semântico, otimização e execução) — <strong>361 casos</strong> em 12 módulos.</li>
 <li>Documentação de casos de teste da sprint 6 (<a href="https://github.com/COMP1-16/COMP-16/issues/37">#37</a>).</li>
-<li>Página de <a href="../escopo-status/">status do escopo</a> comparando documentação, implementação e cobertura de testes.</li>
 </ul>
 <h3 id="sprint-7-documentacao-final">Sprint 7 — Documentação final</h3>
 <ul>
@@ -1045,7 +1016,7 @@
 <div class="admonition warning">
 <p class="admonition-title">string.h não implementada</p>
 <p>A biblioteca <strong><code>string.h</code></strong> (<code>strlen</code>, <code>strcpy</code>, <code>strcmp</code>, <code>strcat</code>, <code>strchr</code>) <strong>não teve interpretação implementada</strong> neste projeto. Essas funções dependem de um escopo maior de interpretação — em especial <strong>vetores e ponteiros</strong> — do que o planejado e efetivamente executado pela equipe.</p>
-<p>O interpretador adota o tipo estendido <code>string</code> para literais e variáveis de texto, sem modelagem de <code>char[]</code> nem aritmética de ponteiros. Detalhes na matriz de <a href="../escopo-status/">status do escopo</a>.</p>
+<p>O interpretador adota o tipo estendido <code>string</code> para literais e variáveis de texto, sem modelagem de <code>char[]</code> nem aritmética de ponteiros. Detalhes no <a href="../escopo/">escopo do interpretador</a>.</p>
 </div>
 <h2 id="artefatos-principais">Artefatos principais</h2>
 <table>
