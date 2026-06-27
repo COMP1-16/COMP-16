@@ -10,7 +10,6 @@
 - Implementação parcial de `stdlib.h`: `atoi`, `atof` e `exit` ([#34](https://github.com/COMP1-16/COMP-16/issues/34)).
 - Suíte de testes padronizada em `testes/` com quatro camadas por feature (sintático, semântico, otimização e execução) — **361 casos** em 12 módulos.
 - Documentação de casos de teste da sprint 6 ([#37](https://github.com/COMP1-16/COMP-16/issues/37)).
-- Página de [status do escopo](escopo-status.md) comparando documentação, implementação e cobertura de testes.
 
 ### Sprint 7 — Documentação final
 
@@ -32,7 +31,7 @@
 
     A biblioteca **`string.h`** (`strlen`, `strcpy`, `strcmp`, `strcat`, `strchr`) **não teve interpretação implementada** neste projeto. Essas funções dependem de um escopo maior de interpretação — em especial **vetores e ponteiros** — do que o planejado e efetivamente executado pela equipe.
 
-    O interpretador adota o tipo estendido `string` para literais e variáveis de texto, sem modelagem de `char[]` nem aritmética de ponteiros. Detalhes na matriz de [status do escopo](escopo-status.md).
+    O interpretador adota o tipo estendido `string` para literais e variáveis de texto, sem modelagem de `char[]` nem aritmética de ponteiros. Detalhes no [escopo do interpretador](escopo.md).
 
 ## Artefatos principais
 
