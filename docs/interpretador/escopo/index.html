@@ -14,7 +14,7 @@
         <link rel="prev" href="../linguagemInterpretada/">
       
       
-        <link rel="next" href="../escopo-status/">
+        <link rel="next" href="../escopo/">
       
       
         
@@ -481,34 +481,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../escopo-status/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Status do escopo
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../estrutura/" class="md-nav__link">
         
   
@@ -872,24 +844,27 @@
 
 <h1 id="escopo-do-interpretador">Escopo do interpretador</h1>
 <blockquote>
-<p>Lista objetiva do que o interpretador pretende cobrir neste projeto. O contexto sobre a linguagem C e a organização desta seção da documentação está em <a href="../linguagem-e-escopo/">Linguagem e Escopo — visão geral</a>.<br />
-Para ver o que já está implementado e testado hoje, consulte <a href="../escopo-status/">Status do escopo</a>.</p>
+<p>Lista do que o interpretador <strong>implementa e testa</strong> nesta versão. O contexto sobre a linguagem C e a organização desta seção da documentação está em <a href="../linguagem-e-escopo/">Linguagem e Escopo — visão geral</a>.</p>
 </blockquote>
 <table>
 <thead>
 <tr>
 <th>Área</th>
-<th>O que entra no interpretador</th>
+<th>Implementado</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Pipeline</td>
+<td>Análise léxica, sintática, semântica, otimização e interpretação; flags <code>--parse-only</code>, <code>--semantic-only</code>, <code>--optimize-only</code> e <code>--no-opt</code></td>
+</tr>
+<tr>
 <td>Tipos e variáveis</td>
-<td>Tipos primitivos <code>int</code>, <code>float</code>, <code>double</code>, <code>char</code>, <code>bool</code>; declaração com e sem inicialização; modificador <code>const</code>; arrays unidimensionais de tipos primitivos; strings como <code>char[]</code> / <code>char*</code></td>
+<td><code>int</code>, <code>float</code>, <code>char</code>, <code>void</code> e <code>string</code> (extensão para literais de texto); declaração simples, com inicialização e múltipla (<code>int a, b;</code>); escopo local, sombreamento e detecção de redeclaração; comentários de linha (<code>//</code>)</td>
 </tr>
 <tr>
 <td>Operadores aritméticos</td>
-<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td>
+<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (incluindo menos unário)</td>
 </tr>
 <tr>
 <td>Operadores relacionais</td>
@@ -897,7 +872,7 @@ Para ver o que já está implementado e testado hoje, consulte <a href="../escop
 </tr>
 <tr>
 <td>Operadores lógicos</td>
-<td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td>
+<td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code> (com avaliação em curto-circuito)</td>
 </tr>
 <tr>
 <td>Atribuição e atualização composta</td>
@@ -909,34 +884,42 @@ Para ver o que já está implementado e testado hoje, consulte <a href="../escop
 </tr>
 <tr>
 <td>Controle de fluxo</td>
-<td><code>if</code>, <code>else if</code>, <code>else</code>; <code>while</code>, <code>do while</code>, <code>for</code>; <code>switch</code>, <code>case</code>, <code>default</code>; <code>break</code>, <code>continue</code>, <code>return</code> (incluindo <code>return 0</code>)</td>
+<td><code>if</code>, <code>else if</code>, <code>else</code>; <code>while</code> e <code>for</code>; <code>switch</code>, <code>case</code>, <code>default</code> (com <em>fall-through</em> e <code>case</code> com <code>char</code>); <code>break</code>, <code>continue</code> e <code>return</code></td>
 </tr>
 <tr>
 <td>Funções</td>
-<td>Declaração e chamada com parâmetros e retorno; recursão; escopo de variáveis locais</td>
+<td>Definição com corpo, parâmetros tipados e retorno; chamada com passagem por valor; recursão; escopo de parâmetros e variáveis locais</td>
 </tr>
 <tr>
-<td>Biblioteca <code>stdio.h</code></td>
-<td><code>printf</code>, <code>scanf</code></td>
+<td>Entrada e saída</td>
+<td><code>printf</code> com especificadores <code>%d</code>, <code>%i</code>, <code>%f</code>, <code>%s</code>, <code>%c</code> e sequências de escape (<code>\n</code>)</td>
 </tr>
 <tr>
 <td>Biblioteca <code>math.h</code></td>
 <td><code>sqrt</code>, <code>pow</code>, <code>abs</code>, <code>floor</code>, <code>ceil</code>, <code>round</code></td>
 </tr>
 <tr>
-<td>Biblioteca <code>string.h</code></td>
-<td><code>strlen</code>, <code>strcpy</code>, <code>strcmp</code>, <code>strcat</code>, <code>strchr</code></td>
-</tr>
-<tr>
 <td>Biblioteca <code>stdlib.h</code></td>
-<td><code>abs</code>, <code>rand</code>, <code>srand</code>, <code>atoi</code>, <code>atof</code>, <code>exit</code></td>
+<td><code>atoi</code>, <code>atof</code>, <code>exit</code></td>
 </tr>
 <tr>
 <td>Biblioteca <code>ctype.h</code></td>
 <td><code>isalpha</code>, <code>isdigit</code>, <code>isspace</code></td>
 </tr>
+<tr>
+<td>Otimizador</td>
+<td><em>Constant folding</em> em expressões aritméticas, relacionais e lógicas; dobra de chamadas a <code>math.h</code>, <code>stdlib.h</code> e <code>ctype.h</code> com literais; simplificação de atribuições compostas; eliminação de código morto em <code>if</code>, <code>while</code>, <code>for</code> e após <code>return</code>, <code>break</code> e <code>continue</code></td>
+</tr>
+<tr>
+<td>Testes automatizados</td>
+<td><strong>389 casos</strong> em três camadas (sintática, semântica e execução) para declaração/atualização de variáveis, operadores, <code>if/else</code>, <code>while</code>, <code>for</code>, <code>switch/case</code>, recursão, <code>math.h</code>, <code>stdlib.h</code>, <code>ctype.h</code> e otimizador</td>
+</tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">Fora do escopo implementado</p>
+<p>Ainda <strong>não</strong> implementados: <code>do while</code>, <code>scanf</code>, <code>const</code>, arrays, ponteiros, <code>double</code>, <code>bool</code>, <code>string.h</code>, <code>rand</code>/<code>srand</code> e protótipos de função.</p>
+</div>
 <hr />
 <h2 id="historico-de-versao">Histórico de Versão</h2>
 <table>
@@ -960,6 +943,12 @@ Para ver o que já está implementado e testado hoje, consulte <a href="../escop
 <td style="text-align: left;">13/05/26</td>
 <td style="text-align: left;">Revisão do conteúdo e da estética da página</td>
 <td style="text-align: left;">Camila Careli</td>
+</tr>
+<tr>
+<td style="text-align: left;">1.2</td>
+<td style="text-align: left;">27/06/26</td>
+<td style="text-align: left;">Atualização para refletir o escopo realmente implementado e testado</td>
+<td style="text-align: left;">Equipe COMP-16</td>
 </tr>
 </tbody>
 </table>
