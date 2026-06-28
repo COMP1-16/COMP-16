@@ -17,6 +17,14 @@
 - Casos de teste da sprint 7 ([#38](https://github.com/COMP1-16/COMP-16/issues/38)) — em andamento.
 - Registro transparente do [uso de IA](../qualidade.md) no projeto.
 
+## Vídeo da apresentação
+
+Vídeo da apresentação do projeto para a disciplina **Compiladores 1 (FGA0003)**:
+
+[Assistir no YouTube — Apresentação do Interpretador C (Equipe COMP-16)](https://youtu.be/4g_a3CVmpLo)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4g_a3CVmpLo" title="Apresentação Interpretador C — Equipe COMP-16" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Bibliotecas e escopo
 
 | Biblioteca | Status na entrega final |
@@ -50,4 +58,5 @@
 
 | Versão | Data | Descrição | Autor |
 | :--- | :--- | :--- | :--- |
+| 1.1 | 27/06/26 | Link do vídeo da apresentação (FGA0003) | Pedro Henrique |
 | 1.0 | 21/06/26 | Resumo das entregas finais (Sprints 6 e 7) | Pedro Henrique |
